@@ -1,10 +1,20 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const config = {
     entry: './src/index.ts',
     output: {
         path: path.resolve(__dirname, 'dist')
     },
+    devServer: {
+        open: true,
+        host: 'localhost'
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: 'index.html'
+        })
+    ],
     module: {
         rules: [
             {
