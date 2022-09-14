@@ -1,1 +1,53 @@
-console.log('Hello World!');
+import { diAuto, stopDeepConfig as stopDeepConfigFlag } from './constants/diConstants';
+import { Injectable as InjectableDecorator } from './decorators/injectable';
+import { DependencyConfig as DependencyConfigDecorator } from './decorators/dependencyConfig';
+import { DependenciesCreator } from './dependency/dependenciesCreator';
+import { InjectorFactory } from './injectors/injectorFactory';
+import { SingletonInjector } from './injectors/singletonInjector';
+import { Message } from './utils/message';
+
+function of(...classes: Class[]): any | any[] {
+    const dependenciesCreator = new DependenciesCreator();
+    if (classes.length === 1) return dependenciesCreator.createInstance(classes[0]);
+    return classes.map((c) => dependenciesCreator.createInstance(c));
+}
+
+function by<T extends Class>(c: T, ...args: any[]): InstanceType<T> {
+    return new DependenciesCreator().createInstance(c, args);
+}
+
+export function destroySingletonInstance(c: NormalClass): void {
+    const singletonInjector = <SingletonInjector>InjectorFactory.getInjector('singleton');
+    singletonInjector.destroyInstance(c);
+}
+
+export function registerDepsConfig(c: NormalClass): void {}
+
+export const Injectable = InjectableDecorator;
+export const DependencyConfig = DependencyConfigDecorator;
+
+export const stopDeepConfig = stopDeepConfigFlag;
+
+if (Reflect.has(window, 'of')) {
+    Message.error('依赖注入容器初始化失败！');
+    Message.throwError('依赖注入全局方法 "of" 被占用！');
+} else if (Reflect.has(window, 'by')) {
+    Message.error('依赖注入容器初始化失败！');
+    Message.throwError('依赖注入全局方法 "by" 被占用！');
+} else if (Reflect.has(window, 'AUTO')) {
+    Message.error('依赖注入容器初始化失败！');
+    Message.throwError('依赖注入全局属性 "AUTO" 被占用！');
+} else if (Reflect.has(window, 'destroySingletonInstance')) {
+    Message.error('依赖注入容器初始化失败！');
+    Message.throwError('依赖注入全局方法 "destroySingletonInstance" 被占用！');
+} else if (Reflect.has(window, 'destroySingletonInstance')) {
+    Message.error('依赖注入容器初始化失败！');
+    Message.throwError('依赖注入全局方法 "registerDepsConfig" 被占用！');
+} else {
+    const windowAny: any = window;
+    windowAny.of = of;
+    windowAny.by = by;
+    windowAny.AUTO = diAuto;
+}
+
+import('../tests/test');

@@ -16,10 +16,8 @@
         "sourceMap": true,
         "baseUrl": ".",
         "types": ["webpack-env", "jest"],
-        "paths": {
-            "@/*": ["src/*"]
-        },
         "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
     },
-    "files": ["src/index.ts"]
+    "include": ["src/**/*.ts", "tests/**/*.ts"],
+    "exclude": ["node_modules"]
 }
