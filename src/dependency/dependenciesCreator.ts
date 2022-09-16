@@ -9,17 +9,29 @@ import { DependenciesCollector } from './dependenciesCollector';
 import { DependenciesGraph } from './dependenciesGraph';
 
 export class DependenciesCreator {
-    private dependenciesGraph: DependenciesGraph;
+    private static instance: DependenciesCreator;
+
+    private dependenciesGraph = new DependenciesGraph();
+    private currentCreatingInstanceClass: NormalClass;
+
+    private isInjecting = false;
 
     createInstance<T>(c: Class<T>, args?: any[]): T {
-        this.dependenciesGraph = new DependenciesGraph();
+        let isRootInjection = false;
+        if (!this.isInjecting) {
+            this.isInjecting = true;
+            isRootInjection = true;
+        }
 
         const instance = this.createInstanceRecursive(c, args);
+
+        if (isRootInjection) DependenciesCreator.instance = null;
+
         return instance;
     }
 
     // 递归创建依赖实例，以及依赖构造方法中可注入的参数项的实例
-    createInstanceRecursive<T>(c: Class<T>, args?: any[], outerClass?: Class): T {
+    createInstanceRecursive<T>(c: Class<T>, args?: any[], outerClass: Class = this.currentCreatingInstanceClass): T {
         let usingClass: Class<T>;
         let usingArgs = args || [];
 
@@ -40,8 +52,7 @@ export class DependenciesCreator {
                     if (configResult instanceof c) {
                         return configResult;
                     }
-                    Message.error(`配置的对象不是 "${c.name}" 或其子类的实例`);
-                    return undefined;
+                    Message.throwError('29002', `配置的对象不是 "${c.name}" 或其子类的实例`);
                 }
 
                 currentUsingClass = configEntity.usingClass;
@@ -54,9 +65,8 @@ export class DependenciesCreator {
         // 检测循环依赖
         const circularDependencyClasses = this.dependenciesGraph.addNodeAndCheckRing(usingClass, outerClass);
         if (circularDependencyClasses) {
-            circularDependencyClasses.push(circularDependencyClasses[0]);
             const circularDependencyClassNames = circularDependencyClasses.map((cdc) => cdc.name).join(' -> ');
-            Message.throwError(`检测到循环依赖：${circularDependencyClassNames}`);
+            Message.throwError('39001', `检测到循环依赖：${circularDependencyClassNames}`);
         }
 
         // 为构造方法参数注入实例
@@ -75,10 +85,12 @@ export class DependenciesCreator {
 
         // 创建实例
         try {
+            this.currentCreatingInstanceClass = <NormalClass>usingClass;
             const instance = targetInjector.inject(<NormalClass>usingClass, ...usingArgs);
+            this.currentCreatingInstanceClass = null;
             return instance;
         } catch (error: any) {
-            Message.error(`依赖注入容器实例化类 "${usingClass.name}" 出错！\n ${error?.stack || error}`);
+            Message.error('39002', `依赖注入容器实例化类 "${usingClass.name}" 出错！\n ${error?.stack || error}`);
         }
 
         return undefined;
@@ -86,7 +98,7 @@ export class DependenciesCreator {
 
     handleConstructorArgs(usingArgs: any[], constructorArgs: any[], c: Class) {
         if (usingArgs.length > constructorArgs.length) {
-            Message.warn(`为 "${c.name}" 的构造方法配置的参数过多！`);
+            Message.warn('20001', `为 "${c.name}" 的构造方法配置的参数过多！`);
         } else if (usingArgs.length < constructorArgs.length) {
             const padLength = constructorArgs.length - usingArgs.length;
             for (let i = 0; i < padLength; i++) {
@@ -106,5 +118,12 @@ export class DependenciesCreator {
                 }
             }
         }
+    }
+
+    static getInstance(): DependenciesCreator {
+        if (!DependenciesCreator.instance) {
+            DependenciesCreator.instance = new DependenciesCreator();
+        }
+        return DependenciesCreator.instance;
     }
 }

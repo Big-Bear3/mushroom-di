@@ -15,7 +15,7 @@ export class InjectorFactory {
                 targetInjector = SingletonInjector.getInstance();
                 break;
             default:
-                Message.throwError(`未知的注入类型 "${injectorType}"！`);
+                Message.throwError('29003', `未知的注入类型 "${injectorType}"！`);
         }
         return targetInjector;
     }

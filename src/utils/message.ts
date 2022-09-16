@@ -1,13 +1,38 @@
+/**
+ * 错误码规则：
+ * 第一位：0.初始化问题 1.运行时内部问题 2.用户使用问题 3.执行用户代码问题
+ * 第二位：0.警告 1.错误 9.抛异常
+ */
 export class Message {
-    static warn(...data: any[]): void {
-        console.warn(...data);
+    static histories: {
+        type: 'warn' | 'error' | 'throw';
+        code: string;
+        message: string;
+    }[] = [];
+
+    static warn(code: string, message: string): void {
+        Message.histories.push({ type: 'warn', code, message });
+
+        console.warn(`(${code}) ${message}`);
     }
 
-    static error(...data: any[]): void {
-        console.error(...data);
+    static error(code: string, message: string): void {
+        Message.histories.push({ type: 'error', code, message });
+
+        console.warn(`(${code}) ${message}`);
     }
 
-    static throwError(message: string, options?: ErrorOptions): void {
-        throw new Error(message, options);
+    static throwError(code: string, message: string, options?: ErrorOptions): void {
+        Message.histories.push({ type: 'throw', code, message });
+
+        throw new Error(`(${code}) ${message}`, options);
+    }
+
+    static getHistory(): any[] {
+        return Message.histories;
+    }
+
+    static clearHistory(): void {
+        Message.histories.splice(0);
     }
 }

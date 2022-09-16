@@ -7,7 +7,6 @@ export class DependenciesCollector {
 
     collect(c: Class, injectableOptions: InjectableOptions): void {
         let options = injectableOptions;
-        if (!options || !options.type) options = { type: 'multiple' };
         this.dependenciesMap.set(c, options);
     }
 

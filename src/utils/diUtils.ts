@@ -1,11 +1,13 @@
+import { DependenciesCollector } from '../dependency/dependenciesCollector';
+
 export function parentsIsSingleton(c: Class): boolean {
-    // TODO 未递归判断
-    // const clazz = getRealClass(c);
-    // const parent = getRealClass(Object.getPrototypeOf(clazz));
-    // const dependenciesCollector = DependenciesCollector.getInstance();
-    // const parentInjectableOptions = dependenciesCollector.get(parent);
-    // if (parentInjectableOptions && parentInjectableOptions.type === 'singleton') {
-    //     return true;
-    // }
+    const dependenciesCollector = DependenciesCollector.getInstance();
+    let parentClass = <Class>Reflect.getPrototypeOf(c);
+    while (parentClass) {
+        const parentInjectableOptions = dependenciesCollector.get(parentClass);
+        if (parentInjectableOptions.type === 'singleton') return true;
+
+        parentClass = <Class>Reflect.getPrototypeOf(parentClass);
+    }
     return false;
 }
