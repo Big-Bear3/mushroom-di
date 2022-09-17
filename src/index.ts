@@ -28,8 +28,6 @@ export const DependencyConfig = DependencyConfigDecorator;
 
 export const stopDeepConfig = stopDeepConfigFlag;
 
-window.of = of;
-
 if (Reflect.has(window, 'of')) {
     Message.error('01001', '依赖注入容器初始化失败！');
     Message.throwError('09001', '依赖注入全局方法 "of" 被占用！');

@@ -1,12 +1,11 @@
 import { Injectable } from '../../src';
 
-@Injectable()
 export class Animal {}
 
-@Injectable()
+@Injectable({ type: 'multiple' })
 export class Bear extends Animal {}
 
-@Injectable()
+@Injectable({ type: 'singleton' })
 export class BrownBear extends Bear {
     age: number;
 

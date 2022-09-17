@@ -27,6 +27,7 @@ export class DependenciesGraph {
         return this.checkRing(currentNode);
     }
 
+    // 广度优先检测依赖有向图是否有环
     private checkRing(targetNode: DependencyNode): Class[] {
         const pendingNodes: { value: DependencyNode; path: Class[] }[] = [
             {
@@ -42,12 +43,16 @@ export class DependenciesGraph {
             if (!isFirstLoop && currentNode.value === targetNode) return currentNode.path;
 
             if (currentNode.value.nextNodesCount() > 0) {
+                const currentNextNodes = [];
+
                 for (const nextNode of currentNode.value.nextNodes) {
-                    pendingNodes.push({
+                    currentNextNodes.push({
                         value: nextNode,
                         path: [...currentNode.path, nextNode.value]
                     });
                 }
+
+                pendingNodes.unshift(...currentNextNodes);
             }
 
             if (isFirstLoop) isFirstLoop = false;

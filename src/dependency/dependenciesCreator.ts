@@ -12,7 +12,7 @@ export class DependenciesCreator {
     private static instance: DependenciesCreator;
 
     private dependenciesGraph = new DependenciesGraph();
-    private currentCreatingInstanceClass: NormalClass;
+    private creatingInstanceClassQueue: NormalClass[] = [];
 
     private isInjecting = false;
 
@@ -31,7 +31,7 @@ export class DependenciesCreator {
     }
 
     // 递归创建依赖实例，以及依赖构造方法中可注入的参数项的实例
-    createInstanceRecursive<T>(c: Class<T>, args?: any[], outerClass: Class = this.currentCreatingInstanceClass): T {
+    createInstanceRecursive<T>(c: Class<T>, args?: any[], outerClass?: Class): T {
         let usingClass: Class<T>;
         let usingArgs = args || [];
 
@@ -63,10 +63,15 @@ export class DependenciesCreator {
         }
 
         // 检测循环依赖
-        const circularDependencyClasses = this.dependenciesGraph.addNodeAndCheckRing(usingClass, outerClass);
+        let realOuterClass: Class;
+        if (outerClass) realOuterClass = outerClass;
+        else if (this.creatingInstanceClassQueue.length > 0)
+            realOuterClass = this.creatingInstanceClassQueue[this.creatingInstanceClassQueue.length - 1];
+
+        const circularDependencyClasses = this.dependenciesGraph.addNodeAndCheckRing(usingClass, realOuterClass);
         if (circularDependencyClasses) {
             const circularDependencyClassNames = circularDependencyClasses.map((cdc) => cdc.name).join(' -> ');
-            Message.throwError('39001', `检测到循环依赖：${circularDependencyClassNames}`);
+            Message.throwError('39002', `检测到循环依赖：${circularDependencyClassNames}`);
         }
 
         // 为构造方法参数注入实例
@@ -85,12 +90,12 @@ export class DependenciesCreator {
 
         // 创建实例
         try {
-            this.currentCreatingInstanceClass = <NormalClass>usingClass;
+            this.creatingInstanceClassQueue.push(<NormalClass>usingClass);
             const instance = targetInjector.inject(<NormalClass>usingClass, ...usingArgs);
-            this.currentCreatingInstanceClass = null;
+            this.creatingInstanceClassQueue.pop();
             return instance;
         } catch (error: any) {
-            Message.error('39002', `依赖注入容器实例化类 "${usingClass.name}" 出错！\n ${error?.stack || error}`);
+            Message.throwError('39001', `依赖注入容器实例化类 "${usingClass.name}" 出错！\n ${error?.stack || error}`);
         }
 
         return undefined;

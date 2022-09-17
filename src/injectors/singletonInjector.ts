@@ -15,7 +15,7 @@ class SingletonDependencyInfo<T = any> {
 export class SingletonInjector implements IInjector {
     private static instance: SingletonInjector;
 
-    private singletonDependenciesMap = new Map<NormalClass, SingletonDependencyInfo>();
+    private singletonDependenciesMap = new WeakMap<NormalClass, SingletonDependencyInfo>();
 
     private constructor() {}
 

@@ -5,7 +5,7 @@ export function parentsIsSingleton(c: Class): boolean {
     let parentClass = <Class>Reflect.getPrototypeOf(c);
     while (parentClass) {
         const parentInjectableOptions = dependenciesCollector.get(parentClass);
-        if (parentInjectableOptions.type === 'singleton') return true;
+        if (parentInjectableOptions?.type === 'singleton') return true;
 
         parentClass = <Class>Reflect.getPrototypeOf(parentClass);
     }
