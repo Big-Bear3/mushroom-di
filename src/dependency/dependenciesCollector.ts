@@ -1,3 +1,4 @@
+import { defaultInjectableOptions } from '../../src/constants/diConstants';
 import { InjectableOptions } from '../types/diTypes';
 
 export class DependenciesCollector {
@@ -11,7 +12,7 @@ export class DependenciesCollector {
     }
 
     get(c: Class): InjectableOptions {
-        return this.dependenciesMap.get(c);
+        return this.dependenciesMap.get(c) || defaultInjectableOptions;
     }
 
     contains(c: Class): boolean {

@@ -16,3 +16,9 @@ export interface MethodDescriptor {
     writable: boolean;
     value: Function;
 }
+
+export interface DependencyConfigResult<T> {
+    usingClass?: Class<T>;
+    usingArgs?: any[];
+    usingObject?: T;
+}

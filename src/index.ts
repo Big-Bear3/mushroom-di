@@ -8,12 +8,12 @@ import { Message } from './utils/message';
 
 function of(...classes: Class[]): any | any[] {
     const dependenciesCreator = DependenciesCreator.getInstance();
-    if (classes.length === 1) return dependenciesCreator.createInstance(classes[0]);
-    return classes.map((c) => dependenciesCreator.createInstance(c));
+    if (classes.length === 1) return dependenciesCreator.getDependency(classes[0]);
+    return classes.map((c) => dependenciesCreator.getDependency(c));
 }
 
 function by<T extends Class>(c: T, ...args: any[]): InstanceType<T> {
-    return DependenciesCreator.getInstance().createInstance(c, args);
+    return DependenciesCreator.getInstance().getDependency(c, args);
 }
 
 export function destroySingletonInstance(c: NormalClass): void {
@@ -50,4 +50,4 @@ if (Reflect.has(window, 'of')) {
     windowAny.AUTO = diAuto;
 }
 
-// import('../tests/webTest');
+import('../tests/webTest');
