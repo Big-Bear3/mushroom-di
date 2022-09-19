@@ -28,6 +28,11 @@ export class DependenciesCreator {
         return instance;
     }
 
+    getCreatingInstanceClass(): Class {
+        if (this.creatingInstanceClassQueue.length === 0) return undefined;
+        return this.creatingInstanceClassQueue[this.creatingInstanceClassQueue.length - 1];
+    }
+
     // 递归创建依赖实例，以及依赖构造方法中可注入的参数项的实例
     private createInstance<T>(usingClass: NormalClass<T>, usingArgs?: any[]): T {
         this.checkCircularDependencies(usingClass);

@@ -6,7 +6,7 @@ export interface InjectableOptions {
     type: InjectorType;
 }
 
-export type ConfigMethod = (configEntity: DependencyConfigEntity<any, any[]>) => void | symbol | any;
+export type ConfigMethod = (configEntity: DependencyConfigEntity<any, any[]>, outerClass?: Class) => void | symbol | any;
 
 export type GenericType<T> = T extends Class<infer G> ? G : any;
 

@@ -49,7 +49,10 @@ export class DependenciesSearcher {
             const configMethod = DependenciesConfigCollector.getInstance().getConfigMethod(currentUsingClass);
             if (configMethod) {
                 configEntity = new DependencyConfigEntity(currentUsingClass, usingArgs);
-                const configResult = configMethod(configEntity);
+                const dependenciesCreator = DependenciesCreator.getInstance();
+                const outerClass = dependenciesCreator.getCreatingInstanceClass();
+
+                const configResult = configMethod(configEntity, outerClass);
 
                 if (configResult && configResult !== stopDeepConfig) {
                     if (configResult instanceof originalClass) {
