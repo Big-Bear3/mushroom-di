@@ -1,4 +1,4 @@
-import { stopDeepConfig } from '../../src/constants/diConstants';
+import { messageNewLineSign, stopDeepConfig } from '../../src/constants/diConstants';
 import { DependenciesConfigCollector } from '../../src/dependency-config/dependenciesConfigCollector';
 import { DependencyConfigEntity } from '../../src/dependency-config/dependencyConfigEntity';
 import { Message } from '../../src/utils/message';
@@ -17,11 +17,17 @@ export class DependenciesSearcher {
 
         const injectType = DependenciesClassCollector.getInstance().getInjectableOptions(usingClass).type;
         if (injectType === 'singleton') {
-            let instance = this.getInstanceFromHolder(<NormalClass>usingClass, injectType);
-            if (instance) return instance;
-            else {
+            let instance = this.getInstanceFromManager(<NormalClass>usingClass, injectType);
+            if (instance) {
+                if (usingArgs.length > 0)
+                    Message.warn(
+                        '20002',
+                        `您试图在为一个已创建的单例依赖传入构造方法参数，这些参数将不会生效！${messageNewLineSign}class: ${usingClass.name}`
+                    );
+                return instance;
+            } else {
                 instance = dependenciesCreator.createDependency(<NormalClass>usingClass, usingArgs);
-                this.addInstanceToHolder(<NormalClass>usingClass, instance, injectType);
+                this.addInstanceToManager(<NormalClass>usingClass, instance, injectType);
                 return instance;
             }
         }
@@ -62,7 +68,7 @@ export class DependenciesSearcher {
         return { usingClass, usingArgs };
     }
 
-    private getInstanceFromHolder<T>(usingClass: NormalClass<T>, injectType: InjectorType): T {
+    private getInstanceFromManager<T>(usingClass: NormalClass<T>, injectType: InjectorType): T {
         switch (injectType) {
             case 'singleton':
                 if (injectType === 'singleton') {
@@ -78,7 +84,7 @@ export class DependenciesSearcher {
         }
     }
 
-    private addInstanceToHolder<T>(usingClass: NormalClass<T>, instance: T, injectType: InjectorType): void {
+    private addInstanceToManager<T>(usingClass: NormalClass<T>, instance: T, injectType: InjectorType): void {
         if (injectType === 'singleton') {
             const singletonDependenciesManager = SingletonDependenciesManager.getInstance();
             singletonDependenciesManager.addDependency(<NormalClass>usingClass, instance);

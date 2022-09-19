@@ -37,9 +37,13 @@ export class BrownBears extends Bears {
 export class Zoo {
     brownBear: BrownBear;
     brownBears: BrownBears;
+    brownBearBy: BrownBear;
+    brownBearsBy: BrownBears;
 
     constructor(brownBear: BrownBear, brownBears: BrownBears) {
         this.brownBear = brownBear;
         this.brownBears = brownBears;
+        this.brownBearBy = by(BrownBear, 5);
+        this.brownBearsBy = by(BrownBears, 12);
     }
 }

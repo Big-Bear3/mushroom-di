@@ -2,6 +2,7 @@ import { Message } from '../utils/message';
 import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
 import { DependenciesGraph } from './dependenciesGraph';
 import { DependenciesSearcher } from './dependenciesSearcher';
+import { messageNewLineSign } from '../../src/constants/diConstants';
 
 export class DependenciesCreator {
     private static instance: DependenciesCreator;
@@ -52,7 +53,10 @@ export class DependenciesCreator {
 
             return instance;
         } catch (error: any) {
-            Message.throwError('39001', `依赖注入容器实例化类 "${usingClass.name}" 出错！\n ${error?.stack || error}`);
+            Message.throwError(
+                '39001',
+                `依赖注入容器实例化类 "${usingClass.name}" 出错！${messageNewLineSign}${error?.stack || error}`
+            );
         }
 
         return undefined;

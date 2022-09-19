@@ -52,4 +52,4 @@ if (Reflect.has(window, 'of')) {
     windowAny.AUTO = diAuto;
 }
 
-import('../tests/webTest');
+// import('../tests/webTest');

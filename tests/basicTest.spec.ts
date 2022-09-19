@@ -18,22 +18,22 @@ test('单例多例', () => {
     expect(animal1 === animal2).toBe(false);
 });
 
-// test('继承单例警告', () => {
-//     const brownBear1 = of(BrownBear);
-//     const brownBear2 = of(BrownBear);
-//     expect(brownBear1 === brownBear2).toBe(true);
+test('继承单例警告', () => {
+    const brownBear1 = of(BrownBear);
+    const brownBear2 = of(BrownBear);
+    expect(brownBear1 === brownBear2).toBe(true);
 
-//     const brownBears1 = of(BrownBears);
-//     const brownBears2 = of(BrownBears);
-//     expect(brownBears1 === brownBears2).toBe(false);
-// });
+    const brownBears1 = of(BrownBears);
+    const brownBears2 = of(BrownBears);
+    expect(brownBears1 === brownBears2).toBe(false);
+});
 
-// test('带参数的构造方法', () => {
-//     const brownBear1 = of(BrownBear);
-//     const brownBear2 = of(BrownBear);
-//     expect(brownBear1 === brownBear2).toBe(true);
+test('带参数的构造方法', () => {
+    const brownBear1 = of(BrownBear);
+    const brownBear2 = of(BrownBear);
+    expect(brownBear1 === brownBear2).toBe(true);
 
-//     const brownBears1 = of(BrownBears);
-//     const brownBears2 = of(BrownBears);
-//     expect(brownBears1 === brownBears2).toBe(false);
-// });
+    const brownBears1 = of(BrownBears);
+    const brownBears2 = of(BrownBears);
+    expect(brownBears1 === brownBears2).toBe(false);
+});
