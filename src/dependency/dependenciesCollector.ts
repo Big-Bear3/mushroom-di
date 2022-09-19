@@ -7,8 +7,7 @@ export class DependenciesCollector {
     private dependenciesMap = new Map<Class, InjectableOptions>();
 
     collect(c: Class, injectableOptions: InjectableOptions): void {
-        let options = injectableOptions;
-        this.dependenciesMap.set(c, options);
+        this.dependenciesMap.set(c, injectableOptions);
     }
 
     get(c: Class): InjectableOptions {

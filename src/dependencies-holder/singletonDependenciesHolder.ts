@@ -3,12 +3,16 @@ export class SingletonDependenciesHolder {
 
     private singletonDependenciesMap = new WeakMap<NormalClass, any>();
 
-    addDependency<T>(c: NormalClass<T>, instance: T): void {
-        this.singletonDependenciesMap.set(c, instance);
+    addDependency<T>(nc: NormalClass<T>, instance: T): void {
+        this.singletonDependenciesMap.set(nc, instance);
     }
 
-    getDependency<T>(c: NormalClass<T>): T {
-        return this.singletonDependenciesMap.get(c);
+    getDependency<T>(nc: NormalClass<T>): T {
+        return this.singletonDependenciesMap.get(nc);
+    }
+
+    removeDependency<T>(nc: NormalClass<T>): void {
+        this.singletonDependenciesMap.delete(nc);
     }
 
     static getInstance(): SingletonDependenciesHolder {

@@ -10,7 +10,7 @@ test('检测循环依赖', () => {
     toggleCircularSwitch1(false);
 
     try {
-        const a = of(CircularClassA);
+        of(CircularClassA);
     } catch (error) {}
 
     expect(messageHistory).toHaveLength(0);
@@ -18,7 +18,7 @@ test('检测循环依赖', () => {
     toggleCircularSwitch1(true);
 
     try {
-        const a = of(CircularClassA);
+        of(CircularClassA);
     } catch (error) {}
 
     expect(messageHistory[0]?.code).toBe('39002');

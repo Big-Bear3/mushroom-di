@@ -9,29 +9,29 @@ export function toggleCircularSwitch1(state: boolean) {
 @Injectable({ type: 'multiple' })
 export class CircularClassA {
     constructor() {
-        const b = of(CircularClassB);
-        const c = of(CircularClassC);
+        of(CircularClassB);
+        of(CircularClassC);
     }
 }
 
 @Injectable({ type: 'multiple' })
 export class CircularClassB {
     constructor() {
-        const d = of(CircularClassD);
+        of(CircularClassD);
     }
 }
 
 @Injectable({ type: 'multiple' })
 export class CircularClassC {
     constructor() {
-        const e = of(CircularClassE);
+        of(CircularClassE);
     }
 }
 
 @Injectable({ type: 'multiple' })
 export class CircularClassD {
     constructor(public c: CircularClassC) {
-        const e = of(CircularClassE);
+        of(CircularClassE);
     }
 }
 
@@ -39,6 +39,6 @@ export class CircularClassD {
 export class CircularClassE {
     constructor() {
         if (!circularSwitch1) return;
-        const a = of(CircularClassA);
+        of(CircularClassA);
     }
 }

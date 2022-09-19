@@ -1,22 +1,24 @@
 module.exports = {
     root: true,
     env: {
+        browser: true,
         node: true
     },
-    extends: ['eslint:recommended'],
+    extends: ['plugin:@typescript-eslint/recommended'],
+    plugins: ['@typescript-eslint'],
     parserOptions: {
         ecmaVersion: 2020,
         parser: '@typescript-eslint/parser'
     },
     rules: {
-        'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-        'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-        quotes: ['error', 'single'],
+        'no-console': 'off',
+        'no-debugger': 'warn',
+        quotes: ['warn', 'single'],
         'no-use-before-define': 'off',
         'no-undef': 'off',
-        'no-shadow': 'off',
+        'no-shadow': 'error',
         'no-labels': 'off',
-        'linebreak-style': 'off',
+        'linebreak-style': ['error', 'windows'],
         'import/prefer-default-export': 'off',
         'class-methods-use-this': 'off',
         'no-restricted-syntax': 'off',
@@ -27,20 +29,19 @@ module.exports = {
         'no-underscore-dangle': 'off',
         'no-useless-constructor': 'off',
         'no-plusplus': 'off',
-        '@typescript-eslint/no-explicit-any': ['off'],
-        '@typescript-eslint/explicit-module-boundary-types': 'off',
-        '@typescript-eslint/no-empty-function': 'off',
         'dot-notation': 'off',
         'no-lonely-if': 'off',
         'import/no-cycle': 'off',
-        'import/order': 'off'
-    },
-    overrides: [
-        {
-            files: ['**/__tests__/*.{j,t}s?(x)', '**/tests/unit/**/*.spec.{j,t}s?(x)'],
-            env: {
-                jest: true
+
+        '@typescript-eslint/no-explicit-any': ['off'],
+        '@typescript-eslint/no-empty-function': 'off',
+        '@typescript-eslint/ban-types': [
+            'error',
+            {
+                types: {
+                    Function: false
+                }
             }
-        }
-    ]
+        ]
+    }
 };

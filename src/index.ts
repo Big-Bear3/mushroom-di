@@ -1,27 +1,29 @@
+import 'reflect-metadata';
 import { diAuto, stopDeepConfig as stopDeepConfigFlag } from './constants/diConstants';
 import { Injectable as InjectableDecorator } from './decorators/injectable';
 import { DependencyConfig as DependencyConfigDecorator } from './decorators/dependencyConfig';
-import { DependenciesCreator } from './dependency/dependenciesCreator';
-import { InjectorFactory } from './injectors/injectorFactory';
-import { SingletonInjector } from './injectors/singletonInjector';
+import { DependenciesSearcher } from './dependency/dependenciesSearcher';
 import { Message } from './utils/message';
+import { SingletonDependenciesHolder } from './dependencies-holder/singletonDependenciesHolder';
+
+const dependenciesSearcher = DependenciesSearcher.getInstance();
 
 function of(...classes: Class[]): any | any[] {
-    const dependenciesCreator = DependenciesCreator.getInstance();
-    if (classes.length === 1) return dependenciesCreator.getDependency(classes[0]);
-    return classes.map((c) => dependenciesCreator.getDependency(c));
+    if (classes.length === 1) return dependenciesSearcher.searchDependency(classes[0]);
+    return classes.map((c) => dependenciesSearcher.searchDependency(c));
 }
 
 function by<T extends Class>(c: T, ...args: any[]): InstanceType<T> {
-    return DependenciesCreator.getInstance().getDependency(c, args);
+    return dependenciesSearcher.searchDependency(c, args);
 }
 
-export function destroySingletonInstance(c: NormalClass): void {
-    const singletonInjector = <SingletonInjector>InjectorFactory.getInjector('singleton');
-    singletonInjector.destroyInstance(c);
+export function destroySingletonInstance(nc: NormalClass): void {
+    const singletonDependenciesHolder = SingletonDependenciesHolder.getInstance();
+    singletonDependenciesHolder.removeDependency(nc);
 }
 
-export function registerDepsConfig(c: NormalClass): void {}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function registerDepsConfig(c: Class): void {}
 
 export const Injectable = InjectableDecorator;
 export const DependencyConfig = DependencyConfigDecorator;

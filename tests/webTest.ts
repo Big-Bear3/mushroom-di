@@ -4,9 +4,9 @@ import { BrownBear, Zoo } from './test-classes/basicClasses';
 export function test(): void {
     try {
         const a = of(BrownBear);
-    } catch (error) {
-        debugger;
-    }
+        const b = of(BrownBear);
+    } catch (error) {}
+    of(CircularClassA);
 }
 
 test();
