@@ -1,5 +1,5 @@
-export class SingletonDependenciesHolder {
-    private static instance: SingletonDependenciesHolder;
+export class SingletonDependenciesManager {
+    private static instance: SingletonDependenciesManager;
 
     private singletonDependenciesMap = new WeakMap<NormalClass, any>();
 
@@ -15,10 +15,10 @@ export class SingletonDependenciesHolder {
         this.singletonDependenciesMap.delete(nc);
     }
 
-    static getInstance(): SingletonDependenciesHolder {
-        if (!SingletonDependenciesHolder.instance) {
-            SingletonDependenciesHolder.instance = new SingletonDependenciesHolder();
+    static getInstance(): SingletonDependenciesManager {
+        if (!SingletonDependenciesManager.instance) {
+            SingletonDependenciesManager.instance = new SingletonDependenciesManager();
         }
-        return SingletonDependenciesHolder.instance;
+        return SingletonDependenciesManager.instance;
     }
 }

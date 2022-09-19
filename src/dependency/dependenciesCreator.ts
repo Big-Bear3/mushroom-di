@@ -1,5 +1,5 @@
 import { Message } from '../utils/message';
-import { DependenciesCollector } from './dependenciesCollector';
+import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
 import { DependenciesGraph } from './dependenciesGraph';
 import { DependenciesSearcher } from './dependenciesSearcher';
 
@@ -28,7 +28,7 @@ export class DependenciesCreator {
     }
 
     // 递归创建依赖实例，以及依赖构造方法中可注入的参数项的实例
-    createInstance<T>(usingClass: NormalClass<T>, usingArgs?: any[]): T {
+    private createInstance<T>(usingClass: NormalClass<T>, usingArgs?: any[]): T {
         this.checkCircularDependencies(usingClass);
 
         this.creatingInstanceClassQueue.push(usingClass);
@@ -81,7 +81,7 @@ export class DependenciesCreator {
             }
         }
 
-        const dependenciesCollector = DependenciesCollector.getInstance();
+        const dependenciesCollector = DependenciesClassCollector.getInstance();
 
         for (let i = 0; i < usingArgs.length; i++) {
             if (usingArgs[i] === AUTO) {

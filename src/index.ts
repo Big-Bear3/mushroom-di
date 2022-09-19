@@ -4,7 +4,7 @@ import { Injectable as InjectableDecorator } from './decorators/injectable';
 import { DependencyConfig as DependencyConfigDecorator } from './decorators/dependencyConfig';
 import { DependenciesSearcher } from './dependency/dependenciesSearcher';
 import { Message } from './utils/message';
-import { SingletonDependenciesHolder } from './dependencies-holder/singletonDependenciesHolder';
+import { SingletonDependenciesManager } from './dependency-manager/singletonDependenciesManager';
 
 const dependenciesSearcher = DependenciesSearcher.getInstance();
 
@@ -18,8 +18,8 @@ function by<T extends Class>(c: T, ...args: any[]): InstanceType<T> {
 }
 
 export function destroySingletonInstance(nc: NormalClass): void {
-    const singletonDependenciesHolder = SingletonDependenciesHolder.getInstance();
-    singletonDependenciesHolder.removeDependency(nc);
+    const singletonDependenciesManager = SingletonDependenciesManager.getInstance();
+    singletonDependenciesManager.removeDependency(nc);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

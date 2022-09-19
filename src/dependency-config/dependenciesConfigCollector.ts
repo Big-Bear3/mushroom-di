@@ -11,7 +11,7 @@ export class DependenciesConfigCollector {
         this.dependenciesConfigMap.set(c, configMethod);
     }
 
-    get(c: Class): ConfigMethod {
+    getConfigMethod(c: Class): ConfigMethod {
         return this.dependenciesConfigMap.get(c);
     }
 

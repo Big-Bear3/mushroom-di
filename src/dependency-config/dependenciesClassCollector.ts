@@ -1,8 +1,8 @@
-import { defaultInjectableOptions } from '../../src/constants/diConstants';
+import { defaultInjectableOptions } from '../constants/diConstants';
 import { InjectableOptions } from '../types/diTypes';
 
-export class DependenciesCollector {
-    private static instance: DependenciesCollector;
+export class DependenciesClassCollector {
+    private static instance: DependenciesClassCollector;
 
     private dependenciesMap = new Map<Class, InjectableOptions>();
 
@@ -10,7 +10,7 @@ export class DependenciesCollector {
         this.dependenciesMap.set(c, injectableOptions);
     }
 
-    get(c: Class): InjectableOptions {
+    getInjectableOptions(c: Class): InjectableOptions {
         return this.dependenciesMap.get(c) || defaultInjectableOptions;
     }
 
@@ -20,10 +20,10 @@ export class DependenciesCollector {
 
     private constructor() {}
 
-    static getInstance(): DependenciesCollector {
-        if (!DependenciesCollector.instance) {
-            DependenciesCollector.instance = new DependenciesCollector();
+    static getInstance(): DependenciesClassCollector {
+        if (!DependenciesClassCollector.instance) {
+            DependenciesClassCollector.instance = new DependenciesClassCollector();
         }
-        return DependenciesCollector.instance;
+        return DependenciesClassCollector.instance;
     }
 }

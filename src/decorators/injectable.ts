@@ -1,4 +1,4 @@
-import { DependenciesCollector } from '../dependency/dependenciesCollector';
+import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
 import { parentsIsSingleton } from '../utils/diUtils';
 import { defaultInjectableOptions } from '../constants/diConstants';
 import { Message } from '../utils/message';
@@ -13,7 +13,7 @@ export function Injectable(options: InjectableOptions = defaultInjectableOptions
             );
         }
 
-        DependenciesCollector.getInstance().collect(target, options);
+        DependenciesClassCollector.getInstance().collect(target, options);
 
         return target;
     }) as ClassDecorator;

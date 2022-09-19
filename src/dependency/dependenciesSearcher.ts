@@ -2,9 +2,9 @@ import { stopDeepConfig } from '../../src/constants/diConstants';
 import { DependenciesConfigCollector } from '../../src/dependency-config/dependenciesConfigCollector';
 import { DependencyConfigEntity } from '../../src/dependency-config/dependencyConfigEntity';
 import { Message } from '../../src/utils/message';
-import { SingletonDependenciesHolder } from '../dependencies-holder/singletonDependenciesHolder';
+import { SingletonDependenciesManager } from '../dependency-manager/singletonDependenciesManager';
 import { DependencyConfigResult, InjectorType } from '../types/diTypes';
-import { DependenciesCollector } from './dependenciesCollector';
+import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
 import { DependenciesCreator } from './dependenciesCreator';
 
 export class DependenciesSearcher {
@@ -15,7 +15,7 @@ export class DependenciesSearcher {
         const { usingClass, usingArgs, usingObject } = this.getUsingsByConfig(c, args);
         if (usingObject) return usingObject;
 
-        const injectType = DependenciesCollector.getInstance().get(usingClass).type;
+        const injectType = DependenciesClassCollector.getInstance().getInjectableOptions(usingClass).type;
         if (injectType === 'singleton') {
             let instance = this.getInstanceFromHolder(<NormalClass>usingClass, injectType);
             if (instance) return instance;
@@ -40,7 +40,7 @@ export class DependenciesSearcher {
 
             let configEntity: DependencyConfigEntity<any, any[]>;
 
-            const configMethod = DependenciesConfigCollector.getInstance().get(currentUsingClass);
+            const configMethod = DependenciesConfigCollector.getInstance().getConfigMethod(currentUsingClass);
             if (configMethod) {
                 configEntity = new DependencyConfigEntity(currentUsingClass, usingArgs);
                 const configResult = configMethod(configEntity);
@@ -66,8 +66,8 @@ export class DependenciesSearcher {
         switch (injectType) {
             case 'singleton':
                 if (injectType === 'singleton') {
-                    const singletonDependenciesHolder = SingletonDependenciesHolder.getInstance();
-                    const singletonInstance = singletonDependenciesHolder.getDependency(<NormalClass>usingClass);
+                    const singletonDependenciesManager = SingletonDependenciesManager.getInstance();
+                    const singletonInstance = singletonDependenciesManager.getDependency(<NormalClass>usingClass);
                     if (singletonInstance) return singletonInstance;
                     return undefined;
                 }
@@ -80,8 +80,8 @@ export class DependenciesSearcher {
 
     private addInstanceToHolder<T>(usingClass: NormalClass<T>, instance: T, injectType: InjectorType): void {
         if (injectType === 'singleton') {
-            const singletonDependenciesHolder = SingletonDependenciesHolder.getInstance();
-            singletonDependenciesHolder.addDependency(<NormalClass>usingClass, instance);
+            const singletonDependenciesManager = SingletonDependenciesManager.getInstance();
+            singletonDependenciesManager.addDependency(<NormalClass>usingClass, instance);
         }
     }
 
