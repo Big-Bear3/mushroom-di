@@ -1,3 +1,4 @@
+import { of, by, AUTO } from '../src';
 import { destroySingletonInstance, Injectable, registerDepsConfig } from '../src';
 import { Message } from '../src/utils/message';
 import { Animal, BrownBear, Zoo } from './test-classes/basicClasses';

@@ -1,9 +1,9 @@
-import { messageNewLineSign, stopDeepConfig } from '../../src/constants/diConstants';
+import { messageNewLineSign, STOP_DEEP_CONFIG } from '../../src/constants/diConstants';
 import { DependenciesConfigCollector } from '../../src/dependency-config/dependenciesConfigCollector';
 import { DependencyConfigEntity } from '../../src/dependency-config/dependencyConfigEntity';
 import { Message } from '../../src/utils/message';
 import { SingletonDependenciesManager } from '../dependency-manager/singletonDependenciesManager';
-import { DependencyConfigResult, InjectorType } from '../types/diTypes';
+import { Class, NormalClass, DependencyConfigResult, InjectorType } from '../types/diTypes';
 import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
 import { DependenciesCreator } from './dependenciesCreator';
 
@@ -54,7 +54,7 @@ export class DependenciesSearcher {
 
                 const configResult = configMethod(configEntity, outerClass);
 
-                if (configResult && configResult !== stopDeepConfig) {
+                if (configResult && configResult !== STOP_DEEP_CONFIG) {
                     if (configResult instanceof originalClass) {
                         return { usingObject: configResult };
                     }
@@ -64,7 +64,7 @@ export class DependenciesSearcher {
                 currentUsingClass = configEntity.usingClass;
                 usingArgs = configEntity.args;
 
-                if (configResult === stopDeepConfig) break;
+                if (configResult === STOP_DEEP_CONFIG) break;
             }
         }
 

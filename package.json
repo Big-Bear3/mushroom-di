@@ -1,11 +1,19 @@
 {
-    "version": "1.0.0",
-    "description": "light-di-ts",
+    "version": "1.0.6",
     "name": "light-di-ts",
+    "author": "BigBear3",
+    "description": "light-di-ts",
+    "license": "MIT",
+    "main": "./index.js",
+    "types": "./index.d.ts",
+    "files": [
+        "index.js",
+        "index.js.LICENSE.txt",
+        "index.d.ts"
+    ],
     "scripts": {
         "build": "webpack --mode=production --node-env=production",
         "build:dev": "webpack --mode=development",
-        "build:prod": "webpack --mode=production --node-env=production",
         "serve": "webpack serve",
         "test": "jest"
     },
@@ -28,6 +36,5 @@
         "webpack": "^5.74.0",
         "webpack-cli": "^4.10.0",
         "webpack-dev-server": "^4.11.0"
-    },
-    "types": "src/declares/global.d.ts"
+    }
 }

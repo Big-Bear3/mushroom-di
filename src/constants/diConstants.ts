@@ -6,6 +6,6 @@ export const defaultInjectableOptions: InjectableOptions = {
 
 export const messageNewLineSign = '\n    ';
 
-export const diAuto = Symbol('DI-AUTO');
+export const AUTO = Symbol('DI-AUTO');
 
-export const stopDeepConfig = Symbol('DI-STOP-DEEP-CONFIG');
+export const STOP_DEEP_CONFIG = Symbol('DI-STOP-DEEP-CONFIG');

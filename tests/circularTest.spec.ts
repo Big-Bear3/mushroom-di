@@ -1,3 +1,4 @@
+import { of } from '../src';
 import { Message } from '../src/utils/message';
 import { CircularClassA, toggleCircularSwitch1 } from './test-classes/circularClasses';
 

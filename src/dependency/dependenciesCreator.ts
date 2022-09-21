@@ -2,7 +2,8 @@ import { Message } from '../utils/message';
 import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
 import { DependenciesGraph } from './dependenciesGraph';
 import { DependenciesSearcher } from './dependenciesSearcher';
-import { messageNewLineSign } from '../../src/constants/diConstants';
+import { AUTO, messageNewLineSign } from '../../src/constants/diConstants';
+import { Class, NormalClass } from '../../src/types/diTypes';
 
 export class DependenciesCreator {
     private static instance: DependenciesCreator;

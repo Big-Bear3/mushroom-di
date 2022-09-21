@@ -1,5 +1,5 @@
 import { defaultInjectableOptions } from '../constants/diConstants';
-import { InjectableOptions } from '../types/diTypes';
+import { Class, InjectableOptions } from '../types/diTypes';
 
 export class DependenciesClassCollector {
     private static instance: DependenciesClassCollector;

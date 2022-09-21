@@ -1,4 +1,4 @@
-import { Injectable } from '../../src';
+import { Injectable, of } from '../../src';
 
 let circularSwitch1 = true;
 

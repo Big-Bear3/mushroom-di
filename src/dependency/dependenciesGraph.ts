@@ -1,3 +1,5 @@
+import { Class } from '../../src/types/diTypes';
+
 export class DependenciesGraph {
     private initialNode: DependencyNode;
     private valueToNode: Map<Class, DependencyNode>;

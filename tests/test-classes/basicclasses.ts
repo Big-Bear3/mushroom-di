@@ -1,4 +1,4 @@
-import { Injectable } from '../../src';
+import { by, Injectable } from '../../src';
 
 export class Animal {}
 

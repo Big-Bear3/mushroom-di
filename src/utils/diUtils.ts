@@ -1,3 +1,4 @@
+import { Class } from '../../src/types/diTypes';
 import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
 
 export function parentsIsSingleton(c: Class): boolean {

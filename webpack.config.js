@@ -39,5 +39,8 @@ module.exports = () => {
     } else {
         config.mode = 'development';
     }
+
+    config.output.filename = 'index.js';
+
     return config;
 };
