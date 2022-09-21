@@ -1,8 +1,9 @@
+import type { InjectableOptions } from '../types/diTypes';
+
 import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
 import { parentsIsSingleton } from '../utils/diUtils';
 import { defaultInjectableOptions, messageNewLineSign } from '../constants/diConstants';
 import { Message } from '../utils/message';
-import { InjectableOptions } from '../types/diTypes';
 
 export function Injectable(options: InjectableOptions = defaultInjectableOptions): ClassDecorator {
     return ((target: any) => {

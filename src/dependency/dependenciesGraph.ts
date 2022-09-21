@@ -1,4 +1,4 @@
-import { Class } from '../../src/types/diTypes';
+import type { Class } from '../../src/types/diTypes';
 
 export class DependenciesGraph {
     private initialNode: DependencyNode;

@@ -1,4 +1,4 @@
-import { InjectableOptions } from '../types/diTypes';
+import type { InjectableOptions } from '../types/diTypes';
 
 export const defaultInjectableOptions: InjectableOptions = {
     type: 'multiple'

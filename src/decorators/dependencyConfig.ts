@@ -1,5 +1,6 @@
+import type { Class, ConfigMethod, MethodDescriptor } from '../types/diTypes';
+
 import { DependenciesConfigCollector } from '../dependency-config/dependenciesConfigCollector';
-import { Class, ConfigMethod, MethodDescriptor } from '../types/diTypes';
 
 export function DependencyConfig(c: Class): MethodDecorator {
     return ((_target: any, _key: string, methodDescriptor: MethodDescriptor) => {

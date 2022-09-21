@@ -1,4 +1,5 @@
-import { Class } from '../../src/types/diTypes';
+import type { Class } from '../../src/types/diTypes';
+
 import { DependencyConfig } from '../../src';
 import { DependencyConfigEntity } from '../../src/dependency-config/dependencyConfigEntity';
 import { Banana, BrownMonkey, Corn, Food, GoldMonkey, Monkey, Peach, RedMonkey, YellowMonkey } from './configedClasses';

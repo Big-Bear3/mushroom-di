@@ -1,4 +1,4 @@
-import { NormalClass } from '../../src/types/diTypes';
+import type { NormalClass } from '../../src/types/diTypes';
 
 export class SingletonDependenciesManager {
     private static instance: SingletonDependenciesManager;

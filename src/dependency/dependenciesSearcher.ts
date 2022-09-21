@@ -1,9 +1,10 @@
+import type { Class, NormalClass, DependencyConfigResult, InjectorType } from '../types/diTypes';
+
 import { messageNewLineSign, STOP_DEEP_CONFIG } from '../../src/constants/diConstants';
 import { DependenciesConfigCollector } from '../../src/dependency-config/dependenciesConfigCollector';
 import { DependencyConfigEntity } from '../../src/dependency-config/dependencyConfigEntity';
 import { Message } from '../../src/utils/message';
 import { SingletonDependenciesManager } from '../dependency-manager/singletonDependenciesManager';
-import { Class, NormalClass, DependencyConfigResult, InjectorType } from '../types/diTypes';
 import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
 import { DependenciesCreator } from './dependenciesCreator';
 

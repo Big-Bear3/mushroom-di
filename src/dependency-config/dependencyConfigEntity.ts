@@ -1,4 +1,4 @@
-import { Class, GenericType } from '../types/diTypes';
+import type { Class, GenericType } from '../types/diTypes';
 
 export class DependencyConfigEntity<T extends Class = any, A extends Class | any[] = never> {
     usingClass: Class<GenericType<T>>;

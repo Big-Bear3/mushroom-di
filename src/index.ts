@@ -1,10 +1,12 @@
 import 'reflect-metadata';
+
+import type { Class, NormalClass } from './types/diTypes';
+
 import { AUTO as autoFlag, STOP_DEEP_CONFIG as stopDeepConfigFlag } from './constants/diConstants';
 import { Injectable as InjectableDecorator } from './decorators/injectable';
 import { DependencyConfig as DependencyConfigDecorator } from './decorators/dependencyConfig';
 import { DependenciesSearcher } from './dependency/dependenciesSearcher';
 import { SingletonDependenciesManager } from './dependency-manager/singletonDependenciesManager';
-import { Class, NormalClass } from './types/diTypes';
 
 const dependenciesSearcher = DependenciesSearcher.getInstance();
 

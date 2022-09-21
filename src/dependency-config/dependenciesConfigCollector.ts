@@ -1,5 +1,6 @@
+import type { Class, ConfigMethod } from '../types/diTypes';
+
 import { Message } from '../../src/utils/message';
-import { Class, ConfigMethod } from '../types/diTypes';
 
 export class DependenciesConfigCollector {
     private static instance: DependenciesConfigCollector;
