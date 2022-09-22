@@ -40,6 +40,7 @@ module.exports = () => {
         config.mode = 'development';
     }
 
+    config.output.libraryTarget = 'umd';
     config.output.filename = 'index.js';
 
     return config;
