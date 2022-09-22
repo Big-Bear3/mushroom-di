@@ -6,7 +6,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const config = {
     entry: './src/index.ts',
     output: {
-        path: path.resolve(__dirname, 'dist')
+        path: path.resolve(__dirname, 'dist'),
+        libraryTarget: 'umd',
+        filename: 'index.js'
     },
     devServer: {
         open: true,
@@ -39,9 +41,6 @@ module.exports = () => {
     } else {
         config.mode = 'development';
     }
-
-    config.output.libraryTarget = 'umd';
-    config.output.filename = 'index.js';
 
     return config;
 };
