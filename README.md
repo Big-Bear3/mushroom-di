@@ -28,13 +28,13 @@ export class Bee {
 ```
 const bee = of(Bee);
 ```
-这样我们就通过 **mushroom** 的依赖查找功能，得到了该类的实例（依赖）。我们还可以通过 **of()** 方法一次性获得多个依赖：
+这样我们就通过 **Mushroom** 的依赖查找功能，得到了该类的实例（依赖）。我们还可以通过 **of()** 方法一次性获得多个依赖：
 ```
 const [bee1, bee2, bee3, ...] = of(Bee1, Bee2, Bee3, ...);
 ```
 
 ### 单例与多例
-或许我们在项目中需要一些单例的依赖，我们可以为 **@Injectable()** 传入一个 **type** 参数，**mushroom** 将会控制这个类创建出的实例是单例的还是多例的：
+或许我们在项目中需要一些单例的依赖，我们可以为 **@Injectable()** 传入一个 **type** 参数，**Mushroom** 将会控制这个类创建出的实例是单例的还是多例的：
 ```
 @Injectable({ type: 'singleton' })
 export class Bee {
@@ -52,7 +52,7 @@ export class Bee {
 ```
 如果不传，默认为多例。
 
-### 使用 @Inject() 装饰器为成员变量注入
+### 使用 @Inject() 装饰器为成员变量注入依赖
 上面介绍的使用 **of()** 获取实例为依赖查找的方式，您可以在任何地方使用它。现在我们来介绍一下依赖注入的方式，但依赖注入只能在类中使用。
 首先我们再创建一个类Honey，用于将其实例注入到Bee类的实例中:
 ```
@@ -73,7 +73,7 @@ export class Bee {
     constructor() {}
 }
 ```
-这样，在我们使用 **of()** 获取Bee的实例时，**mushroom** 会自动将Honey的实例注入到Bee的实例中：
+这样，在我们使用 **of()** 获取Bee的实例时，**Mushroom** 会自动将Honey的实例注入到Bee的实例中：
 ```
 const bee = of(Bee);
 console.log(bee.honey.honeyType); // "Jujube honey"
@@ -94,7 +94,7 @@ export class Bee {
 console.log(Bee.honey.honeyType); // "Jujube honey"
 ```
 
-### 构造方法注入
+### 构造方法注入依赖
 除了用 **@Inject()** 装饰器，我们还可以通过构造方法注入依赖：
 ```
 @Injectable()
@@ -111,7 +111,7 @@ console.log(bee.honey2.honeyType); // "Jujube honey"
 ```
 
 ### 使用 by() 方法为依赖的构造方法传递参数
-少数情况下，我们需要创建构造方法带参数的依赖，我们可以使用 **mushroom** 提供的 **by()** 方法：
+少数情况下，我们需要创建构造方法带参数的依赖，我们可以使用 **Mushroom** 提供的 **by()** 方法：
 ```
 @Injectable()
 export class Bee {
@@ -130,7 +130,7 @@ export class Bee {
 const bee = by(Bee, 123);
 console.log(bee.getName()); // "bee123"
 ```
-如果第一个参数需要自动注入，第二个参数需要传入参数，则可以使用 **mushroom** 提供的 **AUTO** symbol常量：
+如果第一个参数需要自动注入，第二个参数需要传入参数，则可以使用 **Mushroom** 提供的 **AUTO** symbol常量：
 ```
 @Injectable()
 export class Bee {
@@ -196,7 +196,7 @@ export class BeeConfig {
     }
 }
 ```
-当然，您还需要使用 **mushroom** 提供的 **registerDepsConfig** 方法，在您程序的入口去注册该配置类：
+当然，您还需要使用 **Mushroom** 提供的 **registerDepsConfig** 方法，在您程序的入口去注册该配置类：
 ```
 registerDepsConfig(BeeConfig);
 ```
@@ -222,7 +222,7 @@ console.log(bee instanceof Hornet); // true
 console.log(bee.getName()); // bee999
 console.log(bee.location); // Forest
 ```
-该配置是一种深度的配置，如果当前配置指定了usingClass，则 **mushroom** 还会继续查找本次usingClass的指定的配置进行进一步的配置，直到最后两次配置指定的usingClass一致为止。
+该配置是一种深度的配置，如果当前配置指定了usingClass，则 **Mushroom** 还会继续查找本次usingClass的指定的配置进行进一步的配置，直到最后两次配置指定的usingClass一致为止。
 ```
 @Injectable()
 export class FierceHornet extends Hornet {
@@ -250,7 +250,7 @@ const bee = of(Bee);
 console.log(bee instanceof Hornet); // true
 console.log(bee instanceof FierceHornet); // true
 ```
-如若不想继续深度查找配置，可以在配置方法中返回 **mushroom** 提供的 **STOP_DEEP_CONFIG** symbol常量，来阻止继续深度查找配置：
+如若不想继续深度查找配置，可以在配置方法中返回 **Mushroom** 提供的 **STOP_DEEP_CONFIG** symbol常量，来阻止继续深度查找配置：
 ```
 export class BeeConfig {
     @DependencyConfig(Bee)
@@ -292,7 +292,7 @@ console.log(honey);
 ```
 
 ### 循环依赖
-**mushroom** 提供了循环依赖检测机制，如果在依赖的创建过程中产生了循环依赖，会有错误提示：
+**Mushroom** 提供了循环依赖检测机制，如果在依赖的创建过程中产生了循环依赖，会有错误提示：
 ```
 @Injectable()
 export class Bee1 {
