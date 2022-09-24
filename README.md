@@ -110,12 +110,12 @@ export class Bee {
 ```
 ```
 const bee = by(Bee, 123);
-console.log(bee.getName()); // bee123
+console.log(bee.getName()); // "bee123"
 ```
 
 ## 高级用法
 ### 使用DependencyConfig() 装饰器进行依赖配置
-我们可以通过自定义的方法配置被依赖的类如何创建实例：
+我们可以通过 **DependencyConfig()** 装饰器装饰自定义方法，来配置被依赖的类如何创建实例：
 ```
 @Injectable()
 export class Bee {
@@ -162,8 +162,9 @@ export class BeeConfig {
 ```
 ```
 const bee = of(Bee);
-console.log(bee.getName()); //
-console.log(bee.location);
+console.log(bee instanceof HoneyBee); // true
+console.log(bee.getName()); // "bee520"
+console.log(bee.location); // "Jungle"
 ```
 
 
