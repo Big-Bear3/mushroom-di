@@ -114,7 +114,7 @@ console.log(bee.getName()); // "bee123"
 ```
 
 ## 高级用法
-### 使用DependencyConfig() 装饰器进行依赖配置
+### 使用DependencyConfig() 装饰器、与依赖配置
 我们可以通过 **DependencyConfig()** 装饰器装饰自定义方法，来配置被依赖的类如何创建实例：
 ```
 @Injectable()
@@ -154,11 +154,15 @@ export class Hornet extends Bee {
 ```
 export class BeeConfig {
     @DependencyConfig(Bee)
-    static configBee(configEntity: DependencyConfigEntity<typeof Bee | typeof HoneyBee | typeof Hornet>): void {
+    private static configBee(configEntity: DependencyConfigEntity<typeof Bee | typeof HoneyBee | typeof Hornet>): void {
         configEntity.usingClass = HoneyBee;
         configEntity.args = ['520'];
     }
 }
+```
+当然，您还需要在您程序的入口去注册该配置类。
+```
+registerDepsConfig(BeeConfig);
 ```
 ```
 const bee = of(Bee);
@@ -166,6 +170,7 @@ console.log(bee instanceof HoneyBee); // true
 console.log(bee.getName()); // "bee520"
 console.log(bee.location); // "Jungle"
 ```
+
 
 
 
