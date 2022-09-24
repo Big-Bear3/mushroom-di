@@ -1,15 +1,15 @@
-# 🚀 Welcome to your new awesome project!
-
-This project has been created using **webpack-cli**, you can now run
-
+# mushroom-di
+## 安装
+1. 安装依赖包
 ```
-npm run build
+npm i mushroom-di
 ```
-
-or
-
+2. 在tsconfig.json中添加如下属性：
 ```
-yarn build
+"experimentalDecorators": true,
+"emitDecoratorMetadata": true,
+"useDefineForClassFields": false,
 ```
-
-to bundle your application
+## 如何使用？
+### of()方法、@Injectable()装饰器
+首先我们需要一个用于创建实例的类，并将其用@Injectable()装饰器装饰：
