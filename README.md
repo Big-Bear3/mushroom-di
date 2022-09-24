@@ -112,9 +112,27 @@ export class Bee {
 const bee = by(Bee, 123);
 console.log(bee.getName()); // "bee123"
 ```
+如果第一个参数需要自动注入，第二个参数需要传入参数，则可以使用 **mushroom** 提供的 **AUTO** symbol常量：
+```
+@Injectable()
+export class Bee {
+    private name: string;
+
+    constructor(private honey: Honey, code: string) {
+        this.name = 'bee' + code;
+    }
+
+    getName(): string {
+        return this.name;
+    }
+}
+```
+```
+const bee = by(Bee, AUTO, 123);
+```
 
 ## 高级用法
-### 使用DependencyConfig() 装饰器、与依赖配置
+### 使用DependencyConfig() 装饰器进行依赖配置
 我们可以通过 **DependencyConfig()** 装饰器装饰自定义方法，来配置被依赖的类如何创建实例：
 ```
 @Injectable()
