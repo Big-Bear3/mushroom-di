@@ -94,7 +94,7 @@ export class Bee {
 console.log(Bee.honey.honeyType); // "Jujube honey"
 ```
 
-### 构造方法注入依赖
+### 通过构造方法注入依赖
 除了用 **@Inject()** 装饰器，我们还可以通过构造方法注入依赖：
 ```
 @Injectable()
