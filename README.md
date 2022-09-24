@@ -160,7 +160,7 @@ export class BeeConfig {
     }
 }
 ```
-当然，您还需要在您程序的入口去注册该配置类：
+当然，您还需要使用 **mushroom** 提供的 **registerDepsConfig** 方法，在您程序的入口去注册该配置类：
 ```
 registerDepsConfig(BeeConfig);
 ```
