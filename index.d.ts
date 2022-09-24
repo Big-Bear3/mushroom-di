@@ -14,9 +14,9 @@ export function by<T extends Class, CP extends [any, ...any[]]>(c: T, ...args: C
 export const AUTO: any;
 export const STOP_DEEP_CONFIG: symbol;
 
-export type InjectorType = 'multiple' | 'singleton';
+export type InjectType = 'multiple' | 'singleton';
 export interface InjectableOptions {
-    type: InjectorType;
+    type: InjectType;
 }
 
 export interface InjectOptions {

@@ -1,4 +1,4 @@
-import type { Class, NormalClass, DependencyConfigResult, InjectorType } from '../types/diTypes';
+import type { Class, NormalClass, DependencyConfigResult, InjectType } from '../types/diTypes';
 
 import { messageNewLineSign, STOP_DEEP_CONFIG } from '../../src/constants/diConstants';
 import { DependenciesConfigCollector } from '../../src/dependency-config/dependenciesConfigCollector';
@@ -65,14 +65,14 @@ export class DependenciesSearcher {
                 currentUsingClass = configEntity.usingClass;
                 usingArgs = configEntity.args;
 
-                if (configResult === STOP_DEEP_CONFIG) break;
+                if (configResult === STOP_DEEP_CONFIG) return { usingClass: currentUsingClass, usingArgs };
             }
         }
 
         return { usingClass, usingArgs };
     }
 
-    private getInstanceFromManager<T>(usingClass: NormalClass<T>, injectType: InjectorType): T {
+    private getInstanceFromManager<T>(usingClass: NormalClass<T>, injectType: InjectType): T {
         switch (injectType) {
             case 'singleton':
                 if (injectType === 'singleton') {
@@ -88,7 +88,7 @@ export class DependenciesSearcher {
         }
     }
 
-    private addInstanceToManager<T>(usingClass: NormalClass<T>, instance: T, injectType: InjectorType): void {
+    private addInstanceToManager<T>(usingClass: NormalClass<T>, instance: T, injectType: InjectType): void {
         if (injectType === 'singleton') {
             const singletonDependenciesManager = SingletonDependenciesManager.getInstance();
             singletonDependenciesManager.addDependency(<NormalClass>usingClass, instance);

@@ -3,10 +3,10 @@ import type { DependencyConfigEntity } from '../dependency-config/dependencyConf
 export type Class<T = any> = abstract new (...args: any[]) => T;
 export type NormalClass<T = any> = new (...args: any[]) => T;
 
-export type InjectorType = 'multiple' | 'singleton';
+export type InjectType = 'multiple' | 'singleton';
 
 export interface InjectableOptions {
-    type: InjectorType;
+    type: InjectType;
 }
 
 export interface InjectOptions {
