@@ -4,7 +4,7 @@
 ```
 npm i mushroom-di
 ```
-2. 在tsconfig.json中添加如下属性：
+2. 在tsconfig.json中配置如下属性：
 ```
 "experimentalDecorators": true,
 "emitDecoratorMetadata": true,
@@ -26,7 +26,7 @@ export class Bee {
 ```
 const bee = of(Bee);
 ```
-这样我们就通过 **mushroom** 的依赖查找功能，得到了对该类实例（依赖）。我们还可以通过 **of()** 方法一次性获得多个依赖：
+这样我们就通过 **mushroom** 的依赖查找功能，得到了该类的实例（依赖）。我们还可以通过 **of()** 方法一次性获得多个依赖：
 ```
 const [bee1, bee2, bee3, ...] = of(Bee1, Bee2, Bee3, ...);
 ```
@@ -50,6 +50,33 @@ export class Bee {
 ```
 如果不传，默认为多例。
 
+### 使用@Inject()装饰器为成员变量注入
+上面介绍的使用 **of()** 获取实例为依赖查找的方式，您可以在任何地方使用它。现在我们来介绍一下依赖注入的方式，但依赖注入只能在类中使用。
+首先我们再创建一个类Honey，用于将其实例注入到Bee类的实例中:
+```
+@Injectable()
+export class Honey {
+    honeyType = 'Jujube honey';
+}
+```
+在Bee类中使用@Inject()装饰器为成员变量 "honey" 注入
+```
+@Injectable()
+export class Bee {
+    name = 'bee';
+    
+    @Inject()
+    honey: Honey;
+
+    constructor() {}
+}
+```
+这样，在我们使用 **of()** 获取Bee的实例时，**mushroom** 会自动将Honey的实例注入到Bee的实例中：
+```
+const bee = of(Bee);
+console.log(bee.honey.honeyType); // "Jujube honey"
+```
+
 ### 构造方法注入
 首先我们再创建一个类Honey，用于将其实例注入到Bee类:
 ```
@@ -64,14 +91,14 @@ export class Honey {
 export class Bee {
     name = 'bee';
 
-    constructor(private honey: Honey) {}
+    constructor(public honey: Honey) {}
 }
 ```
-这样，在我们使用 **of()** 获取Bee的实例时，**mushroom** 会自动将Honey的实例注入到bee中：
+这样，在我们使用 **of()** 获取Bee的实例时，**mushroom** 会自动将Honey的实例注入到Bee的实例中：
 ```
 const bee = of(Bee);
+console.log(bee.honey.honeyType); // "Jujube honey"
 ```
-
 
 
 
