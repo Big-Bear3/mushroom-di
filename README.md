@@ -10,7 +10,9 @@ npm i mushroom-di
 "emitDecoratorMetadata": true,
 "useDefineForClassFields": false,
 ```
+
 ## 基本用法
+
 ### of() 方法与 @Injectable() 装饰器
 首先我们需要一个用于创建实例的类，并将其用 **@Injectable()** 装饰器装饰：
 ```
@@ -59,7 +61,7 @@ export class Honey {
     honeyType = 'Jujube honey';
 }
 ```
-在Bee类中使用@Inject()装饰器，将依赖注入到成员变量 "honey" 上：
+在Bee类中使用 **@Inject()** 装饰器，将依赖注入到成员变量 "honey" 上：
 ```
 @Injectable()
 export class Bee {
@@ -75,6 +77,21 @@ export class Bee {
 ```
 const bee = of(Bee);
 console.log(bee.honey.honeyType); // "Jujube honey"
+```
+**@Inject()** 装饰器也可以装饰静态成员变量：
+```
+@Injectable()
+export class Bee {
+    name = 'bee';
+    
+    @Inject()
+    static honey: Honey;
+
+    constructor() {}
+}
+```
+```
+console.log(Bee.honey.honeyType); // "Jujube honey"
 ```
 
 ### 构造方法注入
@@ -92,6 +109,7 @@ const bee = of(Bee);
 console.log(bee.honey1.honeyType); // "Jujube honey"
 console.log(bee.honey2.honeyType); // "Jujube honey"
 ```
+
 ### 使用 by() 方法为依赖的构造方法传递参数
 少数情况下，我们需要创建构造方法带参数的依赖，我们可以使用 **mushroom** 提供的 **by()** 方法：
 ```
@@ -254,8 +272,137 @@ console.log(bee instanceof Hornet); // true
 console.log(bee instanceof FierceHornet); // false
 ```
 
+### 延迟注入
+有时我们为了提升实例的初始化性能，可以为 **@Inject()** 装饰器传入 **{lazy: true}** 参数实现延迟注入：
+```
+@Injectable()
+export class Bee {
+    name = 'bee';
 
+    @Inject({ lazy: true })
+    honey: Honey;
 
+    constructor() {}
+}
+```
+```
+const bee = of(Bee); // 这时bee.honey还未注入
+const honey = bee.honey; // 获取bee.honey，会触发注入
+console.log(honey);
+```
+
+### 循环依赖
+**mushroom** 提供了循环依赖检测机制，如果在依赖的创建过程中产生了循环依赖，会有错误提示：
+```
+@Injectable()
+export class Bee1 {
+    name = 'bee1';
+
+    bee2: Bee2;
+
+    constructor() {
+        this.bee2 = of(Bee2);
+    }
+}
+
+@Injectable()
+export class Bee2 {
+    name = 'bee2';
+
+    bee3: Bee3;
+
+    constructor() {
+        this.bee3 = of(Bee3);
+    }
+}
+
+@Injectable()
+export class Bee3 {
+    name = 'bee3';
+
+    bee1: Bee1;
+
+    constructor() {
+        this.bee1 = of(Bee1);
+    }
+}
+```
+```
+const bee = of(Bee1); // Error: (39002) 检测到循环依赖：Bee1 -> Bee2 -> Bee3 -> Bee1
+```
+解决方式大致有2种：
+1. 在使用该依赖的时候再通过 **of()** 或 **by()** 方法创建该依赖：
+（这里用setTimeout()来表示使用时）
+```
+@Injectable()
+export class Bee1 {
+    name = 'bee1';
+
+    bee2: Bee2;
+
+    constructor() {
+        this.bee2 = of(Bee2);
+    }
+}
+
+@Injectable()
+export class Bee2 {
+    name = 'bee2';
+
+    bee3: Bee3;
+
+    constructor() {
+        this.bee3 = of(Bee3);
+    }
+}
+
+@Injectable()
+export class Bee3 {
+    name = 'bee3';
+
+    bee1: Bee1;
+
+    constructor() {
+        setTimeout(() => {
+            this.bee1 = of(Bee1);
+        });
+    }
+}
+```
+2. 使用延迟注入：
+```
+@Injectable()
+export class Bee1 {
+    name = 'bee1';
+
+    bee2: Bee2;
+
+    constructor() {
+        this.bee2 = of(Bee2);
+    }
+}
+
+@Injectable()
+export class Bee2 {
+    name = 'bee2';
+
+    bee3: Bee3;
+
+    constructor() {
+        this.bee3 = of(Bee3);
+    }
+}
+
+@Injectable()
+export class Bee3 {
+    name = 'bee3';
+
+    @Inject({ lazy: true })
+    bee1: Bee1;
+
+    constructor() {}
+}
+```
 
 
 
