@@ -59,7 +59,7 @@ export class Honey {
     honeyType = 'Jujube honey';
 }
 ```
-在Bee类中使用@Inject()装饰器为成员变量 "honey" 注入
+在Bee类中使用@Inject()装饰器，将依赖注入到成员变量 "honey" 上：
 ```
 @Injectable()
 export class Bee {
@@ -78,27 +78,16 @@ console.log(bee.honey.honeyType); // "Jujube honey"
 ```
 
 ### 构造方法注入
-首先我们再创建一个类Honey，用于将其实例注入到Bee类:
-```
-@Injectable({ type: 'multiple' })
-export class Honey {
-    honeyType = 'Jujube honey';
-}
-```
-在Bee类中使用构造方法注入
+除了用 **@Inject()** 装饰器，我们还可以通过构造方法注入依赖：
 ```
 @Injectable()
 export class Bee {
     name = 'bee';
 
-    constructor(public honey: Honey) {}
+    constructor(public honey1: Honey, public honey2: Honey) {}
 }
 ```
-这样，在我们使用 **of()** 获取Bee的实例时，**mushroom** 会自动将Honey的实例注入到Bee的实例中：
-```
-const bee = of(Bee);
-console.log(bee.honey.honeyType); // "Jujube honey"
-```
+
 
 
 
