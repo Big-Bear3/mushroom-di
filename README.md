@@ -87,6 +87,36 @@ export class Bee {
     constructor(public honey1: Honey, public honey2: Honey) {}
 }
 ```
+```
+const bee = of(Bee);
+console.log(bee.honey1.honeyType); // "Jujube honey"
+console.log(bee.honey2.honeyType); // "Jujube honey"
+```
+### 使用by()方法为依赖的构造方法传递参数
+少数情况下，我们需要创建构造方法带参数的依赖，我们可以使用 **mushroom** 提供的 **by()** 方法：
+```
+@Injectable()
+export class Bee {
+    private name: string;
+
+    constructor(code: string) {
+        this.name = 'bee' + code;
+    }
+
+    getName(): string {
+        return this.name;
+    }
+}
+```
+```
+const bee = by(Bee, 123);
+console.log(bee.getName()); // bee123
+```
+
+
+
+
+
 
 
 
