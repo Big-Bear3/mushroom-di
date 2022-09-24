@@ -1,4 +1,9 @@
-import { by, Injectable } from '../../src';
+import { by, Inject, Injectable } from '../../src';
+
+@Injectable({ type: 'multiple' })
+export class Honey {
+    honeyType = 'Jujube honey';
+}
 
 export class Animal {}
 
@@ -21,7 +26,19 @@ export class Animals {
 }
 
 @Injectable({ type: 'multiple' })
-export class Bears extends Animals {}
+export class Bears extends Animals {
+    @Inject()
+    honey: Honey;
+
+    @Inject()
+    honey2: Honey;
+
+    @Inject({ lazy: true })
+    honeyLazy: Honey;
+
+    @Inject({ lazy: true })
+    honeyLazy2: Honey;
+}
 
 @Injectable({ type: 'multiple' })
 export class BrownBears extends Bears {

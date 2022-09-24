@@ -19,8 +19,17 @@ export interface InjectableOptions {
     type: InjectorType;
 }
 
+export interface InjectOptions {
+    lazy: boolean;
+}
+
 export function Injectable(options?: InjectableOptions): ClassDecorator;
 export function DependencyConfig(c: Class): MethodDecorator;
+
+export function Inject(): PropertyDecorator;
+export function Inject(c: Class): PropertyDecorator;
+export function Inject(injectOptions: InjectOptions): PropertyDecorator;
+export function Inject(c: Class, injectOptions: InjectOptions): PropertyDecorator;
 
 export type GenericType<T> = T extends Class<infer G> ? G : any;
 export interface DependencyConfigEntity<T extends Class = any, A extends Class | any[] = never> {

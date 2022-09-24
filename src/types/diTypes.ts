@@ -9,6 +9,10 @@ export interface InjectableOptions {
     type: InjectorType;
 }
 
+export interface InjectOptions {
+    lazy: boolean;
+}
+
 export type ConfigMethod = (configEntity: DependencyConfigEntity<any, any[]>, outerClass?: Class) => void | symbol | any;
 
 export type GenericType<T> = T extends Class<infer G> ? G : any;

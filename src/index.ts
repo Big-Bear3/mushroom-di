@@ -5,6 +5,7 @@ import type { Class, NormalClass } from './types/diTypes';
 import { AUTO as autoFlag, STOP_DEEP_CONFIG as stopDeepConfigFlag } from './constants/diConstants';
 import { Injectable as InjectableDecorator } from './decorators/injectable';
 import { DependencyConfig as DependencyConfigDecorator } from './decorators/dependencyConfig';
+import { Inject as InjectDecorator } from './decorators/inject';
 import { DependenciesSearcher } from './dependency/dependenciesSearcher';
 import { SingletonDependenciesManager } from './dependency-manager/singletonDependenciesManager';
 
@@ -30,7 +31,9 @@ export function registerDepsConfig(c: Class): void {}
 export const Injectable = InjectableDecorator;
 export const DependencyConfig = DependencyConfigDecorator;
 
+export const Inject = InjectDecorator;
+
 export const AUTO = autoFlag;
 export const STOP_DEEP_CONFIG = stopDeepConfigFlag;
 
-// import('../tests/webTest');
+import('../tests/webTest');
