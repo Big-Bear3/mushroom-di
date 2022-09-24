@@ -10,16 +10,24 @@ export function Inject(classOrInjectOptions?: Class | InjectOptions, injectOptio
     const injectArgumentsLength = arguments.length;
 
     return function (target: any, key: string | symbol) {
+        const isStaticProp = isStaticProperty(target);
+
         if (injectArgumentsLength === 0) {
-            addInjectPropertyOfDesignType(target, key);
+            isStaticProp ? addInjectStaticPropertyOfDesignType(target, key) : addInjectPropertyOfDesignType(target, key);
         } else if (injectArgumentsLength === 1) {
             if (typeof classOrInjectOptions === 'function') {
-                addInjectPropertyOfSpecificClass(target, key, classOrInjectOptions);
+                isStaticProp
+                    ? addInjectStaticPropertyOfSpecificClass(target, key, classOrInjectOptions)
+                    : addInjectPropertyOfSpecificClass(target, key, classOrInjectOptions);
             } else {
-                addInjectPropertyOfDesignType(target, key, classOrInjectOptions);
+                isStaticProp
+                    ? addInjectStaticPropertyOfDesignType(target, key, classOrInjectOptions)
+                    : addInjectPropertyOfDesignType(target, key, classOrInjectOptions);
             }
         } else if (injectArgumentsLength === 2) {
-            addInjectPropertyOfSpecificClass(target, key, <Class>classOrInjectOptions, injectOptions);
+            isStaticProp
+                ? addInjectStaticPropertyOfSpecificClass(target, key, <Class>classOrInjectOptions, injectOptions)
+                : addInjectPropertyOfSpecificClass(target, key, <Class>classOrInjectOptions, injectOptions);
         }
     };
 }
@@ -39,4 +47,25 @@ function addInjectPropertyOfSpecificClass(
 ): void {
     if (!specificClass || specificClass === Object) return;
     InjectPropertiesHandler.getInstance().addInjectProperty(target, key, specificClass, injectOptions);
+}
+
+function addInjectStaticPropertyOfDesignType(target: any, key: string | symbol, injectOptions?: InjectOptions): void {
+    const designType = Reflect.getMetadata('design:type', target, key);
+    if (!designType || designType === Object) return;
+
+    InjectPropertiesHandler.getInstance().handleInstanceStaticProperty(target, key, designType, injectOptions);
+}
+
+function addInjectStaticPropertyOfSpecificClass(
+    target: any,
+    key: string | symbol,
+    specificClass: Class,
+    injectOptions?: InjectOptions
+): void {
+    if (!specificClass || specificClass === Object) return;
+    InjectPropertiesHandler.getInstance().handleInstanceStaticProperty(target, key, specificClass, injectOptions);
+}
+
+function isStaticProperty(target: any): boolean {
+    return !!target.prototype;
 }

@@ -36,4 +36,4 @@ export const Inject = InjectDecorator;
 export const AUTO = autoFlag;
 export const STOP_DEEP_CONFIG = stopDeepConfigFlag;
 
-import('../tests/webTest');
+// import('../tests/webTest');

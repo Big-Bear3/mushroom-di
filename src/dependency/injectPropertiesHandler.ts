@@ -30,6 +30,7 @@ export class InjectPropertiesHandler {
         injectOptions: InjectOptions = defaultInjectOptions
     ): void {
         const targetInjectPropertiesInfo = this.classToInjectProperties.get(c);
+
         if (targetInjectPropertiesInfo) {
             if (injectOptions.lazy)
                 targetInjectPropertiesInfo.lazyProps.push({
@@ -105,7 +106,7 @@ export class InjectPropertiesHandler {
                         properties[propInfo.propName] = propValue;
                         return propValue;
                     },
-                    set(value) {
+                    set(value: unknown) {
                         let properties = instanceToLazyInjectProperties.get(this);
                         if (!properties) {
                             properties = {};
@@ -120,6 +121,33 @@ export class InjectPropertiesHandler {
         const parentClass = Object.getPrototypeOf(nc);
         if (parentClass) {
             this.handleInstanceLazyProperties(parentClass);
+        }
+    }
+
+    handleInstanceStaticProperty(
+        c: Class,
+        propName: string | symbol,
+        definedClass: Class,
+        injectOptions: InjectOptions = defaultInjectOptions
+    ): void {
+        if (injectOptions.lazy) {
+            let _value: any;
+
+            Reflect.defineProperty(c, propName, {
+                enumerable: true,
+                configurable: true,
+                get() {
+                    if (_value) return _value;
+
+                    _value = DependenciesSearcher.getInstance().searchDependency(definedClass);
+                    return _value;
+                },
+                set(value: unknown) {
+                    _value = value;
+                }
+            });
+        } else {
+            Reflect.set(c, propName, DependenciesSearcher.getInstance().searchDependency(definedClass));
         }
     }
 
