@@ -154,7 +154,7 @@ export class Hornet extends Bee {
 ```
 export class BeeConfig {
     @DependencyConfig(Bee)
-    private static configBee(configEntity: DependencyConfigEntity<typeof Bee | typeof HoneyBee | typeof Hornet>): void {
+    private static configBee(configEntity: DependencyConfigEntity<typeof Bee | typeof HoneyBee | typeof Hornet>) {
         configEntity.usingClass = HoneyBee;
         configEntity.args = ['520'];
     }
@@ -171,13 +171,70 @@ console.log(bee instanceof HoneyBee); // true
 console.log(bee.getName()); // "bee520"
 console.log(bee.location); // "Jungle"
 ```
+您还可以在配置方法中直接返回要使用的实例：
+```
+export class BeeConfig {
+    @DependencyConfig(Bee)
+    private static configBee() {
+        return by(Hornet, 999);
+    }
+}
+```
+```
+const bee = of(Bee);
+console.log(bee instanceof Hornet); // true
+console.log(bee.getName()); // bee999
+console.log(bee.location); // Forest
+```
+该配置是一种深度的配置，如果当前配置指定了usingClass，则 **mushroom** 还会继续查找本次usingClass的指定的配置进行进一步的配置，直到最后两次配置指定的usingClass一致为止。
+```
+@Injectable()
+export class FierceHornet extends Hornet {
+    location = 'Rainforest';
 
+    constructor(code: string) {
+        super(code);
+    }
+}
 
+export class BeeConfig {
+    @DependencyConfig(Bee)
+    private static configBee(configEntity: DependencyConfigEntity<typeof Bee | typeof HoneyBee | typeof Hornet>) {
+        configEntity.usingClass = Hornet;
+    }
 
+    @DependencyConfig(Hornet)
+    private static configHornet(configEntity: DependencyConfigEntity<typeof Hornet | typeof FierceHornet>) {
+        configEntity.usingClass = FierceHornet;
+    }
+}
+```
+```
+const bee = of(Bee);
+console.log(bee instanceof Hornet); // true
+console.log(bee instanceof FierceHornet); // true
+```
+如若不想继续深度查找配置，可以在配置方法中返回 **mushroom** 提供的 **STOP_DEEP_CONFIG** symbol常量，来阻止继续深度查找配置：
+```
+export class BeeConfig {
+    @DependencyConfig(Bee)
+    private static configBee(configEntity: DependencyConfigEntity<typeof Bee | typeof HoneyBee | typeof Hornet>) {
+        configEntity.usingClass = Hornet;
 
+        return STOP_DEEP_CONFIG;
+    }
 
-
-
+    @DependencyConfig(Hornet)
+    private static configHornet(configEntity: DependencyConfigEntity<typeof Hornet | typeof FierceHornet>) {
+        configEntity.usingClass = FierceHornet;
+    }
+}
+```
+```
+const bee = of(Bee);
+console.log(bee instanceof Hornet); // true
+console.log(bee instanceof FierceHornet); // false
+```
 
 
 
