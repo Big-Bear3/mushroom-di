@@ -56,6 +56,10 @@ export class Bee {
 }
 ```
 如果不传，默认为多例。
+当我们需要将单例的依赖销毁，下一次重新创建时，可以调用 **destroySingletonInstance()** 方法来销毁 **Mushroom** 容器中保存的实例：
+```
+destroySingletonInstance(Bee);
+```
 
 ### 使用 @Inject() 装饰器为成员变量注入依赖
 上面介绍的使用 **of()** 获取实例为依赖查找的方式，您可以在任何地方使用它。现在我们来介绍一下依赖注入的方式，但依赖注入只能在类中使用。  
