@@ -1,5 +1,3 @@
-import 'reflect-metadata';
-
 import type { Class, InstanceTypes, NormalClass } from './types/diTypes';
 
 import { AUTO as autoFlag, STOP_DEEP_CONFIG as stopDeepConfigFlag } from './constants/diConstants';
@@ -40,4 +38,4 @@ export const Inject = InjectDecorator;
 export const AUTO = autoFlag;
 export const STOP_DEEP_CONFIG = stopDeepConfigFlag;
 
-// import('../tests/webTest');
+import('../tests/webTest');

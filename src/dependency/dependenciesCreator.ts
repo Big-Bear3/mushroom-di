@@ -43,7 +43,7 @@ export class DependenciesCreator {
         this.creatingInstanceClassQueue.push(usingClass);
 
         // 为构造方法参数注入实例
-        const constructorArgs: Function[] = Reflect.getMetadata('design:paramtypes', usingClass);
+        const constructorArgs: Function[] = Reflect.getMetadata?.('design:paramtypes', usingClass);
         if (constructorArgs) {
             this.handleConstructorArgs(usingArgs, constructorArgs, usingClass);
         }

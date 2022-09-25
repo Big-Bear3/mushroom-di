@@ -74,7 +74,9 @@ export class InjectPropertiesHandler {
             const dependenciesSearcher = DependenciesSearcher.getInstance();
 
             for (const propInfo of injectPropertiesInfo.props) {
-                instance[propInfo.propName] = dependenciesSearcher.searchDependency(propInfo.definedClass);
+                instance[propInfo.propName] = propInfo.definedClass
+                    ? dependenciesSearcher.searchDependency(propInfo.definedClass)
+                    : undefined;
             }
         }
 
@@ -91,30 +93,34 @@ export class InjectPropertiesHandler {
             const instanceToLazyInjectProperties = this.instanceToLazyInjectProperties;
 
             for (const propInfo of injectPropertiesInfo.lazyProps) {
-                Reflect.defineProperty(nc.prototype, propInfo.propName, {
-                    enumerable: true,
-                    configurable: true,
-                    get() {
-                        let properties = instanceToLazyInjectProperties.get(this);
-                        if (properties) {
-                            if (Reflect.has(properties, propInfo.propName)) return properties[propInfo.propName];
-                        } else {
-                            properties = {};
-                            instanceToLazyInjectProperties.set(this, properties);
+                if (propInfo.definedClass) {
+                    Reflect.defineProperty(nc.prototype, propInfo.propName, {
+                        enumerable: true,
+                        configurable: true,
+                        get() {
+                            let properties = instanceToLazyInjectProperties.get(this);
+                            if (properties) {
+                                if (Reflect.has(properties, propInfo.propName)) return properties[propInfo.propName];
+                            } else {
+                                properties = {};
+                                instanceToLazyInjectProperties.set(this, properties);
+                            }
+                            const propValue = dependenciesSearcher.searchDependency(propInfo.definedClass);
+                            properties[propInfo.propName] = propValue;
+                            return propValue;
+                        },
+                        set(value: unknown) {
+                            let properties = instanceToLazyInjectProperties.get(this);
+                            if (!properties) {
+                                properties = {};
+                                instanceToLazyInjectProperties.set(this, properties);
+                            }
+                            properties[propInfo.propName] = value;
                         }
-                        const propValue = dependenciesSearcher.searchDependency(propInfo.definedClass);
-                        properties[propInfo.propName] = propValue;
-                        return propValue;
-                    },
-                    set(value: unknown) {
-                        let properties = instanceToLazyInjectProperties.get(this);
-                        if (!properties) {
-                            properties = {};
-                            instanceToLazyInjectProperties.set(this, properties);
-                        }
-                        properties[propInfo.propName] = value;
-                    }
-                });
+                    });
+                } else {
+                    Reflect.set(nc.prototype, propInfo.propName, undefined);
+                }
             }
         }
 
@@ -130,7 +136,7 @@ export class InjectPropertiesHandler {
         definedClass: Class,
         injectOptions: InjectOptions = defaultInjectOptions
     ): void {
-        if (injectOptions.lazy) {
+        if (injectOptions.lazy && definedClass) {
             let _value: any;
 
             Reflect.defineProperty(c, propName, {
@@ -147,7 +153,8 @@ export class InjectPropertiesHandler {
                 }
             });
         } else {
-            Reflect.set(c, propName, DependenciesSearcher.getInstance().searchDependency(definedClass));
+            if (definedClass) Reflect.set(c, propName, DependenciesSearcher.getInstance().searchDependency(definedClass));
+            else Reflect.set(c, propName, undefined);
         }
     }
 

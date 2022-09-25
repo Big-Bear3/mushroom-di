@@ -11,15 +11,15 @@ export class Honey {
 
 @Injectable({ type: 'multiple' })
 export class Bee {
-    @Inject()
-    honey: Honey;
+    @Inject(Honey)
+    honey: any;
 
-    @Inject({ lazy: true })
-    static honeyStatic: Honey;
+    @Inject()
+    honey1: Honey;
 }
 
 export function test(): void {
-    const a1 = of(Bears);
+    const a1 = of(Bee);
     // const a2 = of(Bee);
     const b1 = a1.honey;
     // const b2 = a2.honey;
