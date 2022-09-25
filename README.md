@@ -1,5 +1,5 @@
 ## 为什么需要Mushroom？
-在Typescript项目中，我们维护有状态的对象时，面向对象（Class）比面向函数更加有优势。
+在Typescript项目中，我们维护有状态的对象时，面向对象（Class）比面向函数会更加有优势。
 1. 功能性  
     在Typescript的类中，照比只使用函数，我们可以拥有更多的功能，如访问修饰符、访问器、继承、实现接口等，这些可以使我们程序的灵活性，健壮性更好，条理更清晰。
 2. 简洁性、易用性  
@@ -52,7 +52,7 @@ const { setState, getState, stateIsEqual } = new StateManager();
 ```
 这样就简洁多了，而且性能要比闭包的方式好一些。不过这个类的实例是需要new出来的，这非常不利于我们控制如何去new，以及对这些new出来的实例（依赖）进行管理。  
 [**Mushroom**](https://github.com/Big-Bear3/mushroom-di) 为创建、管理、维护（Ioc、DI）这些依赖提供了完整的解决方案。如：单例、多例的控制，依赖创建的参数配置、使用子类（多态）的配置，依赖查找与自动注入等等。  
-下面本文将会由浅至深的介绍 **Mushroom** 这款依赖注入工具。
+下面本文将会由浅至深地介绍 **Mushroom** 这款依赖注入工具。
 
 ## Mushroom适合什么样的开发者？
 1. 对面向对象程序设计有一定的了解
@@ -115,7 +115,7 @@ export class Bee {
 }
 ```
 如果不传，默认为多例。  
-当我们需要将单例的依赖销毁，让下一次重新创建时，可以调用 **destroySingletonInstance()** 方法来销毁 **Mushroom** 容器中保存的实例：
+单例依赖一旦创建就会放入 **Mushroom** 容器中，之后将一直使用这个依赖，不会重新创建。当我们需要将 **Mushroom** 容器中的单例依赖销毁，让下一次重新创建时，可以调用 **destroySingletonInstance()** 方法来销毁 **Mushroom** 容器中保存的实例：
 ```
 destroySingletonInstance(Bee);
 ```
