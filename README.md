@@ -93,6 +93,18 @@ export class Bee {
 ```
 console.log(Bee.honey.honeyType); // "Jujube honey"
 ```
+如果您想依赖接口，可以采用下面这种写法：
+```
+@Injectable()
+export class Bee {
+    name = 'bee';
+    
+    @Inject(Honey)
+    static honey: IHoney; // IHoney为接口
+
+    constructor() {}
+}
+```
 
 ### 通过构造方法注入依赖
 除了用 **@Inject()** 装饰器，我们还可以通过构造方法注入依赖：
@@ -109,6 +121,10 @@ const bee = of(Bee);
 console.log(bee.honey1.honeyType); // "Jujube honey"
 console.log(bee.honey2.honeyType); // "Jujube honey"
 ```
+**注：由于用vite搭建的项目本身不支持 reflect-metadata，所以不支持构造方法注入以及不传入依赖类参数的 @Inject() 装饰器注入，您可以参考如下解决方式：**
+[evanw/esbuild#991](https://github.com/evanw/esbuild/issues/991)
+[esbuild-decorators](https://github.com/anatine/esbuildnx/tree/main/packages/esbuild-decorators)
+**或者使用 @Inject() 装饰器注入，并传入依赖类参数**
 
 ### 使用 by() 方法为依赖的构造方法传递参数
 少数情况下，我们需要创建构造方法带参数的依赖，我们可以使用 **Mushroom** 提供的 **by()** 方法：
