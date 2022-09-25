@@ -1,8 +1,8 @@
 export type Class<T = any> = abstract new (...args: any[]) => T;
 export type NormalClass<T = any> = new (...args: any[]) => T;
 
-type InstanceTypes<T extends Class[]> = T extends [first: infer F, ...rest: infer R]
-    ? [InstanceType<F>, ...InstanceTypes<R>]
+export type InstanceTypes<T extends Class[]> = T extends [first: infer F, ...rest: infer R]
+    ? [InstanceType<F extends Class ? F : any>, ...InstanceTypes<R extends Class[] ? R : any[]>]
     : [];
 
 export function of<T extends Class>(c: T): InstanceType<T>;

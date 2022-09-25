@@ -272,6 +272,28 @@ console.log(bee instanceof Hornet); // true
 console.log(bee instanceof FierceHornet); // false
 ```
 
+### 任意参数的 by() 方法
+```
+您可以利用 **by()** 方法，传递一个标识给依赖配置方法，去告知其如何配置依赖：
+export class BeeConfig {
+    @DependencyConfig(Bee)
+    private static configBee(
+        configEntity: DependencyConfigEntity<typeof Bee | typeof HoneyBee | typeof Hornet, [{ flag: number }]>
+    ) {
+        if (configEntity.args[0].flag === 1) {
+            configEntity.usingClass = HoneyBee;
+        } else {
+            configEntity.usingClass = Hornet;
+        }
+    }
+}
+```
+```
+const bee1 = by(Bee, { flag: 1 }); // HoneyBee
+const bee2 = by(Bee, { flag: 0 }); // Hornet
+```
+如果您需要在某个范围内控制依赖的单例，这将会很有用！
+
 ### 延迟注入
 有时我们为了提升实例的初始化性能，可以为 **@Inject()** 装饰器传入 **{lazy: true}** 参数实现延迟注入：
 ```
