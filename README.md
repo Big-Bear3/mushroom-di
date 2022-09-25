@@ -29,7 +29,7 @@ export function useStateManager() {
 
 const { setState, getState, stateIsEqual } = useStateManager();
 ```
-是不是看起来比较熟悉？在Vue3的项目中，<script setup>标签解决了在vue文件中多余的return问题，但是这些use函数中，您依然需要返回。在vscode代码跟踪上（ctrl+左键点击变量）也有问题。    
+是不是看起来比较熟悉？在Vue3的项目中，<script setup>标签解决了在vue文件中多余的return问题，但是这些use函数中，您依然需要返回。而且在vscode代码跟踪上（ctrl+左键点击变量）也有问题。    
 我们可以使用类来解决这些问题：
 ```
 export class StateManager {
@@ -46,10 +46,12 @@ export class StateManager {
     stateIsEqual(myState: any): boolean {
         return this.state === myState;
     }
-}
+}  
+    
+const { setState, getState, stateIsEqual } = new StateManager();
 ```
 这样就简洁多了，而且性能要比闭包的方式好一些。不过这个类的实例是需要new出来的，这非常不利于我们控制如何去new，以及对这些new出来的实例（依赖）进行管理。  
-**Mushroom** 为创建、管理、维护这些依赖提供了完整的解决方案。如：单例、多例的控制，依赖创建的参数配置、使用子类（多态）的配置，依赖查找与自动注入等等。  
+[**Mushroom**](https://github.com/Big-Bear3/mushroom-di) 为创建、管理、维护（Ioc、DI）这些依赖提供了完整的解决方案。如：单例、多例的控制，依赖创建的参数配置、使用子类（多态）的配置，依赖查找与自动注入等等。  
 下面本文将会由浅至深的介绍 **Mushroom** 这款依赖注入工具。
 
 ## Mushroom适合什么样的开发者？
