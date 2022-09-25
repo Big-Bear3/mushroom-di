@@ -1,10 +1,8 @@
-# mushroom-di
-
 ## 为什么需要Mushroom？
 在Typescript项目中，我们维护有状态的对象时，面向对象（Class）比面向函数更加有优势。
 1. 功能性  
     在Typescript的类中，照比只使用函数，我们可以拥有更多的功能，如访问修饰符、访问器、继承、实现接口等，这些可以使我们程序的灵活性，健壮性更好，条理更清晰。
-2. 简洁性、易用性
+2. 简洁性、易用性  
     在只使用函数时，维护有状态的对象，我们往往需要利用闭包：
 ```
 export function useStateManager() {
@@ -31,7 +29,7 @@ export function useStateManager() {
 
 const { setState, getState, stateIsEqual } = useStateManager();
 ```
-是不是看起来比较熟悉？在Vue3的项目中，<script setup>标签解决了在vue文件中多余的return问题，但是这些use函数中，你依然需要返回。在vscode代码跟踪上（ctrl+左键点击变量）也有问题。    
+是不是看起来比较熟悉？在Vue3的项目中，<script setup>标签解决了在vue文件中多余的return问题，但是这些use函数中，您依然需要返回。在vscode代码跟踪上（ctrl+左键点击变量）也有问题。    
 我们可以使用类来解决这些问题：
 ```
 export class StateManager {
@@ -50,7 +48,7 @@ export class StateManager {
     }
 }
 ```
-这样就简洁多了，而且性能要比闭包的方式好一些。不过在我们使用这个类的实例时，是需要new出来的，这非常不利于我们对这些new出来的实例（依赖）进行管理与维护。  
+这样就简洁多了，而且性能要比闭包的方式好一些。不过这个类的实例是需要new出来的，这非常不利于我们控制如何去new，以及对这些new出来的实例（依赖）进行管理。  
 **Mushroom** 为创建、管理、维护这些依赖提供了完整的解决方案。如：单例、多例的控制，依赖创建的参数配置、使用子类（多态）的配置，依赖查找与自动注入等等。  
 下面本文将会由浅至深的介绍 **Mushroom** 这款依赖注入工具。
 
