@@ -1,8 +1,13 @@
 # mushroom-di
+
+## 运行环境
+**需要支持Map、WeakMap；**  
+**需要支持reflect-metadata；** （可选，如不支持只能使用限定的注入方式。[参考](#vite-attention)）
+
 ## 安装
 1. 安装依赖包
 ```
-npm i mushroom-di
+npm install mushroom-di --save
 ```
 2. 在tsconfig.json中配置如下属性：
 ```
@@ -106,6 +111,7 @@ export class Bee {
 }
 ```
 
+<a id="vite-attention"></a>
 ### 通过构造方法注入依赖
 除了用 **@Inject()** 装饰器，我们还可以通过构造方法注入依赖：
 ```
@@ -121,7 +127,7 @@ const bee = of(Bee);
 console.log(bee.honey1.honeyType); // "Jujube honey"
 console.log(bee.honey2.honeyType); // "Jujube honey"
 ```
-**注：由于用vite搭建的项目本身不支持 reflect-metadata，所以不支持构造方法注入以及不传入依赖类参数的 @Inject() 装饰器注入，您可以参考如下解决方式：**  
+**注：由于用vite搭建的项目本身不支持 reflect-metadata，所以不支持构造方法注入以及不传入依赖类参数的 @Inject() 装饰器注入，您可以参考如下方式去解决：**  
 [evanw/esbuild#991](https://github.com/evanw/esbuild/issues/991)  
 [esbuild-decorators](https://github.com/anatine/esbuildnx/tree/main/packages/esbuild-decorators)  
 **或者使用 @Inject() 装饰器注入，并为其传入依赖类参数**
