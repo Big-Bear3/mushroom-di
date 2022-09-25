@@ -53,7 +53,7 @@ export class Bee {
 如果不传，默认为多例。
 
 ### 使用 @Inject() 装饰器为成员变量注入依赖
-上面介绍的使用 **of()** 获取实例为依赖查找的方式，您可以在任何地方使用它。现在我们来介绍一下依赖注入的方式，但依赖注入只能在类中使用。
+上面介绍的使用 **of()** 获取实例为依赖查找的方式，您可以在任何地方使用它。现在我们来介绍一下依赖注入的方式，但依赖注入只能在类中使用。  
 首先我们再创建一个类Honey，用于将其实例注入到Bee类的实例中:
 ```
 @Injectable()
@@ -121,10 +121,10 @@ const bee = of(Bee);
 console.log(bee.honey1.honeyType); // "Jujube honey"
 console.log(bee.honey2.honeyType); // "Jujube honey"
 ```
-**注：由于用vite搭建的项目本身不支持 reflect-metadata，所以不支持构造方法注入以及不传入依赖类参数的 @Inject() 装饰器注入，您可以参考如下解决方式：**
-[evanw/esbuild#991](https://github.com/evanw/esbuild/issues/991)
-[esbuild-decorators](https://github.com/anatine/esbuildnx/tree/main/packages/esbuild-decorators)
-**或者使用 @Inject() 装饰器注入，并传入依赖类参数**
+**注：由于用vite搭建的项目本身不支持 reflect-metadata，所以不支持构造方法注入以及不传入依赖类参数的 @Inject() 装饰器注入，您可以参考如下解决方式：**  
+[evanw/esbuild#991](https://github.com/evanw/esbuild/issues/991)  
+[esbuild-decorators](https://github.com/anatine/esbuildnx/tree/main/packages/esbuild-decorators)  
+**或者使用 @Inject() 装饰器注入，并为其传入依赖类参数**
 
 ### 使用 by() 方法为依赖的构造方法传递参数
 少数情况下，我们需要创建构造方法带参数的依赖，我们可以使用 **Mushroom** 提供的 **by()** 方法：
@@ -369,8 +369,7 @@ export class Bee3 {
 const bee = of(Bee1); // Error: (39002) 检测到循环依赖：Bee1 -> Bee2 -> Bee3 -> Bee1
 ```
 解决方式大致有2种：
-1. 在使用该依赖的时候再通过 **of()** 或 **by()** 方法创建该依赖：
-（这里用setTimeout()来表示使用时）
+1. 在使用该依赖的时候再通过 **of()** 或 **by()** 方法创建该依赖： （这里用setTimeout()来表示使用时）
 ```
 @Injectable()
 export class Bee1 {
