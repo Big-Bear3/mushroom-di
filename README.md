@@ -2,7 +2,7 @@
 
 ## 运行环境
 **需要支持Map、WeakMap；**  
-**需要支持reflect-metadata；** （可选，如不支持只能使用[限定的注入方式](#vite-attention)）。
+**需要支持reflect-metadata；** （可选，如不支持，只能使用[限定的注入方式](#vite-attention)）。
 
 ## 安装
 1. 安装依赖包
