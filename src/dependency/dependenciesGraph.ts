@@ -1,11 +1,16 @@
 import type { Class } from '../../src/types/diTypes';
 
+/** 当前正在创建的所有依赖的有向图，用于检测是否存在循环依赖 */
 export class DependenciesGraph {
+    /** 第一个添加的节点 */
     private initialNode: DependencyNode;
+
+    /** 依赖所属类和图节点的映射 */
     private valueToNode: Map<Class, DependencyNode>;
 
     constructor() {}
 
+    /** 添加节点并检测是否产生了环 */
     addNodeAndCheckRing(currentNodeValue: Class, parentNodeValue: Class): Class[] {
         if (!parentNodeValue) {
             this.initialNode = new DependencyNode(currentNodeValue);
@@ -26,10 +31,11 @@ export class DependenciesGraph {
             return undefined;
         }
         parentNode.addNextNode(currentNode);
+
         return this.checkRing(currentNode);
     }
 
-    // 广度优先检测依赖有向图是否有环
+    /** 广度优先检测依赖有向图是否有环 */
     private checkRing(targetNode: DependencyNode): Class[] {
         const pendingNodes: { value: DependencyNode; path: Class[] }[] = [
             {
@@ -64,20 +70,22 @@ export class DependenciesGraph {
     }
 }
 
+/** 依赖的有向图节点 */
 export class DependencyNode {
     value: Class;
+
     nextNodes: Set<DependencyNode>;
 
     constructor(value: Class) {
         this.value = value;
     }
 
-    addNextNode(node: DependencyNode) {
+    addNextNode(node: DependencyNode): void {
         if (!this.nextNodes) this.nextNodes = new Set();
         this.nextNodes.add(node);
     }
 
-    nextNodesCount() {
+    nextNodesCount(): number {
         return this.nextNodes ? this.nextNodes.size : 0;
     }
 }

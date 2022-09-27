@@ -11,11 +11,13 @@ import { DependenciesCreator } from './dependenciesCreator';
 export class DependenciesSearcher {
     private static instance: DependenciesSearcher;
 
+    /** 根据依赖配置查找或创建依赖 */
     searchDependency<T>(c: Class<T>, args?: any[]): T {
-        const dependenciesCreator = DependenciesCreator.getInstance();
+        // 读取依赖配置
         const { usingClass, usingArgs, usingObject } = this.getUsingsByConfig(c, args);
         if (usingObject) return usingObject;
 
+        // 获取注入方式
         const injectType = DependenciesClassCollector.getInstance().getInjectableOptions(usingClass).type;
         if (injectType === 'singleton') {
             let instance = this.getInstanceFromManager(<NormalClass>usingClass, injectType);
@@ -27,16 +29,16 @@ export class DependenciesSearcher {
                     );
                 return instance;
             } else {
-                instance = dependenciesCreator.createDependency(<NormalClass>usingClass, usingArgs);
+                instance = DependenciesCreator.getInstance().createDependency(<NormalClass>usingClass, usingArgs);
                 this.addInstanceToManager(<NormalClass>usingClass, instance, injectType);
                 return instance;
             }
         }
 
-        return dependenciesCreator.createDependency(<NormalClass>usingClass, usingArgs);
+        return DependenciesCreator.getInstance().createDependency(<NormalClass>usingClass, usingArgs);
     }
 
-    // 获取依赖配置的结果
+    /** 获取依赖配置的结果 */
     private getUsingsByConfig<T>(originalClass: Class<T>, originalArgs?: any[]): DependencyConfigResult<T> {
         let usingClass: Class<T>;
         let usingArgs = originalArgs || [];
@@ -47,15 +49,18 @@ export class DependenciesSearcher {
 
             let configEntity: DependencyConfigEntity<any, any[]>;
 
+            // 获取自定义配置依赖方法
             const configMethod = DependenciesConfigCollector.getInstance().getConfigMethod(currentUsingClass);
             if (configMethod) {
                 configEntity = new DependencyConfigEntity(currentUsingClass, usingArgs);
-                const dependenciesCreator = DependenciesCreator.getInstance();
-                const outerClass = dependenciesCreator.getCreatingInstanceClass();
+
+                // 正在创建依赖的实例所属的类
+                const outerClass = DependenciesCreator.getInstance().getCreatingInstanceClass();
 
                 const configResult = configMethod(configEntity, outerClass);
 
                 if (configResult && configResult !== STOP_DEEP_CONFIG) {
+                    // 检测指定的依赖所属的类，是否是原始定义的类或其子类
                     if (configResult instanceof originalClass) {
                         return { usingObject: configResult };
                     }
@@ -72,26 +77,26 @@ export class DependenciesSearcher {
         return { usingClass, usingArgs };
     }
 
+    /** 从依赖管理器中获取实例 */
     private getInstanceFromManager<T>(usingClass: NormalClass<T>, injectType: InjectType): T {
         switch (injectType) {
             case 'singleton':
-                if (injectType === 'singleton') {
-                    const singletonDependenciesManager = SingletonDependenciesManager.getInstance();
-                    const singletonInstance = singletonDependenciesManager.getDependency(<NormalClass>usingClass);
-                    if (singletonInstance) return singletonInstance;
-                    return undefined;
-                }
-                break;
+                return SingletonDependenciesManager.getInstance().getDependency(<NormalClass>usingClass);
 
             default:
                 return undefined;
         }
     }
 
+    /** 向依赖管理器中添加实例 */
     private addInstanceToManager<T>(usingClass: NormalClass<T>, instance: T, injectType: InjectType): void {
-        if (injectType === 'singleton') {
-            const singletonDependenciesManager = SingletonDependenciesManager.getInstance();
-            singletonDependenciesManager.addDependency(<NormalClass>usingClass, instance);
+        switch (injectType) {
+            case 'singleton':
+                SingletonDependenciesManager.getInstance().addDependency(<NormalClass>usingClass, instance);
+                break;
+
+            default:
+                break;
         }
     }
 

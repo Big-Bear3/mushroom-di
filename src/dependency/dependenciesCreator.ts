@@ -17,6 +17,7 @@ export class DependenciesCreator {
 
     private isInjecting = false;
 
+    /** 创建依赖、控制当前实例，如果当前依赖树创建完毕，则销毁本实例 */
     createDependency<T>(usingClass: NormalClass<T>, usingArgs?: any[]): T {
         let isRootInjection = false;
         if (!this.isInjecting) {
@@ -31,12 +32,13 @@ export class DependenciesCreator {
         return instance;
     }
 
+    /** 获取正在创建依赖的实例所属的类 */
     getCreatingInstanceClass(): Class {
         if (this.creatingInstanceClassQueue.length === 0) return undefined;
         return this.creatingInstanceClassQueue[this.creatingInstanceClassQueue.length - 1];
     }
 
-    // 递归创建依赖实例，以及依赖构造方法中可注入的参数项的实例
+    /** 递归创建依赖实例，以及依赖构造方法中可注入的参数项的实例 */
     private createInstance<T>(usingClass: NormalClass<T>, usingArgs?: any[]): T {
         this.checkCircularDependencies(usingClass);
 
@@ -75,7 +77,7 @@ export class DependenciesCreator {
         return undefined;
     }
 
-    // 检测循环依赖
+    /** 检测循环依赖 */
     private checkCircularDependencies(usingClass: NormalClass): void {
         let outerClass: Class;
         if (this.creatingInstanceClassQueue.length > 0)
@@ -88,10 +90,12 @@ export class DependenciesCreator {
         }
     }
 
+    // 判断构造方法参数是否可注入，如果可注入则去查找该依赖
     private handleConstructorArgs(usingArgs: any[], constructorArgs: any[], usingClass: NormalClass): void {
         if (usingArgs.length > constructorArgs.length) {
             Message.warn('20001', `为 "${usingClass.name}" 的构造方法配置的参数过多！`);
         } else if (usingArgs.length < constructorArgs.length) {
+            // 如果提供的参数个数过少，则用AUTO补全
             const padLength = constructorArgs.length - usingArgs.length;
             for (let i = 0; i < padLength; i++) {
                 usingArgs.push(AUTO);

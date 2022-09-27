@@ -5,6 +5,9 @@ import { parentsIsSingleton } from '../utils/diUtils';
 import { defaultInjectableOptions, messageNewLineSign } from '../constants/diConstants';
 import { Message } from '../utils/message';
 
+/**
+ * Injectable() 装饰器
+ */
 export function Injectable(options: InjectableOptions = defaultInjectableOptions): ClassDecorator {
     return ((target: any) => {
         if (parentsIsSingleton(target)) {

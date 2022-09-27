@@ -2,6 +2,9 @@ import type { Class, InjectOptions } from './../types/diTypes';
 
 import { InjectPropertiesHandler } from './../dependency/injectPropertiesHandler';
 
+/**
+ * Inject() 装饰器
+ */
 export function Inject(): PropertyDecorator;
 export function Inject(c: Class): PropertyDecorator;
 export function Inject(injectOptions: InjectOptions): PropertyDecorator;

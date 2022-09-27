@@ -6,6 +6,7 @@ type ArgsType<T extends Class, A extends Class | any[]> = A extends never
     ? ConstructorParameters<A>
     : A;
 
+/** 用于存放配置的依赖所使用的类和构造方法参数 */
 export class DependencyConfigEntity<T extends Class = any, A extends Class | any[] = never> {
     usingClass: Class<GenericType<T>>;
 

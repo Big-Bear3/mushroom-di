@@ -16,6 +16,7 @@ interface InjectPropertiesInfo {
     lazyPropsHandled: boolean;
 }
 
+/** 用于处理静态、非静态成员变量注入 */
 export class InjectPropertiesHandler {
     private static instance: InjectPropertiesHandler;
 
