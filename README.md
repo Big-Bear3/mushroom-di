@@ -61,8 +61,8 @@ const { setState, getState, stateIsEqual } = new StateManager();
 
 ## 运行环境
 **需要支持Map、WeakMap；**  
-**需要支持reflect-metadata；** （可选，如不支持，只能使用[限定的注入方式](#vite-attention)）。
-注：由于用Vite使用esbuild将TypeScript转译到JavaScript，esbuild还不支持reflect-metadata，可以参照以下方式去解决：
+**需要支持reflect-metadata；** （可选，如不支持，只能使用[限定的注入方式](#vite-attention)）。  
+**注：由于用Vite使用esbuild将TypeScript转译到JavaScript，esbuild还不支持reflect-metadata，可以参照以下方式去解决：
 ```
 npm i -D rollup-plugin-swc3
 ```
