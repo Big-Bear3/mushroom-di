@@ -80,9 +80,9 @@ export default defineConfig({
       jsc: {
         parser: {
           syntax: "typescript",
-          // tsx: true, // If you use react
           dynamicImport: false,
           decorators: true,
+          // tsx: true,
         },
         target: "es2021",
         transform: {
