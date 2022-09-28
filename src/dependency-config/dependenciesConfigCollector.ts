@@ -2,9 +2,11 @@ import type { Class, ConfigMethod } from '../types/diTypes';
 
 import { Message } from '../../src/utils/message';
 
+/** 用于收集配置依赖的自定义方法 */
 export class DependenciesConfigCollector {
     private static instance: DependenciesConfigCollector;
 
+    /** 类和配置依赖的自定义方法的映射 */
     private dependenciesConfigMap = new Map<Class, ConfigMethod>();
 
     private constructor() {}

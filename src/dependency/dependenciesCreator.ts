@@ -5,7 +5,7 @@ import { DependenciesClassCollector } from '../dependency-config/dependenciesCla
 import { DependenciesGraph } from './dependenciesGraph';
 import { DependenciesSearcher } from './dependenciesSearcher';
 import { AUTO, messageNewLineSign } from '../../src/constants/diConstants';
-import { InjectPropertiesHandler } from './injectPropertiesHandler';
+import { InjectMembersHandler } from './injectMembersHandler';
 
 export class DependenciesCreator {
     private static instance: DependenciesCreator;
@@ -52,8 +52,8 @@ export class DependenciesCreator {
 
         // 创建实例
         try {
-            const injectPropertiesHandler = InjectPropertiesHandler.getInstance();
-            injectPropertiesHandler.handleInstanceLazyProperties(usingClass);
+            const injectMembersHandler = InjectMembersHandler.getInstance();
+            injectMembersHandler.handleInstanceLazyMembers(usingClass);
 
             let instance: T;
             if (usingArgs.length > 0) {
@@ -62,7 +62,7 @@ export class DependenciesCreator {
                 instance = new usingClass();
             }
 
-            injectPropertiesHandler.handleInstanceProperties(usingClass, instance);
+            injectMembersHandler.handleInstanceMembers(usingClass, instance);
 
             this.creatingInstanceClassQueue.pop();
 

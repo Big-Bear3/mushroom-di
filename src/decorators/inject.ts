@@ -1,6 +1,6 @@
 import type { Class, InjectOptions } from './../types/diTypes';
 
-import { InjectPropertiesHandler } from './../dependency/injectPropertiesHandler';
+import { InjectMembersHandler } from '../dependency/injectMembersHandler';
 
 /**
  * Inject() 装饰器
@@ -13,36 +13,38 @@ export function Inject(classOrInjectOptions?: Class | InjectOptions, injectOptio
     const injectArgumentsLength = arguments.length;
 
     return function (target: any, key: string | symbol) {
-        const isStaticProp = isStaticProperty(target);
+        const isStatic = isStaticMember(target);
 
         if (injectArgumentsLength === 0) {
-            isStaticProp ? addInjectStaticPropertyOfDesignType(target, key) : addInjectPropertyOfDesignType(target, key);
+            isStatic ? addInjectStaticMemberOfDesignType(target, key) : addInjectMemberOfDesignType(target, key);
         } else if (injectArgumentsLength === 1) {
             if (typeof classOrInjectOptions === 'function') {
-                isStaticProp
-                    ? addInjectStaticPropertyOfSpecificClass(target, key, classOrInjectOptions)
-                    : addInjectPropertyOfSpecificClass(target, key, classOrInjectOptions);
+                isStatic
+                    ? addInjectStaticMemberOfSpecificClass(target, key, classOrInjectOptions)
+                    : addInjectMemberOfSpecificClass(target, key, classOrInjectOptions);
             } else {
-                isStaticProp
-                    ? addInjectStaticPropertyOfDesignType(target, key, classOrInjectOptions)
-                    : addInjectPropertyOfDesignType(target, key, classOrInjectOptions);
+                isStatic
+                    ? addInjectStaticMemberOfDesignType(target, key, classOrInjectOptions)
+                    : addInjectMemberOfDesignType(target, key, classOrInjectOptions);
             }
         } else if (injectArgumentsLength === 2) {
-            isStaticProp
-                ? addInjectStaticPropertyOfSpecificClass(target, key, <Class>classOrInjectOptions, injectOptions)
-                : addInjectPropertyOfSpecificClass(target, key, <Class>classOrInjectOptions, injectOptions);
+            isStatic
+                ? addInjectStaticMemberOfSpecificClass(target, key, <Class>classOrInjectOptions, injectOptions)
+                : addInjectMemberOfSpecificClass(target, key, <Class>classOrInjectOptions, injectOptions);
         }
     };
 }
 
-function addInjectPropertyOfDesignType(target: any, key: string | symbol, injectOptions?: InjectOptions): void {
+/** 添加通过metadata获取类型的成员变量 */
+function addInjectMemberOfDesignType(target: any, key: string | symbol, injectOptions?: InjectOptions): void {
     let designType = Reflect.getMetadata?.('design:type', target, key);
     if (!designType || designType === Object) designType = undefined;
 
-    InjectPropertiesHandler.getInstance().addInjectProperty(target, key, designType, injectOptions);
+    InjectMembersHandler.getInstance().addInjectMember(target, key, designType, injectOptions);
 }
 
-function addInjectPropertyOfSpecificClass(
+/** 添加指定类型的成员变量 */
+function addInjectMemberOfSpecificClass(
     target: any,
     key: string | symbol,
     specificClass: Class,
@@ -51,17 +53,19 @@ function addInjectPropertyOfSpecificClass(
     let designType = specificClass;
     if (!specificClass || specificClass === Object) designType = undefined;
 
-    InjectPropertiesHandler.getInstance().addInjectProperty(target, key, designType, injectOptions);
+    InjectMembersHandler.getInstance().addInjectMember(target, key, designType, injectOptions);
 }
 
-function addInjectStaticPropertyOfDesignType(target: any, key: string | symbol, injectOptions?: InjectOptions): void {
+/** 添加通过metadata获取类型的静态成员变量 */
+function addInjectStaticMemberOfDesignType(target: any, key: string | symbol, injectOptions?: InjectOptions): void {
     let designType = Reflect.getMetadata?.('design:type', target, key);
     if (!designType || designType === Object) designType = undefined;
 
-    InjectPropertiesHandler.getInstance().handleInstanceStaticProperty(target, key, designType, injectOptions);
+    InjectMembersHandler.getInstance().handleInstanceStaticMember(target, key, designType, injectOptions);
 }
 
-function addInjectStaticPropertyOfSpecificClass(
+/** 添加指定类型的静态成员变量 */
+function addInjectStaticMemberOfSpecificClass(
     target: any,
     key: string | symbol,
     specificClass: Class,
@@ -70,9 +74,10 @@ function addInjectStaticPropertyOfSpecificClass(
     let designType = specificClass;
     if (!specificClass || specificClass === Object) designType = undefined;
 
-    InjectPropertiesHandler.getInstance().handleInstanceStaticProperty(target, key, designType, injectOptions);
+    InjectMembersHandler.getInstance().handleInstanceStaticMember(target, key, designType, injectOptions);
 }
 
-function isStaticProperty(target: any): boolean {
+/** 判断是否是静态成员变量 */
+function isStaticMember(target: any): boolean {
     return !!target.prototype;
 }
