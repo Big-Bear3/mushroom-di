@@ -65,7 +65,7 @@ const { setState, getState, stateIsEqual } = new StateManager();
 **需要支持Map、WeakMap；**  
 **需要支持reflect-metadata；**  
   
-**注：由于用Vite使用esbuild将TypeScript转译到JavaScript，esbuild还不支持reflect-metadata，可以参照以下方式去解决：
+*注：由于用Vite使用esbuild将TypeScript转译到JavaScript，esbuild还不支持reflect-metadata，可以参照以下方式去解决：
 ```
 npm i -D rollup-plugin-swc3
 ```
