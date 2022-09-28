@@ -62,11 +62,42 @@ const { setState, getState, stateIsEqual } = new StateManager();
 ## 运行环境
 **需要支持Map、WeakMap；**  
 **需要支持reflect-metadata；** （可选，如不支持，只能使用[限定的注入方式](#vite-attention)）。
+注：由于用Vite使用esbuild将TypeScript转译到JavaScript，esbuild还不支持reflect-metadata，可以参照以下方式去解决：
+```
+npm i -D rollup-plugin-swc3
+```
+```
+import { swc } from "rollup-plugin-swc3";
+
+export default defineConfig({
+  ...
+  plugins: [
+    ...
+    swc({
+      jsc: {
+        parser: {
+          syntax: "typescript",
+          // tsx: true, // If you use react
+          dynamicImport: false,
+          decorators: true,
+        },
+        target: "es2021",
+        transform: {
+          decoratorMetadata: true,
+        },
+      },
+    }),
+  ],
+  esbuild: false,
+  ...
+});
+
+```
 
 ## 安装
 1. 安装依赖包
 ```
-npm install mushroom-di --save
+npm i -S mushroom-di
 ```
 2. 在tsconfig.json中配置如下属性：
 ```
@@ -190,10 +221,6 @@ const bee = of(Bee);
 console.log(bee.honey1.honeyType); // "Jujube honey"
 console.log(bee.honey2.honeyType); // "Jujube honey"
 ```
-**注：由于用vite搭建的项目本身不支持 reflect-metadata，所以不支持构造方法注入以及不传入依赖类参数的 @Inject() 装饰器注入，您可以参考如下方式去解决：**  
-[evanw/esbuild#991](https://github.com/evanw/esbuild/issues/991)  
-[esbuild-decorators](https://github.com/anatine/esbuildnx/tree/main/packages/esbuild-decorators)  
-**或者使用 @Inject() 装饰器注入，并为其传入依赖类参数**
 
 ### 使用 by() 方法为依赖的构造方法传递参数
 少数情况下，我们需要创建构造方法带参数的依赖，我们可以使用 **Mushroom** 提供的 **by()** 方法：
