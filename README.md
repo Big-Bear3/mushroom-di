@@ -407,7 +407,50 @@ export class BeeConfig {
 const bee1 = by(Bee, { flag: 1 }); // HoneyBee
 const bee2 = by(Bee, { flag: 0 }); // Hornet
 ```
-如果您需要在某个范围内控制依赖的单例，这将会很有用！
+
+### afterInstanceCreate、afterInstanceFetch钩子
+您可以利用 **DependencyConfigEntity** 中的 **afterInstanceCreate** 、**afterInstanceFetch** 钩子进行创建、获取到依赖后的一些自定义操作，这两个钩子的区别为：  
+**afterInstanceCreate** 只在新实例化依赖后调用；  
+**afterInstanceFetch** 在新实例化依赖以及得到依赖（如获取已创建的单例依赖）后都会调用；  
+顺序为**afterInstanceCreate** -> **afterInstanceFetch**
+下面会举一个利用 **afterInstanceCreate** 配置局部范围内单例的例子：
+```
+@Injectable()
+export class MonkeyChief {
+    location: string;
+
+    constructor(location: string) {
+        this.location = location;
+    }
+}
+```
+```
+export class ScopedClassesConfig {
+    private static monkeyChiefs = new Map<string, MonkeyChief>();
+
+    @DependencyConfig(MonkeyChief)
+    static configMonkeyChief(configEntity: DependencyConfigEntity<typeof MonkeyChief>): void | MonkeyChief {
+        const location = configEntity.args[0];
+
+        if (ScopedClassesConfig.monkeyChiefs.has(location)) {
+            return ScopedClassesConfig.monkeyChiefs.get(location);
+        } else {
+            configEntity.afterInstanceCreate = (instance): void => {
+                ScopedClassesConfig.monkeyChiefs.set(location, instance);
+            };
+        }
+    }
+}
+```
+```
+const huashanMonkeyChief1 = by(MonkeyChief, 'Huashan');
+const huashanMonkeyChief2 = by(MonkeyChief, 'Huashan');
+
+const taishanMonkeyChief = by(MonkeyChief, 'Taishan');
+
+console.log(huashanMonkeyChief1 === huashanMonkeyChief2); // true
+console.log(huashanMonkeyChief1 === taishanMonkeyChief); // false
+```
 
 ### 延迟注入
 有时我们为了提升实例的初始化性能，可以为 **@Inject()** 装饰器传入 **{lazy: true}** 参数实现延迟注入：
