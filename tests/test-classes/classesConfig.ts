@@ -9,6 +9,7 @@ import {
     Food,
     GoldMonkey,
     Monkey,
+    MonkeyChief,
     MonkeyKing,
     Monkeys,
     Peach,
@@ -73,5 +74,22 @@ export class ClassesConfig {
             if (!instance || isNew === undefined) throw new Error();
             ClassesConfig.monkeysFetchCount++;
         };
+    }
+}
+
+export class ScopedClassesConfig {
+    private static monkeyChiefs = new Map<string, MonkeyChief>();
+
+    @DependencyConfig(MonkeyChief)
+    static configMonkeyChief(configEntity: DependencyConfigEntity<typeof MonkeyChief>): void | MonkeyChief {
+        const location = configEntity.args[0];
+
+        if (ScopedClassesConfig.monkeyChiefs.has(location)) {
+            return ScopedClassesConfig.monkeyChiefs.get(location);
+        } else {
+            configEntity.afterInstanceCreate = (instance): void => {
+                ScopedClassesConfig.monkeyChiefs.set(location, instance);
+            };
+        }
     }
 }
