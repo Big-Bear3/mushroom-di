@@ -14,34 +14,49 @@ export class DependenciesSearcher {
     /** 根据依赖配置查找或创建依赖 */
     searchDependency<T>(c: Class<T>, args?: any[]): T {
         // 读取依赖配置
-        const { usingClass, usingArgs, usingObject } = this.getUsingsByConfig(c, args);
-        if (usingObject) return usingObject;
+        const { usingClass, usingArgs, usingObject, afterInstanceCreate, afterInstanceFetch } = this.getUsingsByConfig(c, args);
+        if (usingObject) {
+            afterInstanceFetch?.(usingObject, false);
+            return usingObject;
+        }
 
         // 获取注入方式
         const injectType = DependenciesClassCollector.getInstance().getInjectableOptions(usingClass).type;
+        let instance: any;
         if (injectType === 'singleton') {
-            let instance = this.getInstanceFromManager(<NormalClass>usingClass, injectType);
+            instance = this.getInstanceFromManager(<NormalClass>usingClass, injectType);
             if (instance) {
                 if (usingArgs.length > 0)
                     Message.warn(
                         '20002',
                         `您试图在为一个已创建的单例依赖传入构造方法参数，这些参数将不会生效！${messageNewLineSign}class: ${usingClass.name}`
                     );
-                return instance;
+
+                afterInstanceFetch?.(instance, false);
             } else {
                 instance = DependenciesCreator.getInstance().createDependency(<NormalClass>usingClass, usingArgs);
                 this.addInstanceToManager(<NormalClass>usingClass, instance, injectType);
-                return instance;
+
+                afterInstanceCreate?.(instance);
+                afterInstanceFetch?.(instance, true);
             }
+            return instance;
         }
 
-        return DependenciesCreator.getInstance().createDependency(<NormalClass>usingClass, usingArgs);
+        instance = DependenciesCreator.getInstance().createDependency(<NormalClass>usingClass, usingArgs);
+
+        afterInstanceCreate?.(instance);
+        afterInstanceFetch?.(instance, true);
+
+        return instance;
     }
 
     /** 获取依赖配置的结果 */
     private getUsingsByConfig<T>(originalClass: Class<T>, originalArgs?: any[]): DependencyConfigResult<T> {
         let usingClass: Class<T>;
         let usingArgs = originalArgs || [];
+        let afterInstanceCreate: (instance: T) => void;
+        let afterInstanceFetch: (instance: T, isNew: boolean) => void;
 
         let currentUsingClass = originalClass;
         while (usingClass !== currentUsingClass) {
@@ -62,19 +77,36 @@ export class DependenciesSearcher {
                 if (configResult && configResult !== STOP_DEEP_CONFIG) {
                     // 检测指定的依赖所属的类，是否是原始定义的类或其子类
                     if (configResult instanceof originalClass) {
-                        return { usingObject: configResult };
+                        return {
+                            usingObject: configResult,
+                            afterInstanceCreate: configEntity.afterInstanceCreate,
+                            afterInstanceFetch: configEntity.afterInstanceFetch
+                        };
                     }
                     Message.throwError('29002', `配置的对象不是 "${originalClass.name}" 或其子类的实例`);
                 }
 
                 currentUsingClass = configEntity.usingClass;
                 usingArgs = configEntity.args;
+                afterInstanceCreate = configEntity.afterInstanceCreate;
+                afterInstanceFetch = configEntity.afterInstanceFetch;
 
-                if (configResult === STOP_DEEP_CONFIG) return { usingClass: currentUsingClass, usingArgs };
+                if (configResult === STOP_DEEP_CONFIG)
+                    return {
+                        usingClass: currentUsingClass,
+                        usingArgs,
+                        afterInstanceCreate,
+                        afterInstanceFetch
+                    };
             }
         }
 
-        return { usingClass, usingArgs };
+        return {
+            usingClass,
+            usingArgs,
+            afterInstanceCreate,
+            afterInstanceFetch
+        };
     }
 
     /** 从依赖管理器中获取实例 */

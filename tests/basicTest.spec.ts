@@ -4,7 +4,18 @@ import { Message } from '../src/utils/message';
 import { Animal, BrownBear, Zoo } from './test-classes/basicClasses';
 import { BrownBears } from './test-classes/basicClasses';
 import { ClassesConfig, useFood, useMonkey } from './test-classes/classesConfig';
-import { Banana, BrownMonkey, Corn, GoldMonkey, Monkey, Peach, RedMonkey, YellowMonkey } from './test-classes/configedClasses';
+import {
+    Banana,
+    BrownMonkey,
+    Corn,
+    GoldMonkey,
+    Monkey,
+    MonkeyKing,
+    Monkeys,
+    Peach,
+    RedMonkey,
+    YellowMonkey
+} from './test-classes/configedClasses';
 
 Message.toggleConsolePrintable(false);
 
@@ -97,4 +108,13 @@ test('带配置的依赖', () => {
     expect((monkey10.food as Corn).count).toBe(100);
     expect((monkey10.food as Corn).location).toBe('Beijing');
     expect((monkey10.food as Corn).previous.constructor.name).toBe('Banana');
+});
+test('带配置的依赖配置回调方法', () => {
+    of(MonkeyKing, MonkeyKing, MonkeyKing);
+    of(Monkeys, Monkeys, Monkeys);
+
+    expect(ClassesConfig.monkeyKingCreateCount).toBe(1);
+    expect(ClassesConfig.monkeyKingFetchCount).toBe(3);
+    expect(ClassesConfig.monkeysCreateCount).toBe(3);
+    expect(ClassesConfig.monkeysFetchCount).toBe(3);
 });

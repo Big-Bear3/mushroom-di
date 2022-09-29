@@ -32,4 +32,6 @@ export interface DependencyConfigResult<T> {
     usingClass?: Class<T>;
     usingArgs?: any[];
     usingObject?: T;
+    afterInstanceCreate?: (instance: T) => void;
+    afterInstanceFetch?: (instance: T, isNew: boolean) => void;
 }

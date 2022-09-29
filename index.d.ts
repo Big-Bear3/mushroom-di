@@ -35,6 +35,8 @@ export type GenericType<T> = T extends Class<infer G> ? G : any;
 export interface DependencyConfigEntity<T extends Class = any, A extends Class | any[] = never> {
     usingClass: Class<GenericType<T>>;
     args: ConstructorParameters<T> | (A extends Class ? ConstructorParameters<A> : A);
+    afterInstanceCreate?: (instance: T) => void;
+    afterInstanceFetch?: (instance: T, isNew: boolean) => void;
 }
 export type ConfigMethod = (configEntity: DependencyConfigEntity<any, any[]>, outerClass?: Class) => void | symbol | any;
 
@@ -42,4 +44,6 @@ export interface DependencyConfigResult<T> {
     usingClass?: Class<T>;
     usingArgs?: any[];
     usingObject?: T;
+    afterInstanceCreate?: (instance: T) => void;
+    afterInstanceFetch?: (instance: T, isNew: boolean) => void;
 }

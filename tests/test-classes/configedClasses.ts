@@ -50,3 +50,9 @@ export class BrownMonkey extends Monkey {
 }
 
 export class GoldMonkey extends Monkey {}
+
+@Injectable({ type: 'singleton' })
+export class MonkeyKing {}
+
+@Injectable({ type: 'multiple' })
+export class Monkeys {}

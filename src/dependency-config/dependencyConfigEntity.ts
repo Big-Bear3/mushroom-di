@@ -12,6 +12,10 @@ export class DependencyConfigEntity<T extends Class = any, A extends Class | any
 
     args: ArgsType<T, A>;
 
+    afterInstanceCreate: (instance: T) => void;
+
+    afterInstanceFetch: (instance: T, isNew: boolean) => void;
+
     constructor(usingClass: Class<GenericType<T>>, args?: ArgsType<T, A>) {
         this.usingClass = usingClass;
         this.args = (args || []) as ArgsType<T, A>;
