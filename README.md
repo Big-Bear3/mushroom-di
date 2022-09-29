@@ -411,7 +411,7 @@ const bee2 = by(Bee, { flag: 0 }); // Hornet
 ### afterInstanceCreate、afterInstanceFetch钩子
 您可以利用 **DependencyConfigEntity** 中的 **afterInstanceCreate** 、**afterInstanceFetch** 钩子进行创建、获取到依赖后的一些自定义操作，这两个钩子的区别为：  
 **afterInstanceCreate** 只在新实例化依赖后调用；  
-**afterInstanceFetch** 在新实例化依赖以及得到依赖（如获取已创建的单例依赖）后都会调用；  
+**afterInstanceFetch** 在新实例化依赖以及得到依赖（如：获取已创建的单例依赖）后都会调用；  
 顺序为**afterInstanceCreate** -> **afterInstanceFetch**  
 下面会举一个利用 **afterInstanceCreate** 配置局部范围内单例的例子：
 ```
