@@ -106,7 +106,7 @@ npm i -S mushroom-di
 ```
 "experimentalDecorators": true,
 "emitDecoratorMetadata": true,
-"useDefineForClassFields": false,
+"useDefineForClassFields": false, // 设置为true时，将无法使用成员变量注入方式，但仍可正常使用其他注入方式。
 ```
 
 ## 基本用法
