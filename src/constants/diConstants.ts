@@ -1,5 +1,4 @@
-import type { InjectableOptions } from '../types/diTypes';
-import type { InjectOptions } from './../types/diTypes';
+import type { InjectableOptions, InjectOptions } from '../types/diTypes';
 
 /** 默认可注入对象被注入选项 */
 export const defaultInjectableOptions: InjectableOptions = {
