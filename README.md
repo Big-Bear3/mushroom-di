@@ -1,3 +1,19 @@
+## 用法概览
+```
+// 在ts文件、函数中使用依赖查找
+const instance1 = of(XxxClass);
+const instance2 = by(XxxClass, 1, 'str'); // 带构造方法参数
+
+// 在类中使用依赖注入
+@Injectable()  /** @Injectable({ type: 'singleton' }) //单例 */
+export class MyClass {
+    @Inject()  /** @Inject({ lazy: true }) // 延迟注入 */
+    instance1: XxxClass; // 成员变量注入
+
+    constructor(private instance2: XxxClass) {} // 构造方法注入，类似于Angular
+}
+```
+
 ## 为什么需要Mushroom？
 在Typescript项目中，我们维护有状态的对象时，面向对象（Class）比面向函数会更加有优势。
 1. 功能性  
@@ -208,7 +224,6 @@ export class Bee {
 }
 ```
 
-<a id="vite-attention"></a>
 ### 通过构造方法注入依赖
 除了用 **@Inject()** 装饰器，我们还可以通过构造方法注入依赖：
 ```
