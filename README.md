@@ -1,13 +1,13 @@
 ## 用法风格概览
 ```
-// 在ts文件、函数中使用依赖查找
+/** 在ts文件、函数中使用依赖查找 */
 const instance1 = of(XxxClass);
 const instance2 = by(XxxClass, 1, 'str'); // 带构造方法参数
 
-// 在类中使用依赖注入
-@Injectable()  /** @Injectable({ type: 'singleton' }) //单例 */
+/** 在类中使用依赖注入 */
+@Injectable() // 单例：@Injectable({ type: 'singleton' })
 export class MyClass {
-    @Inject()  /** @Inject({ lazy: true }) // 延迟注入 */
+    @Inject()  // 延迟注入：@Inject({ lazy: true })
     private instance1: XxxClass; // 成员变量注入
 
     constructor(private instance2: XxxClass) {} // 构造方法注入，类似于Angular
