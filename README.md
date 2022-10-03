@@ -1,16 +1,16 @@
 ## 用法风格概览
 ```
 /** 在ts文件、函数中使用依赖查找 */
-const instance1 = of(XxxClass);
-const instance2 = by(XxxClass, 1, 'str'); // 带构造方法参数
+const instance1 = of(OneClass);
+const instance2 = by(OneClass, 1, 'str'); // 带构造方法参数
 
 /** 在类中使用依赖注入 */
 @Injectable() // 单例：@Injectable({ type: 'singleton' })
 export class MyClass {
     @Inject()  // 延迟注入：@Inject({ lazy: true })
-    private instance1: XxxClass; // 成员变量注入
+    private instance1: OneClass; // 成员变量注入
 
-    constructor(private instance2: XxxClass) {} // 构造方法注入，类似于Angular
+    constructor(private instance2: OneClass) {} // 构造方法注入，类似于Angular
 }
 ```
 
