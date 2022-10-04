@@ -7,12 +7,20 @@
 // import { of, by, DependencyConfig } from '../src';
 // import { DependencyConfigEntity } from '../src/dependency-config/dependencyConfigEntity';
 
-// const bear = of(Bear); // Bear
-// const instances = of(Bear, Honey, Animal); // [Bear, Honey, Animal]
+// const bear1 = of(Bear); // Bear
+// const bear2 = of<Bear>(Bear); // Bear
+// const bear3 = of<typeof Bear>(Bear); // Bear
+// const instances1 = of(Bear, Honey, Animal); // [Bear, Honey, Animal]
+// const instances2 = of<[Bear, Honey, Animal]>(Bear, Honey, Animal); // [Bear, Honey, Animal]
+// const instances3 = of<[typeof Bear, typeof Honey, typeof Animal]>(Bear, Honey, Animal); // [Bear, Honey, Animal]
 
 // const zoo1 = by(Zoo); //// Expected at least 2 arguments, but got 1.
-// const zoo2 = by(Zoo, null, null); // by<typeof Zoo>(c: typeof Zoo, brownBear: BrownBear, brownBears: BrownBears): Zoo
-// const zoo3 = by(Zoo, null, null, null); // by<typeof Zoo, [any, any, any]>(c: typeof Zoo, args_0: any, args_1: any, args_2: any): Zoo
+// const zoo2 = by<Zoo>(Zoo); //// Type 'Zoo' does not satisfy the constraint 'Class<any>'.
+// const zoo4 = by(Zoo, null, null); // by<typeof Zoo>(c: typeof Zoo, brownBear: BrownBear, brownBears: BrownBears): Zoo
+// const zoo3 = by<typeof Zoo>(Zoo, null, null); // by<typeof Zoo>(c: typeof Zoo, brownBear: BrownBear, brownBears: BrownBears): Zoo
+// const zoo5 = by<Zoo, [string, string]>(Zoo, null, null); // by<Zoo, [string, string]>(c: Class<Zoo>, args_0: string, args_1: string): Zoo
+// const zoo6 = by<typeof Zoo, [string, string]>(Zoo, null, null); // by<typeof Zoo, [string, string]>(c: typeof Zoo, args_0: string, args_1: string): Zoo
+// const zoo7 = by(Zoo, null, null, null); // by<typeof Zoo, [any, any, any]>(c: typeof Zoo, args_0: any, args_1: any, args_2: any): Zoo
 
 // type BearClass = Class<Bear>; // abstract new (...args: any[]) => Bear
 // type BearNormalClass = NormalClass<Bear>; // new (...args: any[]) => Bear
