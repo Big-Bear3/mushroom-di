@@ -12,6 +12,8 @@ export class MyClass {
 
     constructor(private instance2: OneClass) {} // 构造方法注入，类似于Angular
 }
+
+/** 作者微信：Lwn001*/
 ```
 
 ## 为什么需要Mushroom？
