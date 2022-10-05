@@ -8,7 +8,8 @@ const config = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         libraryTarget: 'umd',
-        filename: 'index.js'
+        filename: 'index.js',
+        globalObject: 'this'
     },
     devServer: {
         open: true,
