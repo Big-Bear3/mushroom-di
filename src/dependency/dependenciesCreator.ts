@@ -73,8 +73,6 @@ export class DependenciesCreator {
                 `依赖注入容器实例化类 "${usingClass.name}" 出错！${messageNewLineSign}${error?.stack || error}`
             );
         }
-
-        return undefined;
     }
 
     /** 检测循环依赖 */

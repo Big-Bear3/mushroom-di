@@ -144,19 +144,23 @@ export class InjectMembersHandler {
         injectOptions: InjectOptions = defaultInjectOptions
     ): void {
         if (injectOptions.lazy && definedClass) {
-            let _value: any;
+            let _value: unknown;
+            let valueAlreadySet = false;
 
             Reflect.defineProperty(c, memberName, {
                 enumerable: true,
                 configurable: true,
                 get() {
-                    if (_value) return _value;
+                    if (valueAlreadySet) return _value;
 
                     _value = DependenciesSearcher.getInstance().searchDependency(definedClass);
+                    valueAlreadySet = true;
+
                     return _value;
                 },
                 set(value: unknown) {
                     _value = value;
+                    valueAlreadySet = true;
                 }
             });
         } else {

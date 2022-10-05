@@ -1,4 +1,4 @@
-import type { Class, NormalClass, DependencyConfigResult, InjectType } from '../types/diTypes';
+import type { Class, NormalClass, DependencyConfigResult } from '../types/diTypes';
 
 import { messageNewLineSign, STOP_DEEP_CONFIG } from '../../src/constants/diConstants';
 import { DependenciesConfigCollector } from '../../src/dependency-config/dependenciesConfigCollector';
@@ -24,7 +24,8 @@ export class DependenciesSearcher {
         const injectType = DependenciesClassCollector.getInstance().getInjectableOptions(usingClass).type;
         let instance: any;
         if (injectType === 'singleton') {
-            instance = this.getInstanceFromManager(<NormalClass>usingClass, injectType);
+            const singletonDependenciesManager = SingletonDependenciesManager.getInstance();
+            instance = singletonDependenciesManager.getDependency(<NormalClass>usingClass);
             if (instance) {
                 if (usingArgs.length > 0)
                     Message.warn(
@@ -35,7 +36,7 @@ export class DependenciesSearcher {
                 afterInstanceFetch?.(instance, false);
             } else {
                 instance = DependenciesCreator.getInstance().createDependency(<NormalClass>usingClass, usingArgs);
-                this.addInstanceToManager(<NormalClass>usingClass, instance, injectType);
+                singletonDependenciesManager.addDependency(<NormalClass>usingClass, instance);
 
                 afterInstanceCreate?.(instance);
                 afterInstanceFetch?.(instance, true);
@@ -107,29 +108,6 @@ export class DependenciesSearcher {
             afterInstanceCreate,
             afterInstanceFetch
         };
-    }
-
-    /** 从依赖管理器中获取实例 */
-    private getInstanceFromManager<T>(usingClass: NormalClass<T>, injectType: InjectType): T {
-        switch (injectType) {
-            case 'singleton':
-                return SingletonDependenciesManager.getInstance().getDependency(<NormalClass>usingClass);
-
-            default:
-                return undefined;
-        }
-    }
-
-    /** 向依赖管理器中添加实例 */
-    private addInstanceToManager<T>(usingClass: NormalClass<T>, instance: T, injectType: InjectType): void {
-        switch (injectType) {
-            case 'singleton':
-                SingletonDependenciesManager.getInstance().addDependency(<NormalClass>usingClass, instance);
-                break;
-
-            default:
-                break;
-        }
     }
 
     static getInstance(): DependenciesSearcher {

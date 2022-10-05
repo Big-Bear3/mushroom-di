@@ -1,11 +1,13 @@
 import type { Class } from '../../src/types/diTypes';
 
-import { DependencyConfig } from '../../src';
+import { DependencyConfig, of } from '../../src';
 import { DependencyConfigEntity } from '../../src/dependency-config/dependencyConfigEntity';
 import {
     Banana,
     BrownMonkey,
+    ColorPig,
     Corn,
+    CounterfeitMonkey,
     Food,
     GoldMonkey,
     Monkey,
@@ -13,9 +15,12 @@ import {
     MonkeyKing,
     Monkeys,
     Peach,
+    Pig,
     RedMonkey,
+    RedPig,
     YellowMonkey
 } from './configedClasses';
+import { STOP_DEEP_CONFIG } from '../../src/constants/diConstants';
 
 let usingFood: any = Food;
 let usingMonkey: any = Monkey;
@@ -74,6 +79,32 @@ export class ClassesConfig {
             if (!instance || isNew === undefined) throw new Error();
             ClassesConfig.monkeysFetchCount++;
         };
+    }
+
+    static afterInstanceFetchLaunched = false;
+
+    @DependencyConfig(CounterfeitMonkey)
+    static configCounterfeitMonkey(configEntity: DependencyConfigEntity<typeof CounterfeitMonkey, [any]>) {
+        configEntity.afterInstanceFetch = () => {
+            ClassesConfig.afterInstanceFetchLaunched = true;
+        };
+        return configEntity.args[0] ? configEntity.args[0] : of(Monkeys);
+    }
+
+    @DependencyConfig(Pig)
+    static configPig(configEntity: DependencyConfigEntity<typeof Pig, [boolean] | [number]>) {
+        configEntity.usingClass = ColorPig;
+        if (configEntity.args[0]) {
+            configEntity.args = [1];
+            return STOP_DEEP_CONFIG;
+        }
+        configEntity.args = [1];
+    }
+
+    @DependencyConfig(ColorPig)
+    static configColorPig(configEntity: DependencyConfigEntity<typeof ColorPig>) {
+        configEntity.usingClass = RedPig;
+        configEntity.args = [2];
     }
 }
 
