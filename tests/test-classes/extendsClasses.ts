@@ -15,7 +15,7 @@ export class RabitMeat extends Meat {
 
 @Injectable({ type: 'singleton' })
 export class DeerMeat extends Meat {
-    @Inject()
+    @Inject(Grass, { lazy: true })
     food: Grass;
 }
 
@@ -46,6 +46,12 @@ export class Animal {
 
     @Inject({ lazy: true })
     static planet2: Mars;
+
+    @Inject(Earth)
+    static planet3: Earth;
+
+    @Inject(Mars, { lazy: true })
+    static planet4: Mars;
 }
 
 @Injectable()
@@ -56,7 +62,7 @@ export class Lion extends Animal {
 
 @Injectable()
 export class MaleLion extends Lion {
-    @Inject()
+    @Inject(DeerMeat)
     food: DeerMeat;
 }
 
@@ -80,4 +86,22 @@ export class Grassland {
 
     @Inject({ lazy: true })
     femaleLion: FemaleLion;
+
+    @Inject({ lazy: true })
+    anyMember: any;
+
+    @Inject(null, { lazy: true })
+    nullMember: MaleLion;
+
+    @Inject({ lazy: true })
+    static anyStaticMember: any;
+
+    @Inject(null, { lazy: true })
+    static nullStaticMember: MaleLion;
+
+    @Inject({ lazy: true })
+    maleLionValue: MaleLion;
+
+    @Inject({ lazy: true })
+    static maleLionStaticValue: MaleLion;
 }

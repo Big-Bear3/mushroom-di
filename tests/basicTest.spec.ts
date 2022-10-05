@@ -1,20 +1,25 @@
-import { of, by, AUTO } from '../src';
+import { of, by, AUTO, DependencyConfig } from '../src';
 import { destroySingletonInstance, Injectable, registerDepsConfig } from '../src';
 import { Message } from '../src/utils/message';
-import { Animal, BrownBear, Zoo } from './test-classes/basicClasses';
+import { Animal, BrownBear, ErrorZoo, Zoo } from './test-classes/basicClasses';
 import { BrownBears } from './test-classes/basicClasses';
 import { ClassesConfig, useFood, useMonkey } from './test-classes/classesConfig';
 import {
     Banana,
     BrownMonkey,
+    ColorPig,
     Corn,
+    CounterfeitMonkey,
     GoldMonkey,
+    Kangaroo,
     Monkey,
     MonkeyChief,
     MonkeyKing,
     Monkeys,
     Peach,
+    Pig,
     RedMonkey,
+    RedPig,
     YellowMonkey
 } from './test-classes/configedClasses';
 
@@ -70,6 +75,54 @@ test('带参数的构造方法', () => {
     expect(zoo2.brownBear && zoo2.brownBear instanceof BrownBear && zoo2.brownBears === null).toBe(true);
 });
 
+test('AUTO参数', () => {
+    destroySingletonInstance(Zoo);
+    const zoo1 = by(Zoo, null);
+    expect(zoo1.brownBear === null && zoo1.brownBears && zoo1.brownBears instanceof BrownBears).toBe(true);
+
+    destroySingletonInstance(Zoo);
+    const zoo2 = by(Zoo, AUTO, null);
+    expect(zoo2.brownBear && zoo2.brownBear instanceof BrownBear && zoo2.brownBears === null).toBe(true);
+
+    destroySingletonInstance(Zoo);
+    const zoo3 = by(Zoo, null, AUTO);
+    expect(zoo3.brownBear === null && zoo3.brownBears && zoo3.brownBears instanceof BrownBears).toBe(true);
+
+    destroySingletonInstance(Zoo);
+    const zoo4 = by(Zoo, AUTO, AUTO);
+    expect(
+        zoo4.brownBear && zoo4.brownBear instanceof BrownBear && zoo4.brownBears && zoo4.brownBears instanceof BrownBears
+    ).toBe(true);
+
+    destroySingletonInstance(Zoo);
+    const messageHistory = Message.getHistory();
+    Message.clearHistory();
+    by(Zoo, AUTO, AUTO, AUTO);
+    expect(messageHistory[0].code).toBe('20001');
+    expect(messageHistory[1].code).toBe('20002');
+
+    Message.clearHistory();
+    by(Zoo, null, null, null);
+    expect(messageHistory[0].code).toBe('20002');
+    expect(messageHistory.length).toBe(1);
+
+    destroySingletonInstance(Zoo);
+    Message.clearHistory();
+    by(Zoo, null, null, null);
+    expect(messageHistory[0].code).toBe('20001');
+    expect(messageHistory[1].code).toBe('20002');
+});
+
+test('创建实例失败抛异常', () => {
+    const messageHistory = Message.getHistory();
+    Message.clearHistory();
+    try {
+        of(ErrorZoo);
+    } catch (error) {}
+
+    expect(messageHistory[0].code).toBe('39001');
+});
+
 test('带配置的依赖', () => {
     const monkey = of(Monkey);
     expect(monkey.constructor.name).toBe('Monkey');
@@ -121,6 +174,21 @@ test('带配置的依赖配置回调方法', () => {
     expect(ClassesConfig.monkeysFetchCount).toBe(3);
 });
 
+test('带配置的依赖配置非子类实例', () => {
+    const messageHistory = Message.getHistory();
+    Message.clearHistory();
+
+    expect(ClassesConfig.afterInstanceFetchLaunched).toBe(false);
+    by(CounterfeitMonkey, new CounterfeitMonkey());
+    expect(ClassesConfig.afterInstanceFetchLaunched).toBe(true);
+
+    try {
+        of(CounterfeitMonkey);
+    } catch (error) {}
+
+    expect(messageHistory[0].code).toBe('29002');
+});
+
 test('配置局部范围内单例', () => {
     const huashanMonkeyChief1 = by(MonkeyChief, 'Huashan');
     const huashanMonkeyChief2 = by(MonkeyChief, 'Huashan');
@@ -129,4 +197,38 @@ test('配置局部范围内单例', () => {
 
     expect(huashanMonkeyChief1 === huashanMonkeyChief2).toBe(true);
     expect(huashanMonkeyChief1 === taishanMonkeyChief).toBe(false);
+});
+
+test('深度查找配置', () => {
+    const pig1 = by(Pig, false);
+    expect(pig1 && pig1 instanceof RedPig).toBe(true);
+    expect(pig1.age).toBe(2);
+
+    const pig2 = by(Pig, true);
+    expect(pig2 && pig2 instanceof ColorPig && !(pig2 instanceof RedPig)).toBe(true);
+    expect(pig2.age).toBe(1);
+});
+
+test('重复配置提示', () => {
+    const messageHistory = Message.getHistory();
+    Message.clearHistory();
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    class ClassesDuplicateConfig {
+        @DependencyConfig(Kangaroo)
+        static configKangaroo() {}
+
+        @DependencyConfig(Kangaroo)
+        static configKangarooDuplicate() {}
+    }
+
+    expect(messageHistory[0].code).toBe('20003');
+});
+
+test('Message打印错误', () => {
+    const messageHistory = Message.getHistory();
+    Message.clearHistory();
+    Message.error('11000', '测试打印错误');
+
+    expect(messageHistory[0].code).toBe('11000');
 });

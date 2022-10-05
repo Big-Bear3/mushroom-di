@@ -15,7 +15,8 @@
         "build": "webpack --mode=production --node-env=production",
         "build:dev": "webpack --mode=development",
         "serve": "webpack serve",
-        "test": "jest"
+        "test": "jest",
+        "test:coverage": "jest --coverage"
     },
     "dependencies": {
         "reflect-metadata": "~0.1.13"

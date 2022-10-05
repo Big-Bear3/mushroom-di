@@ -65,3 +65,30 @@ export class MonkeyChief {
         this.location = location;
     }
 }
+
+@Injectable()
+export class CounterfeitMonkey {
+    constructor() {}
+}
+
+@Injectable()
+export class Pig {
+    constructor(public age: number) {}
+}
+
+@Injectable()
+export class ColorPig extends Pig {
+    constructor(public age: number) {
+        super(age);
+    }
+}
+
+@Injectable()
+export class RedPig extends ColorPig {
+    constructor(public age: number) {
+        super(age);
+    }
+}
+
+@Injectable()
+export class Kangaroo {}
