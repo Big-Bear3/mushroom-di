@@ -83,7 +83,7 @@ const { setState, getState, stateIsEqual } = new StateManager();
 **需要支持Map、WeakMap；**  
 **需要支持reflect-metadata；**  
   
-支持Node端和浏览器端。  
+同时支持Node端和浏览器端。  
 
 *注：由于Vite使用esbuild将TypeScript转译到JavaScript，esbuild还不支持reflect-metadata，可以参照如下方式去解决：
 ```
