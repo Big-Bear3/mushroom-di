@@ -1,5 +1,5 @@
 import { of, by, AUTO, DependencyConfig } from '../src';
-import { destroySingletonInstance, Injectable, registerDepsConfig } from '../src';
+import { MushroomService, Injectable, registerDepsConfig } from '../src';
 import { Message } from '../src/utils/message';
 import { Animal, BrownBear, ErrorZoo, Zoo } from './test-classes/basicClasses';
 import { BrownBears } from './test-classes/basicClasses';
@@ -26,6 +26,8 @@ import {
 Message.toggleConsolePrintable(false);
 
 registerDepsConfig(ClassesConfig);
+
+const mushroomService = of(MushroomService);
 
 test('单例多例', () => {
     const brownBear1 = of(BrownBear);
@@ -56,45 +58,45 @@ test('继承单例抛异常', () => {
 
 test('清除已创建的单例对象', () => {
     const brownBear1 = by(BrownBear, 1);
-    destroySingletonInstance(BrownBear);
+    mushroomService.destroySingletonInstance(BrownBear);
     const brownBear2 = by(BrownBear, 1);
 
     expect(brownBear1 === brownBear2).toBe(false);
 });
 
 test('带参数的构造方法', () => {
-    destroySingletonInstance(BrownBear);
+    mushroomService.destroySingletonInstance(BrownBear);
     const brownBear = by(BrownBear, 12);
     expect(brownBear.age).toBe(12);
 
     const zoo1 = by(Zoo, AUTO, AUTO);
     expect(zoo1.brownBear && zoo1.brownBear instanceof BrownBear).toBe(true);
 
-    destroySingletonInstance(Zoo);
+    mushroomService.destroySingletonInstance(Zoo);
     const zoo2 = by(Zoo, AUTO, null);
     expect(zoo2.brownBear && zoo2.brownBear instanceof BrownBear && zoo2.brownBears === null).toBe(true);
 });
 
 test('AUTO参数', () => {
-    destroySingletonInstance(Zoo);
+    mushroomService.destroySingletonInstance(Zoo);
     const zoo1 = by(Zoo, null);
     expect(zoo1.brownBear === null && zoo1.brownBears && zoo1.brownBears instanceof BrownBears).toBe(true);
 
-    destroySingletonInstance(Zoo);
+    mushroomService.destroySingletonInstance(Zoo);
     const zoo2 = by(Zoo, AUTO, null);
     expect(zoo2.brownBear && zoo2.brownBear instanceof BrownBear && zoo2.brownBears === null).toBe(true);
 
-    destroySingletonInstance(Zoo);
+    mushroomService.destroySingletonInstance(Zoo);
     const zoo3 = by(Zoo, null, AUTO);
     expect(zoo3.brownBear === null && zoo3.brownBears && zoo3.brownBears instanceof BrownBears).toBe(true);
 
-    destroySingletonInstance(Zoo);
+    mushroomService.destroySingletonInstance(Zoo);
     const zoo4 = by(Zoo, AUTO, AUTO);
     expect(
         zoo4.brownBear && zoo4.brownBear instanceof BrownBear && zoo4.brownBears && zoo4.brownBears instanceof BrownBears
     ).toBe(true);
 
-    destroySingletonInstance(Zoo);
+    mushroomService.destroySingletonInstance(Zoo);
     const messageHistory = Message.getHistory();
     Message.clearHistory();
     by(Zoo, AUTO, AUTO, AUTO);
@@ -106,7 +108,7 @@ test('AUTO参数', () => {
     expect(messageHistory[0].code).toBe('20002');
     expect(messageHistory.length).toBe(1);
 
-    destroySingletonInstance(Zoo);
+    mushroomService.destroySingletonInstance(Zoo);
     Message.clearHistory();
     by(Zoo, null, null, null);
     expect(messageHistory[0].code).toBe('20001');
