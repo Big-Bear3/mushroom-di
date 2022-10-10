@@ -123,7 +123,7 @@ export default defineConfig({
 npm i -S mushroom-di
 ```
 2. 在tsconfig.json中配置如下属性：
-```json
+```js
 "experimentalDecorators": true,
 "emitDecoratorMetadata": true,
 "useDefineForClassFields": false, // 设置为true时，将无法使用成员变量注入方式，但仍可正常使用其他注入方式。
