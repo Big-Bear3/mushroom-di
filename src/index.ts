@@ -1,13 +1,13 @@
 import 'reflect-metadata';
 
-import type { Class, NormalClass, ClassTypes, InstanceTypes } from './types/diTypes';
+import type { Class, ClassTypes, InstanceTypes } from './types/diTypes';
 
 import { AUTO as autoFlag, STOP_DEEP_CONFIG as stopDeepConfigFlag } from './constants/diConstants';
 import { Injectable as InjectableDecorator } from './decorators/injectable';
 import { DependencyConfig as DependencyConfigDecorator } from './decorators/dependencyConfig';
 import { Inject as InjectDecorator } from './decorators/inject';
 import { DependenciesSearcher } from './dependency/dependenciesSearcher';
-import { SingletonDependenciesManager } from './dependency-manager/singletonDependenciesManager';
+import { MushroomService as MushroomServiceClass } from './mushroomService';
 
 const dependenciesSearcher = DependenciesSearcher.getInstance();
 
@@ -27,20 +27,18 @@ export function by<T extends Class>(c: T, ...args: any[]): InstanceType<T> {
     return dependenciesSearcher.searchDependency(c, args);
 }
 
-export function destroySingletonInstance(nc: NormalClass): void {
-    const singletonDependenciesManager = SingletonDependenciesManager.getInstance();
-    singletonDependenciesManager.removeDependency(nc);
-}
+export const Injectable = InjectableDecorator;
+export const DependencyConfig = DependencyConfigDecorator;
+export const Inject = InjectDecorator;
+
+export const MushroomService = MushroomServiceClass;
+
+export const AUTO = autoFlag;
+export const STOP_DEEP_CONFIG = stopDeepConfigFlag;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function registerDepsConfig(c: Class): void {}
 
-export const Injectable = InjectableDecorator;
-export const DependencyConfig = DependencyConfigDecorator;
-
-export const Inject = InjectDecorator;
-
-export const AUTO = autoFlag;
-export const STOP_DEEP_CONFIG = stopDeepConfigFlag;
+of(MushroomService);
 
 // import('../tests/webTest');

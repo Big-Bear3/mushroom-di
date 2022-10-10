@@ -1,8 +1,8 @@
 {
-    "version": "1.0.7",
+    "version": "1.1.0",
     "name": "mushroom-di",
     "author": "BigBear3",
-    "description": "mushroom-di",
+    "description": "A node and browser end dependency injection tool.",
     "license": "MIT",
     "main": "./index.js",
     "types": "./index.d.ts",
