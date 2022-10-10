@@ -9,6 +9,8 @@ import { Inject as InjectDecorator } from './decorators/inject';
 import { DependenciesSearcher } from './dependency/dependenciesSearcher';
 import { MushroomService as MushroomServiceClass } from './mushroomService';
 
+// import { Message as MessageClass } from './utils/message';
+
 const dependenciesSearcher = DependenciesSearcher.getInstance();
 
 export function of<T extends Class>(c: T): InstanceType<T>;
@@ -40,5 +42,7 @@ export const STOP_DEEP_CONFIG = stopDeepConfigFlag;
 export function registerDepsConfig(c: Class): void {}
 
 of(MushroomService);
+
+// export const Message = MessageClass;
 
 // import('../tests/webTest');

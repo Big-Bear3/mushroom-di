@@ -2,6 +2,5 @@
 module.exports = {
     clearMocks: true,
     preset: 'ts-jest',
-    coverageProvider: 'v8',
-    testEnvironment: 'jsdom'
+    coverageProvider: 'v8'
 };
