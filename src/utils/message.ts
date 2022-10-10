@@ -24,10 +24,10 @@ export class Message {
         if (Message.consolePrintable) console.error(`(${code}) ${message}`);
     }
 
-    static throwError(code: string, message: string, options?: ErrorOptions): void {
+    static throwError(code: string, message: string): void {
         Message.histories.push({ type: 'throw', code, message });
 
-        if (Message.consolePrintable) throw new Error(`(${code}) ${message}`, options);
+        if (Message.consolePrintable) throw new Error(`(${code}) ${message}`);
         else throw new Error();
     }
 
