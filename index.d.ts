@@ -8,7 +8,20 @@ export type InstanceTypes<T extends Class[]> = T extends [first: infer F, ...res
 
 export type GenericType<T> = T extends Class<infer G> ? G : any;
 
-export type InjectType = 'multiple' | 'singleton';
+export type InjectType = 'multiple' | 'cached' | 'singleton';
+
+export type DependencyWeakKey = Record<string | symbol | number, any>;
+export type DependencyKey =
+    | string
+    | symbol
+    | number
+    | boolean
+    | bigint
+    | ((...args: any[]) => any)
+    | Class
+    | null
+    | undefined
+    | DependencyWeakKey;
 
 export interface InjectableOptions {
     type: InjectType;
@@ -44,7 +57,12 @@ export function Inject(injectOptions: InjectOptions): PropertyDecorator;
 export function Inject(c: Class, injectOptions: InjectOptions): PropertyDecorator;
 
 export class MushroomService {
-    destroySingletonInstance(nc: NormalClass): void;
+    addDependencyWithKey<T>(nc: NormalClass<T>, instance: T, key: DependencyKey): void;
+    addDependencyWithWeakKey<T>(nc: NormalClass<T>, instance: T, key: DependencyWeakKey): void;
+    getDependencyByKey<T>(nc: NormalClass<T>, key: DependencyKey): T;
+    removeDependencyByKey<T>(nc: NormalClass<T>, key: DependencyKey): boolean;
+    destroyCachedInstance(nc: NormalClass, key: DependencyWeakKey): boolean;
+    destroySingletonInstance(nc: NormalClass): boolean;
 }
 
 export const AUTO: any;

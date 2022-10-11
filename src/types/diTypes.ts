@@ -8,7 +8,7 @@ export type InstanceTypes<T extends Class[]> = T extends [first: infer F, ...res
     ? [InstanceType<F extends Class ? F : any>, ...InstanceTypes<R extends Class[] ? R : any[]>]
     : [];
 
-export type InjectType = 'multiple' | 'singleton';
+export type InjectType = 'multiple' | 'cached' | 'singleton';
 
 export interface InjectableOptions {
     type: InjectType;
@@ -37,14 +37,15 @@ export interface DependencyConfigResult<T> {
     afterInstanceFetch?: (instance: T, isNew: boolean) => void;
 }
 
-export type WeakKeyedDependencyKey = Record<string | symbol | number, any>;
-export type KeyedDependencyKey =
+export type DependencyWeakKey = Record<string | symbol | number, any>;
+export type DependencyKey =
     | string
     | symbol
     | number
     | boolean
+    | bigint
     | ((...args: any[]) => any)
     | Class
     | null
     | undefined
-    | WeakKeyedDependencyKey;
+    | DependencyWeakKey;

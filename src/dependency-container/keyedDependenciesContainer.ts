@@ -1,4 +1,4 @@
-import type { NormalClass, KeyedDependencyKey, WeakKeyedDependencyKey } from '../types/diTypes';
+import type { NormalClass, DependencyKey, DependencyWeakKey } from '../types/diTypes';
 
 import { Message } from 'src/utils/message';
 
@@ -6,10 +6,10 @@ import { Message } from 'src/utils/message';
 export class KeyedDependenciesContainer {
     private static instance: KeyedDependenciesContainer;
 
-    private keyedDependenciesMap = new Map<NormalClass, Map<KeyedDependencyKey, any>>();
-    private weakKeyedDependenciesMap = new Map<NormalClass, WeakMap<WeakKeyedDependencyKey, any>>();
+    private keyedDependenciesMap = new Map<NormalClass, Map<DependencyKey, any>>();
+    private weakKeyedDependenciesMap = new Map<NormalClass, WeakMap<DependencyWeakKey, any>>();
 
-    addDependency<T>(nc: NormalClass<T>, instance: T, key: KeyedDependencyKey, isWeak?: boolean): void {
+    addDependency<T>(nc: NormalClass<T>, instance: T, key: DependencyKey, isWeak?: boolean): void {
         // if (!instance) Message.throwError('29005', `向Mushroom容器中添加的对象不能为空！${messageNewLineSign}class: ${nc.name}`);
 
         if (isWeak) {
@@ -24,7 +24,7 @@ export class KeyedDependenciesContainer {
                 this.weakKeyedDependenciesMap.set(nc, instanceWeakMap);
             }
 
-            instanceWeakMap.set(<WeakKeyedDependencyKey>key, instance);
+            instanceWeakMap.set(<DependencyWeakKey>key, instance);
         } else {
             if (typeof key === 'object') this.weakKeyedDependenciesMap.get(nc)?.delete(key);
 
@@ -38,7 +38,7 @@ export class KeyedDependenciesContainer {
         }
     }
 
-    getDependency<T>(nc: NormalClass<T>, key?: KeyedDependencyKey): T {
+    getDependency<T>(nc: NormalClass<T>, key: DependencyKey): T {
         let instance = this.keyedDependenciesMap.get(nc)?.get(key);
         if (instance) return instance;
 
@@ -49,7 +49,7 @@ export class KeyedDependenciesContainer {
         return undefined;
     }
 
-    removeDependency<T>(nc: NormalClass<T>, key?: KeyedDependencyKey): boolean {
+    removeDependency<T>(nc: NormalClass<T>, key: DependencyKey): boolean {
         let isReallyDelete = this.keyedDependenciesMap.get(nc)?.delete(key);
         if (isReallyDelete) return true;
 
