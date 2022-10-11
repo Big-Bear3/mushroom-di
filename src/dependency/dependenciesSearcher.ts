@@ -4,7 +4,7 @@ import { messageNewLineSign, STOP_DEEP_CONFIG } from '../../src/constants/diCons
 import { DependenciesConfigCollector } from '../../src/dependency-config/dependenciesConfigCollector';
 import { DependencyConfigEntity } from '../../src/dependency-config/dependencyConfigEntity';
 import { Message } from '../../src/utils/message';
-import { SingletonDependenciesManager } from '../dependency-manager/singletonDependenciesManager';
+import { SingletonDependenciesContainer } from '../dependency-container/singletonDependenciesContainer';
 import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
 import { DependenciesCreator } from './dependenciesCreator';
 
@@ -24,8 +24,8 @@ export class DependenciesSearcher {
         const injectType = DependenciesClassCollector.getInstance().getInjectableOptions(usingClass).type;
         let instance: any;
         if (injectType === 'singleton') {
-            const singletonDependenciesManager = SingletonDependenciesManager.getInstance();
-            instance = singletonDependenciesManager.getDependency(<NormalClass>usingClass);
+            const singletonDependenciesContainer = SingletonDependenciesContainer.getInstance();
+            instance = singletonDependenciesContainer.getDependency(<NormalClass>usingClass);
             if (instance) {
                 if (usingArgs.length > 0)
                     Message.warn(
@@ -36,7 +36,7 @@ export class DependenciesSearcher {
                 afterInstanceFetch?.(instance, false);
             } else {
                 instance = DependenciesCreator.getInstance().createDependency(<NormalClass>usingClass, usingArgs);
-                singletonDependenciesManager.addDependency(<NormalClass>usingClass, instance);
+                singletonDependenciesContainer.addDependency(<NormalClass>usingClass, instance);
 
                 afterInstanceCreate?.(instance);
                 afterInstanceFetch?.(instance, true);

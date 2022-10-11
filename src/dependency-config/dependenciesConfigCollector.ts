@@ -12,7 +12,7 @@ export class DependenciesConfigCollector {
     private constructor() {}
 
     collect(c: Class, configMethod: ConfigMethod): void {
-        if (this.dependenciesConfigMap.has(c)) Message.warn('20003', `您在多处进行了 "${c.name}" 的依赖配置`);
+        if (this.dependenciesConfigMap.has(c)) Message.warn('20003', `您在多处进行了 "${c.name}" 的依赖配置！`);
         this.dependenciesConfigMap.set(c, configMethod);
     }
 

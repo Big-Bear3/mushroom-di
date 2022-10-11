@@ -21,7 +21,7 @@ export class InjectMembersHandler {
     private static instance: InjectMembersHandler;
 
     /** 类和类中需要注入的非静态成员变量的映射 */
-    private classToInjectMembers = new WeakMap<Class, InjectMembersInfo>();
+    private classToInjectMembers = new Map<Class, InjectMembersInfo>();
 
     /** 实例和实例中需要延迟注入的成员变量的映射 */
     private instanceToLazyInjectMembers = new WeakMap<any, Record<string | symbol, any>>();

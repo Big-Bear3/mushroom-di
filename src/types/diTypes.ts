@@ -36,3 +36,15 @@ export interface DependencyConfigResult<T> {
     afterInstanceCreate?: (instance: T) => void;
     afterInstanceFetch?: (instance: T, isNew: boolean) => void;
 }
+
+export type WeakKeyedDependencyKey = Record<string | symbol | number, any>;
+export type KeyedDependencyKey =
+    | string
+    | symbol
+    | number
+    | boolean
+    | ((...args: any[]) => any)
+    | Class
+    | null
+    | undefined
+    | WeakKeyedDependencyKey;
