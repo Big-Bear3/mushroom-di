@@ -7,6 +7,7 @@ import { Message } from '../../src/utils/message';
 import { SingletonDependenciesContainer } from '../dependency-container/singletonDependenciesContainer';
 import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
 import { DependenciesCreator } from './dependenciesCreator';
+import { CachedDependenciesContainer } from 'src/dependency-container/cachedDependenciesContainer';
 
 export class DependenciesSearcher {
     private static instance: DependenciesSearcher;
@@ -21,11 +22,11 @@ export class DependenciesSearcher {
         }
 
         // 获取注入方式
-        const injectType = DependenciesClassCollector.getInstance().getInjectableOptions(usingClass).type;
+        const injectableOptions = DependenciesClassCollector.getInstance().getInjectableOptions(usingClass);
         let instance: any;
-        if (injectType === 'singleton') {
+        if (injectableOptions.type === 'singleton') {
             const singletonDependenciesContainer = SingletonDependenciesContainer.getInstance();
-            instance = singletonDependenciesContainer.getDependency(<NormalClass>usingClass);
+            instance = singletonDependenciesContainer.getDependency(usingClass);
             if (instance) {
                 if (usingArgs.length > 0)
                     Message.warn(
@@ -35,16 +36,19 @@ export class DependenciesSearcher {
 
                 afterInstanceFetch?.(instance, false);
             } else {
-                instance = DependenciesCreator.getInstance().createDependency(<NormalClass>usingClass, usingArgs);
-                singletonDependenciesContainer.addDependency(<NormalClass>usingClass, instance);
+                instance = DependenciesCreator.getInstance().createDependency(usingClass, usingArgs);
+                singletonDependenciesContainer.addDependency(usingClass, instance);
 
                 afterInstanceCreate?.(instance);
                 afterInstanceFetch?.(instance, true);
             }
             return instance;
+        } else if (injectableOptions.type === 'cached') {
+            const cachedDependenciesContainer = CachedDependenciesContainer.getInstance();
+            const key = cachedDependenciesContainer.getDependencyKey(usingClass);
         }
 
-        instance = DependenciesCreator.getInstance().createDependency(<NormalClass>usingClass, usingArgs);
+        instance = DependenciesCreator.getInstance().createDependency(usingClass, usingArgs);
 
         afterInstanceCreate?.(instance);
         afterInstanceFetch?.(instance, true);
@@ -94,7 +98,7 @@ export class DependenciesSearcher {
 
                 if (configResult === STOP_DEEP_CONFIG)
                     return {
-                        usingClass: currentUsingClass,
+                        usingClass: <NormalClass>currentUsingClass,
                         usingArgs,
                         afterInstanceCreate,
                         afterInstanceFetch
@@ -103,7 +107,7 @@ export class DependenciesSearcher {
         }
 
         return {
-            usingClass,
+            usingClass: <NormalClass>usingClass,
             usingArgs,
             afterInstanceCreate,
             afterInstanceFetch

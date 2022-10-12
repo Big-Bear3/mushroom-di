@@ -1,10 +1,14 @@
-import type { NormalClass, DependencyWeakKey } from '../types/diTypes';
+import type { NormalClass, DependencyWeakKey, ObjectType } from '../types/diTypes';
 
 /** 用于管理所有缓存依赖 */
 export class CachedDependenciesContainer {
     private static instance: CachedDependenciesContainer;
 
+    private static supportWeakRef = WeakRef ? true : false;
+
     private cachedDependenciesMap = new Map<NormalClass, WeakMap<DependencyWeakKey, any>>();
+
+    private cachedDependencyKeysMap = new Map<NormalClass, WeakRef<ObjectType> | ObjectType>();
 
     addDependency<T>(nc: NormalClass<T>, instance: T, key: DependencyWeakKey): void {
         let instanceWeakMap = this.cachedDependenciesMap.get(nc);
@@ -20,9 +24,21 @@ export class CachedDependenciesContainer {
     }
 
     removeDependency<T>(nc: NormalClass<T>, key: DependencyWeakKey): boolean {
+        this.cachedDependencyKeysMap.delete(nc);
         const isReallyDelete = this.cachedDependenciesMap.get(nc)?.delete(key);
         if (isReallyDelete) return true;
         return false;
+    }
+
+    addDependencyKey(nc: NormalClass, key: ObjectType): void {
+        this.cachedDependencyKeysMap.set(nc, CachedDependenciesContainer.supportWeakRef ? new WeakRef(key) : key);
+    }
+
+    getDependencyKey(nc: NormalClass): ObjectType {
+        const key = this.cachedDependencyKeysMap.get(nc);
+        if (!key) return undefined;
+
+        return CachedDependenciesContainer.supportWeakRef ? key.deref : key;
     }
 
     static getInstance(): CachedDependenciesContainer {

@@ -6,11 +6,13 @@ export type InstanceTypes<T extends Class[]> = T extends [first: infer F, ...res
     ? [InstanceType<F extends Class ? F : any>, ...InstanceTypes<R extends Class[] ? R : any[]>]
     : [];
 
+export type ObjectType = Record<string | symbol | number, any>;
+
 export type GenericType<T> = T extends Class<infer G> ? G : any;
 
 export type InjectType = 'multiple' | 'cached' | 'singleton';
 
-export type DependencyWeakKey = Record<string | symbol | number, any>;
+export type DependencyWeakKey = ObjectType;
 export type DependencyKey =
     | string
     | symbol
