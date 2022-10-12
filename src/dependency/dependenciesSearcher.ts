@@ -41,28 +41,28 @@ export class DependenciesSearcher {
             let key = cachedDependenciesContainer.getDependencyKey(usingClass);
             if (key) {
                 instance = cachedDependenciesContainer.getDependency(usingClass, key);
-                if (instance) {
-                    afterInstanceFetch?.(instance, false);
-                } else {
-                    instance = DependenciesCreator.getInstance().createDependency(usingClass, usingArgs);
-                    key = injectableOptions.follow(instance).bind(instance);
-                    if (!key)
-                        Message.throwError(
-                            '29007',
-                            `follow方法的返回值不能为空！${messageNewLineSign}class: ${usingClass.name}, 返回值: ${key}`
-                        );
-                    if (typeof key !== 'object')
-                        Message.throwError(
-                            '29008',
-                            `follow方法的返回值必须是对象类型！${messageNewLineSign}class: ${usingClass.name}, 返回值: ${key}`
-                        );
+                afterInstanceFetch?.(instance, false);
+            } else {
+                instance = DependenciesCreator.getInstance().createDependency(usingClass, usingArgs);
 
-                    cachedDependenciesContainer.addDependencyKey(usingClass, key);
-                    cachedDependenciesContainer.addDependency(usingClass, instance, key);
+                key = injectableOptions.follow.bind(instance)(instance);
 
-                    afterInstanceCreate?.(instance);
-                    afterInstanceFetch?.(instance, true);
-                }
+                if (!key)
+                    Message.throwError(
+                        '29007',
+                        `follow方法的返回值不能为空！${messageNewLineSign}class: ${usingClass.name}, 返回值: ${key}`
+                    );
+                if (typeof key !== 'object')
+                    Message.throwError(
+                        '29008',
+                        `follow方法的返回值必须是对象类型！${messageNewLineSign}class: ${usingClass.name}, 返回值: ${key}`
+                    );
+
+                cachedDependenciesContainer.addDependencyKey(usingClass, key);
+                cachedDependenciesContainer.addDependency(usingClass, instance, key);
+
+                afterInstanceCreate?.(instance);
+                afterInstanceFetch?.(instance, true);
             }
         } else {
             instance = DependenciesCreator.getInstance().createDependency(usingClass, usingArgs);

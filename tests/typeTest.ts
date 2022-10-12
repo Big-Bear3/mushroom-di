@@ -4,7 +4,7 @@
 
 // import { Animal } from './test-classes/extendsClasses';
 // import { Honey, Bear, Zoo, BrownBear } from './test-classes/basicClasses';
-// import { of, by, DependencyConfig } from '../src';
+// import { of, by, DependencyConfig, Injectable } from '../src';
 // import { DependencyConfigEntity } from '../src/dependency-config/dependencyConfigEntity';
 
 // const bear1 = of(Bear); // Bear
@@ -51,3 +51,33 @@
 //         const afterInstanceFetch = configEntity.afterInstanceFetch; // (instance: Zoo | BrownBear, isNew: boolean) => void
 //     }
 // }
+
+// @Injectable<CachedClass1>({
+//     type: 'cached',
+//     // Type 'number' is not assignable to type 'ObjectType'.
+//     follow: function () {
+//         this.type; // Property 'type' does not exist on type 'CachedClass'
+//         this.following; // CachedClass1.following: unknown
+//         return 123;
+//     }
+// })
+// export class CachedClass1 {
+//     constructor(public following: unknown) {}
+// }
+
+// @Injectable<CachedClass2>({
+//     type: 'cached',
+//     follow: (cachedClass2) => ({}) // cachedClass2: CachedClass2
+// })
+// export class CachedClass2 {}
+
+// @Injectable<CachedClass3>({
+//     type: 'cached' // type: "cached"
+// })
+// export class CachedClass3 {}
+
+// @Injectable<CachedClass4>({
+//     type: 'singleton',
+//     follow: () => {} // Argument of type '{ type: "singleton"; follow: () => void; }' is not assignable to parameter of type 'InjectableOptions<CachedClass4>'
+// })
+// export class CachedClass4 {}

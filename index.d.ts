@@ -25,9 +25,14 @@ export type DependencyKey =
     | undefined
     | DependencyWeakKey;
 
-export interface InjectableOptions {
-    type: InjectType;
-}
+export type InjectableOptions<T = any> =
+    | {
+          type: Exclude<InjectType, 'cached'>;
+      }
+    | ({
+          type: Extract<InjectType, 'cached'>;
+          follow?: (instance: T) => ObjectType;
+      } & ThisType<T>);
 
 export interface InjectOptions {
     lazy: boolean;
@@ -49,7 +54,7 @@ export function by<T extends Class>(c: T, ...args: ConstructorParameters<T>): In
 export function by<T extends Class, CP extends [any, ...any[]]>(c: T, ...args: CP): InstanceType<T>;
 export function by<T, CP extends [any, ...any[]]>(c: Class<T>, ...args: CP): T;
 
-export function Injectable(options?: InjectableOptions): ClassDecorator;
+export function Injectable<T>(options?: InjectableOptions<T>): ClassDecorator;
 
 export function DependencyConfig(c: Class): MethodDecorator;
 

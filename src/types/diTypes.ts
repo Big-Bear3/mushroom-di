@@ -12,14 +12,14 @@ export type ObjectType = Record<string | symbol | number, any>;
 
 export type InjectType = 'multiple' | 'cached' | 'singleton';
 
-export type InjectableOptions =
+export type InjectableOptions<T = any> =
     | {
           type: Exclude<InjectType, 'cached'>;
       }
-    | {
+    | ({
           type: Extract<InjectType, 'cached'>;
-          follow: <T>(instance: T) => ObjectType;
-      };
+          follow?: (instance: T) => ObjectType;
+      } & ThisType<T>);
 
 export interface InjectOptions {
     lazy: boolean;

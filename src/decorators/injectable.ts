@@ -8,7 +8,7 @@ import { Message } from '../utils/message';
 /**
  * Injectable() 装饰器
  */
-export function Injectable(options: InjectableOptions = defaultInjectableOptions): ClassDecorator {
+export function Injectable<T>(options: InjectableOptions<T> = defaultInjectableOptions): ClassDecorator {
     return ((target: any) => {
         if (parentsIsSingleton(target)) {
             Message.throwError(
