@@ -45,7 +45,11 @@ export class DependenciesSearcher {
             } else {
                 instance = DependenciesCreator.getInstance().createDependency(usingClass, usingArgs);
 
-                key = injectableOptions.follow.bind(instance)(instance);
+                if (injectableOptions.follow) {
+                    key = injectableOptions.follow.bind(instance)(instance);
+                } else {
+                    key = instance;
+                }
 
                 if (!key)
                     Message.throwError(
