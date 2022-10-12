@@ -5,6 +5,7 @@ import { Injectable } from './decorators/injectable';
 import { SingletonDependenciesContainer } from './dependency-container/singletonDependenciesContainer';
 import { KeyedDependenciesContainer } from './dependency-container/keyedDependenciesContainer';
 import { CachedDependenciesContainer } from './dependency-container/cachedDependenciesContainer';
+import { messageNewLineSign } from './constants/diConstants';
 
 @Injectable({ type: 'singleton' })
 export class MushroomService {
@@ -20,10 +21,12 @@ export class MushroomService {
     }
 
     addDependencyWithKey<T>(nc: NormalClass<T>, instance: T, key: DependencyKey): void {
+        if (!instance) Message.throwError('29005', `向Mushroom容器中添加的对象不能为空！${messageNewLineSign}class: ${nc.name}`);
         this.#keyedDependenciesContainer.addDependency(nc, instance, key);
     }
 
     addDependencyWithWeakKey<T>(nc: NormalClass<T>, instance: T, key: DependencyWeakKey): void {
+        if (!instance) Message.throwError('29006', `向Mushroom容器中添加的对象不能为空！${messageNewLineSign}class: ${nc.name}`);
         this.#keyedDependenciesContainer.addDependency(nc, instance, key, true);
     }
 

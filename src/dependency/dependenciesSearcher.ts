@@ -7,7 +7,7 @@ import { Message } from '../../src/utils/message';
 import { SingletonDependenciesContainer } from '../dependency-container/singletonDependenciesContainer';
 import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
 import { DependenciesCreator } from './dependenciesCreator';
-import { CachedDependenciesContainer } from 'src/dependency-container/cachedDependenciesContainer';
+import { CachedDependenciesContainer } from '../../src/dependency-container/cachedDependenciesContainer';
 
 export class DependenciesSearcher {
     private static instance: DependenciesSearcher;
@@ -28,12 +28,6 @@ export class DependenciesSearcher {
             const singletonDependenciesContainer = SingletonDependenciesContainer.getInstance();
             instance = singletonDependenciesContainer.getDependency(usingClass);
             if (instance) {
-                if (usingArgs.length > 0)
-                    Message.warn(
-                        '20002',
-                        `您试图在为一个已创建的单例依赖传入构造方法参数，这些参数将不会生效！${messageNewLineSign}class: ${usingClass.name}`
-                    );
-
                 afterInstanceFetch?.(instance, false);
             } else {
                 instance = DependenciesCreator.getInstance().createDependency(usingClass, usingArgs);
@@ -42,16 +36,40 @@ export class DependenciesSearcher {
                 afterInstanceCreate?.(instance);
                 afterInstanceFetch?.(instance, true);
             }
-            return instance;
         } else if (injectableOptions.type === 'cached') {
             const cachedDependenciesContainer = CachedDependenciesContainer.getInstance();
-            const key = cachedDependenciesContainer.getDependencyKey(usingClass);
+            let key = cachedDependenciesContainer.getDependencyKey(usingClass);
+            if (key) {
+                instance = cachedDependenciesContainer.getDependency(usingClass, key);
+                if (instance) {
+                    afterInstanceFetch?.(instance, false);
+                } else {
+                    instance = DependenciesCreator.getInstance().createDependency(usingClass, usingArgs);
+                    key = injectableOptions.follow(instance).bind(instance);
+                    if (!key)
+                        Message.throwError(
+                            '29007',
+                            `follow方法的返回值不能为空！${messageNewLineSign}class: ${usingClass.name}, 返回值: ${key}`
+                        );
+                    if (typeof key !== 'object')
+                        Message.throwError(
+                            '29008',
+                            `follow方法的返回值必须是对象类型！${messageNewLineSign}class: ${usingClass.name}, 返回值: ${key}`
+                        );
+
+                    cachedDependenciesContainer.addDependencyKey(usingClass, key);
+                    cachedDependenciesContainer.addDependency(usingClass, instance, key);
+
+                    afterInstanceCreate?.(instance);
+                    afterInstanceFetch?.(instance, true);
+                }
+            }
+        } else {
+            instance = DependenciesCreator.getInstance().createDependency(usingClass, usingArgs);
+
+            afterInstanceCreate?.(instance);
+            afterInstanceFetch?.(instance, true);
         }
-
-        instance = DependenciesCreator.getInstance().createDependency(usingClass, usingArgs);
-
-        afterInstanceCreate?.(instance);
-        afterInstanceFetch?.(instance, true);
 
         return instance;
     }

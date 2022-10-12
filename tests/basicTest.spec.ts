@@ -101,18 +101,6 @@ test('AUTO参数', () => {
     Message.clearHistory();
     by(Zoo, AUTO, AUTO, AUTO);
     expect(messageHistory[0].code).toBe('20001');
-    expect(messageHistory[1].code).toBe('20002');
-
-    Message.clearHistory();
-    by(Zoo, null, null, null);
-    expect(messageHistory[0].code).toBe('20002');
-    expect(messageHistory.length).toBe(1);
-
-    mushroomService.destroySingletonInstance(Zoo);
-    Message.clearHistory();
-    by(Zoo, null, null, null);
-    expect(messageHistory[0].code).toBe('20001');
-    expect(messageHistory[1].code).toBe('20002');
 });
 
 test('创建实例失败抛异常', () => {
