@@ -3,6 +3,7 @@ import { MushroomService, Injectable, registerDepsConfig } from '../src';
 import { Message } from '../src/utils/message';
 import { Animal, BrownBear, ErrorZoo, Zoo } from './test-classes/basicClasses';
 import { BrownBears } from './test-classes/basicClasses';
+import { AquaSquirrel, BlackSquirrel, GreenSquirrel, Squirrel } from './test-classes/cachedClasses';
 import { ClassesConfig, useFood, useMonkey } from './test-classes/classesConfig';
 import {
     Banana,
@@ -13,7 +14,6 @@ import {
     GoldMonkey,
     Kangaroo,
     Monkey,
-    MonkeyChief,
     MonkeyKing,
     Monkeys,
     Peach,
@@ -41,6 +41,10 @@ test('单例多例', () => {
     const animal1 = of(Animal);
     const animal2 = of(Animal);
     expect(animal1 === animal2).toBe(false);
+
+    const squirrel1 = of(Squirrel);
+    const squirrel2 = of(Squirrel);
+    expect(squirrel1 === squirrel2).toBe(true);
 });
 
 test('继承单例抛异常', () => {
@@ -62,6 +66,12 @@ test('清除已创建的单例对象', () => {
     const brownBear2 = by(BrownBear, 1);
 
     expect(brownBear1 === brownBear2).toBe(false);
+
+    const squirrel1 = of(Squirrel);
+    mushroomService.destroyCachedInstance(Squirrel);
+    const squirrel2 = of(Squirrel);
+
+    expect(squirrel1 === squirrel2).toBe(false);
 });
 
 test('带参数的构造方法', () => {
@@ -75,6 +85,9 @@ test('带参数的构造方法', () => {
     mushroomService.destroySingletonInstance(Zoo);
     const zoo2 = by(Zoo, AUTO, null);
     expect(zoo2.brownBear && zoo2.brownBear instanceof BrownBear && zoo2.brownBears === null).toBe(true);
+
+    const blackSquirrel = by(BlackSquirrel, { a: 1 });
+    expect(blackSquirrel.following.a).toBe(1);
 });
 
 test('AUTO参数', () => {
@@ -111,6 +124,22 @@ test('创建实例失败抛异常', () => {
     } catch (error) {}
 
     expect(messageHistory[0].code).toBe('39001');
+});
+
+test('非法的follow返回值', () => {
+    const messageHistory = Message.getHistory();
+    Message.clearHistory();
+
+    try {
+        of(GreenSquirrel);
+    } catch (error) {}
+
+    try {
+        of(AquaSquirrel);
+    } catch (error) {}
+
+    expect(messageHistory[0].code).toBe('29007');
+    expect(messageHistory[1].code).toBe('29008');
 });
 
 test('带配置的依赖', () => {
@@ -177,16 +206,6 @@ test('带配置的依赖配置非子类实例', () => {
     } catch (error) {}
 
     expect(messageHistory[0].code).toBe('29002');
-});
-
-test('配置局部范围内单例', () => {
-    const huashanMonkeyChief1 = by(MonkeyChief, 'Huashan');
-    const huashanMonkeyChief2 = by(MonkeyChief, 'Huashan');
-
-    const taishanMonkeyChief = by(MonkeyChief, 'Taishan');
-
-    expect(huashanMonkeyChief1 === huashanMonkeyChief2).toBe(true);
-    expect(huashanMonkeyChief1 === taishanMonkeyChief).toBe(false);
 });
 
 test('深度查找配置', () => {

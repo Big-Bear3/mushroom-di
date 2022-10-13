@@ -34,12 +34,16 @@ export class MushroomService {
         return this.#keyedDependenciesContainer.getDependency(nc, key);
     }
 
+    containsDependencyWithKey<T>(nc: NormalClass<T>, key: DependencyKey): boolean {
+        return this.#keyedDependenciesContainer.containsDependency(nc, key);
+    }
+
     removeDependencyByKey<T>(nc: NormalClass<T>, key: DependencyKey): boolean {
         return this.#keyedDependenciesContainer.removeDependency(nc, key);
     }
 
-    destroyCachedInstance(nc: NormalClass, key: DependencyWeakKey): boolean {
-        return this.#cachedDependenciesContainer.removeDependency(nc, key);
+    destroyCachedInstance(nc: NormalClass): boolean {
+        return this.#cachedDependenciesContainer.removeDependency(nc);
     }
 
     destroySingletonInstance(nc: NormalClass): boolean {

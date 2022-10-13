@@ -64,6 +64,7 @@ export class Zoo {
         this.brownBearsBy = by(BrownBears, 12);
     }
 }
+
 @Injectable()
 export class ErrorZoo {
     constructor(private brownBear: BrownBear, private brownBears: BrownBears) {

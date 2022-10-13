@@ -67,6 +67,15 @@ export class MonkeyChief {
 }
 
 @Injectable()
+export class YellowMonkeyChief {
+    info: { location: string };
+
+    constructor(info: { location: string }) {
+        this.info = info;
+    }
+}
+
+@Injectable()
 export class CounterfeitMonkey {
     constructor() {}
 }

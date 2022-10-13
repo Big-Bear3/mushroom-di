@@ -23,11 +23,9 @@ export class CachedDependenciesContainer {
         return this.cachedDependenciesMap.get(nc)?.get(key);
     }
 
-    removeDependency<T>(nc: NormalClass<T>, key: DependencyWeakKey): boolean {
+    removeDependency<T>(nc: NormalClass<T>): boolean {
         this.cachedDependencyKeysMap.delete(nc);
-        const isReallyDelete = this.cachedDependenciesMap.get(nc)?.delete(key);
-        if (isReallyDelete) return true;
-        return false;
+        return this.cachedDependenciesMap.delete(nc);
     }
 
     addDependencyKey(nc: NormalClass, key: ObjectType): void {

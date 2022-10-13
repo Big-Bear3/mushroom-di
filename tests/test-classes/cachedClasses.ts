@@ -25,3 +25,19 @@ export class Squirrel {
 export class BlackSquirrel {
     constructor(public following: ObjectType) {}
 }
+
+@Injectable<GreenSquirrel>({
+    type: 'cached',
+    follow: function () {
+        return null;
+    }
+})
+export class GreenSquirrel {}
+
+@Injectable<AquaSquirrel>({
+    type: 'cached',
+    follow: function () {
+        return 'str' as any;
+    }
+})
+export class AquaSquirrel {}

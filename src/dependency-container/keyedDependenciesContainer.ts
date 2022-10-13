@@ -47,6 +47,17 @@ export class KeyedDependenciesContainer {
         return undefined;
     }
 
+    containsDependency<T>(nc: NormalClass<T>, key: DependencyKey): boolean {
+        let instance = this.keyedDependenciesMap.get(nc)?.has(key);
+        if (instance) return true;
+
+        if (typeof key === 'object') {
+            instance = this.weakKeyedDependenciesMap.get(nc)?.has(key);
+            if (instance) return true;
+        }
+        return false;
+    }
+
     removeDependency<T>(nc: NormalClass<T>, key: DependencyKey): boolean {
         let isReallyDelete = this.keyedDependenciesMap.get(nc)?.delete(key);
         if (isReallyDelete) return true;
