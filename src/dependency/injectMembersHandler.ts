@@ -1,4 +1,4 @@
-import type { Class, NormalClass } from '../types/diTypes';
+import type { Class, NormalClass, ObjectType } from '../types/diTypes';
 import type { InjectOptions } from '../types/diTypes';
 
 import { defaultInjectOptions } from '../constants/diConstants';
@@ -6,11 +6,11 @@ import { DependenciesSearcher } from './dependenciesSearcher';
 
 interface InjectMembersInfo {
     members: {
-        memberName: string | symbol;
+        memberName: string | symbol | number;
         definedClass: Class;
     }[];
     lazyMembers: {
-        memberName: string | symbol;
+        memberName: string | symbol | number;
         definedClass: Class;
     }[];
     lazyMembersHandled: boolean;
@@ -24,12 +24,12 @@ export class InjectMembersHandler {
     private classToInjectMembers = new Map<Class, InjectMembersInfo>();
 
     /** 实例和实例中需要延迟注入的成员变量的映射 */
-    private instanceToLazyInjectMembers = new WeakMap<any, Record<string | symbol, any>>();
+    private instanceToLazyInjectMembers = new WeakMap<ObjectType, ObjectType>();
 
     /** 添加类中需要注入的非静态成员变量 */
     addInjectMember(
         c: Class,
-        memberName: string | symbol,
+        memberName: string | symbol | number,
         definedClass: Class,
         injectOptions: InjectOptions = defaultInjectOptions
     ): void {
@@ -73,7 +73,7 @@ export class InjectMembersHandler {
     }
 
     /** 为类中以及其父类中所有非延迟注入的非静态成员变量注入依赖 */
-    handleInstanceMembers(nc: NormalClass, instance: Record<string | symbol, any>): void {
+    handleInstanceMembers(nc: NormalClass, instance: ObjectType): void {
         const injectMembersInfo = this.classToInjectMembers.get(nc.prototype);
         if (injectMembersInfo) {
             const dependenciesSearcher = DependenciesSearcher.getInstance();

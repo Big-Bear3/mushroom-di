@@ -12,7 +12,7 @@ export function Inject(c: Class, injectOptions: InjectOptions): PropertyDecorato
 export function Inject(classOrInjectOptions?: Class | InjectOptions, injectOptions?: InjectOptions): PropertyDecorator {
     const injectArgumentsLength = arguments.length;
 
-    return function (target: any, key: string | symbol) {
+    return function (target: Class, key: string | symbol) {
         const isStatic = isStaticMember(target);
 
         if (injectArgumentsLength === 0) {
@@ -32,11 +32,11 @@ export function Inject(classOrInjectOptions?: Class | InjectOptions, injectOptio
                 ? addInjectStaticMemberOfSpecificClass(target, key, <Class>classOrInjectOptions, injectOptions)
                 : addInjectMemberOfSpecificClass(target, key, <Class>classOrInjectOptions, injectOptions);
         }
-    };
+    } as PropertyDecorator;
 }
 
 /** 添加通过metadata获取类型的成员变量 */
-function addInjectMemberOfDesignType(target: any, key: string | symbol, injectOptions?: InjectOptions): void {
+function addInjectMemberOfDesignType(target: Class, key: string | symbol, injectOptions?: InjectOptions): void {
     let designType = Reflect.getMetadata?.('design:type', target, key);
     if (!designType || designType === Object) designType = undefined;
 
@@ -45,7 +45,7 @@ function addInjectMemberOfDesignType(target: any, key: string | symbol, injectOp
 
 /** 添加指定类型的成员变量 */
 function addInjectMemberOfSpecificClass(
-    target: any,
+    target: Class,
     key: string | symbol,
     specificClass: Class,
     injectOptions?: InjectOptions
@@ -57,7 +57,7 @@ function addInjectMemberOfSpecificClass(
 }
 
 /** 添加通过metadata获取类型的静态成员变量 */
-function addInjectStaticMemberOfDesignType(target: any, key: string | symbol, injectOptions?: InjectOptions): void {
+function addInjectStaticMemberOfDesignType(target: Class, key: string | symbol, injectOptions?: InjectOptions): void {
     let designType = Reflect.getMetadata?.('design:type', target, key);
     if (!designType || designType === Object) designType = undefined;
 
@@ -66,7 +66,7 @@ function addInjectStaticMemberOfDesignType(target: any, key: string | symbol, in
 
 /** 添加指定类型的静态成员变量 */
 function addInjectStaticMemberOfSpecificClass(
-    target: any,
+    target: Class,
     key: string | symbol,
     specificClass: Class,
     injectOptions?: InjectOptions
@@ -78,6 +78,6 @@ function addInjectStaticMemberOfSpecificClass(
 }
 
 /** 判断是否是静态成员变量 */
-function isStaticMember(target: any): boolean {
+function isStaticMember(target: Class): boolean {
     return !!target.prototype;
 }

@@ -38,7 +38,7 @@ export interface InjectOptions {
     lazy: boolean;
 }
 
-export interface DependencyConfigEntity<T extends Class = any, A extends Class | any[] | undefined = undefined> {
+export interface DependencyConfigEntity<T extends Class = Class, A extends Class | any[] | undefined = undefined> {
     usingClass: Class<GenericType<T>>;
     args: A extends undefined ? ConstructorParameters<T> : A extends Class ? ConstructorParameters<A> : A;
     afterInstanceCreate?: (instance: InstanceType<T>) => void;

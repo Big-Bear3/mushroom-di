@@ -1,4 +1,4 @@
-import type { InjectableOptions } from '../types/diTypes';
+import type { Class, InjectableOptions } from '../types/diTypes';
 
 import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
 import { parentsIsSingleton } from '../utils/diUtils';
@@ -9,7 +9,7 @@ import { Message } from '../utils/message';
  * Injectable() 装饰器
  */
 export function Injectable<T>(options: InjectableOptions<T> = defaultInjectableOptions): ClassDecorator {
-    return ((target: any) => {
+    return ((target: Class) => {
         if (parentsIsSingleton(target)) {
             Message.throwError(
                 '29001',

@@ -36,7 +36,7 @@ export class CachedDependenciesContainer {
         const key = this.cachedDependencyKeysMap.get(nc);
         if (!key) return undefined;
 
-        return CachedDependenciesContainer.supportWeakRef ? key.deref() : key;
+        return CachedDependenciesContainer.supportWeakRef ? (<WeakRef<ObjectType>>key).deref() : <ObjectType>key;
     }
 
     static getInstance(): CachedDependenciesContainer {
