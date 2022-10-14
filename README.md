@@ -255,7 +255,7 @@ console.log(bee1 === bee2) // true
 ```
 如果bee1, bee2实例之后不会再被用到，在下次垃圾回收的时候会将其回收，在 **Mushroom** 容器中缓存的Bee的实例也一并被回收。  
 这将会很有用，如果一个对象占用内存比较多，创建的代价又相对较大，推荐使用这种方式。  
-更多用法可以参考这一章节。[链接](#cachedDependenciesAdvancedUsage)  
+更多用法可以参考后续这一章节。[链接](#cachedDependenciesAdvancedUsage)  
     
 我们还可以调用 **MushroomService** 中的 **destroyCachedInstance** 方法，手动清除实例的缓存：
 ```ts
