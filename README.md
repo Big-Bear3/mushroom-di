@@ -506,21 +506,8 @@ export class Bee {
     constructor(public following: ObjectType) {}
 }
 ```
-在Vue3项目中，我们可以这样配置一个服务，跟随某一Vue页面实例的销毁而销毁：
-```ts
-import { getCurrentInstance } from 'vue';
-    
-@Injectable<MyVue3Service>({
-    type: 'cached',
-    follow: function () {
-        return getCurrentInstance() || this;
-    }
-})
-export class MyVue3Service {
-    constructor(public following: ObjectType) {}
-}
-```
-    
+注：在Vue3项目中，如果您使用了<script setup>的方式构建组件并依赖一个缓存类型的依赖作为服务，请勿在setup上下文中直接定义该服务，以及跟随销毁的对象，否则由于Vue会保存setup上下文中的属性，将不能及时清除该服务的缓存。
+
 ### 延迟注入
 有时我们为了提升实例的初始化性能，可以为 **@Inject()** 装饰器传入 **{lazy: true}** 参数实现延迟注入：
 ```ts
