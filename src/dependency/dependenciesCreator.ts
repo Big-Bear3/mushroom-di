@@ -1,4 +1,4 @@
-import type { Class, NormalClass } from '../../src/types/diTypes';
+import type { Class, NormalClass, ObjectType } from '../../src/types/diTypes';
 
 import { Message } from '../utils/message';
 import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
@@ -18,7 +18,7 @@ export class DependenciesCreator {
     private isInjecting = false;
 
     /** 创建依赖、控制当前实例，如果当前依赖树创建完毕，则销毁本实例 */
-    createDependency<T>(usingClass: NormalClass<T>, usingArgs?: any[]): T {
+    createDependency<T>(usingClass: NormalClass<T>, usingArgs?: unknown[]): T {
         let isRootInjection = false;
         if (!this.isInjecting) {
             this.isInjecting = true;
@@ -39,7 +39,7 @@ export class DependenciesCreator {
     }
 
     /** 递归创建依赖实例，以及依赖构造方法中可注入的参数项的实例 */
-    private createInstance<T>(usingClass: NormalClass<T>, usingArgs?: any[]): T {
+    private createInstance<T>(usingClass: NormalClass<T>, usingArgs?: unknown[]): T {
         this.checkCircularDependencies(usingClass);
 
         this.creatingInstanceClassQueue.push(usingClass);
@@ -62,15 +62,17 @@ export class DependenciesCreator {
                 instance = new usingClass();
             }
 
-            injectMembersHandler.handleInstanceMembers(usingClass, instance);
+            injectMembersHandler.handleInstanceMembers(usingClass, <ObjectType>instance);
 
             this.creatingInstanceClassQueue.pop();
 
             return instance;
-        } catch (error: any) {
+        } catch (error) {
             Message.throwError(
                 '39001',
-                `依赖注入容器实例化类 "${usingClass.name}" 出错！${messageNewLineSign}${error?.stack || error}`
+                `依赖注入容器实例化类 "${usingClass.name}" 出错！${messageNewLineSign}${
+                    (<{ stack: unknown }>error)?.stack || error
+                }`
             );
         }
     }
@@ -89,7 +91,7 @@ export class DependenciesCreator {
     }
 
     // 判断构造方法参数是否可注入，如果可注入则去查找该依赖
-    private handleConstructorArgs(usingArgs: any[], constructorArgs: any[], usingClass: NormalClass): void {
+    private handleConstructorArgs(usingArgs: unknown[], constructorArgs: unknown[], usingClass: NormalClass): void {
         if (usingArgs.length > constructorArgs.length) {
             Message.warn('20001', `为 "${usingClass.name}" 的构造方法配置的参数过多！`);
         } else if (usingArgs.length < constructorArgs.length) {
@@ -104,12 +106,14 @@ export class DependenciesCreator {
 
         for (let i = 0; i < usingArgs.length; i++) {
             if (usingArgs[i] === AUTO) {
-                const isInjectable = dependenciesCollector.contains(constructorArgs[i]);
-                if (isInjectable) {
-                    usingArgs[i] = this.dependenciesSearcher.searchDependency(constructorArgs[i]);
-                } else {
-                    usingArgs[i] = undefined;
+                if (typeof constructorArgs[i] === 'function') {
+                    const isInjectable = dependenciesCollector.contains(<Class>constructorArgs[i]);
+                    if (isInjectable) {
+                        usingArgs[i] = this.dependenciesSearcher.searchDependency(<Class>constructorArgs[i]);
+                        continue;
+                    }
                 }
+                usingArgs[i] = undefined;
             }
         }
     }

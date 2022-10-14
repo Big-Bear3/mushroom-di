@@ -1,21 +1,54 @@
-import type { NormalClass } from './types/diTypes';
+import type { DependencyKey, NormalClass, DependencyWeakKey } from './types/diTypes';
 
 import { Message } from './utils/message';
 import { Injectable } from './decorators/injectable';
-import { SingletonDependenciesManager } from './dependency-manager/singletonDependenciesManager';
+import { SingletonDependenciesContainer } from './dependency-container/singletonDependenciesContainer';
+import { KeyedDependenciesContainer } from './dependency-container/keyedDependenciesContainer';
+import { CachedDependenciesContainer } from './dependency-container/cachedDependenciesContainer';
+import { messageNewLineSign } from './constants/diConstants';
 
 @Injectable({ type: 'singleton' })
 export class MushroomService {
-    #singletonDependenciesManager = SingletonDependenciesManager.getInstance();
+    #keyedDependenciesContainer = KeyedDependenciesContainer.getInstance();
+
+    #cachedDependenciesContainer = CachedDependenciesContainer.getInstance();
+
+    #singletonDependenciesContainer = SingletonDependenciesContainer.getInstance();
 
     constructor() {
-        if (this.#singletonDependenciesManager.getDependency(<NormalClass<MushroomService>>MushroomService))
+        if (this.#singletonDependenciesContainer.getDependency(<NormalClass<MushroomService>>MushroomService))
             Message.throwError('29003', '请通过依赖查找或依赖注入的方式获取MushroomService实例！');
     }
 
-    destroySingletonInstance(nc: NormalClass): void {
+    addDependencyWithKey<T>(nc: NormalClass<T>, instance: T, key: DependencyKey): void {
+        if (!instance) Message.throwError('29005', `向Mushroom容器中添加的对象不能为空！${messageNewLineSign}class: ${nc.name}`);
+        this.#keyedDependenciesContainer.addDependency(nc, instance, key);
+    }
+
+    addDependencyWithWeakKey<T>(nc: NormalClass<T>, instance: T, key: DependencyWeakKey): void {
+        if (!instance) Message.throwError('29006', `向Mushroom容器中添加的对象不能为空！${messageNewLineSign}class: ${nc.name}`);
+        this.#keyedDependenciesContainer.addDependency(nc, instance, key, true);
+    }
+
+    getDependencyByKey<T>(nc: NormalClass<T>, key: DependencyKey): T {
+        return this.#keyedDependenciesContainer.getDependency(nc, key);
+    }
+
+    containsDependencyWithKey<T>(nc: NormalClass<T>, key: DependencyKey): boolean {
+        return this.#keyedDependenciesContainer.containsDependency(nc, key);
+    }
+
+    removeDependencyByKey<T>(nc: NormalClass<T>, key: DependencyKey): boolean {
+        return this.#keyedDependenciesContainer.removeDependency(nc, key);
+    }
+
+    destroyCachedInstance(nc: NormalClass): boolean {
+        return this.#cachedDependenciesContainer.removeDependency(nc);
+    }
+
+    destroySingletonInstance(nc: NormalClass): boolean {
         if (nc === MushroomService) Message.throwError('29004', '禁止销毁MushroomService实例！');
 
-        this.#singletonDependenciesManager.removeDependency(nc);
+        return this.#singletonDependenciesContainer.removeDependency(nc);
     }
 }

@@ -13,15 +13,15 @@ export class MyClass {
     constructor(private instance2: OneClass) {} // 构造方法注入，类似于Angular
 }
 
-/** 作者微信：Lwn001*/
+/** 作者微信：Lwn001 */
 ```
 
 ## 为什么需要Mushroom？
-在Typescript项目中，我们维护有状态的对象时，面向对象（Class）比面向函数会更加有优势。
+在Typescript项目中，我们维护有状态的对象时，面向对象通常比面向函数更加有优势：  
 1. 功能性  
-    在Typescript的类中，照比只使用函数，我们可以拥有更多的功能，如访问修饰符、访问器、继承、实现接口等，这些可以使我们程序的灵活性，健壮性更好，条理更清晰。
+    Class提供了更多的功能，如访问修饰符、访问器、继承、实现接口等，这些可以使我们程序的灵活性，健壮性更好，条理更清晰。  
 2. 简洁性、易用性  
-    在只使用函数时，维护有状态的对象，我们往往需要利用闭包：
+    只使用函数，维护有状态的对象时，我们往往需要利用闭包：
 ```ts
 export function useStateManager() {
     let state: any;
@@ -47,8 +47,8 @@ export function useStateManager() {
 
 const { setState, getState, stateIsEqual } = useStateManager();
 ```
-是不是看起来比较熟悉？在Vue3的项目中，<script setup>标签解决了在vue文件中多余的return问题，但是这些use函数中，您依然需要返回。而且在vscode代码跟踪上（ctrl+左键点击变量）也有问题。    
-我们可以使用类来解决这些问题：
+是不是看起来比较熟悉？在Vue3的项目中，<script setup>标签解决了在vue文件中多余的return问题，但是这些use函数中依然需要返回。      
+我们可以使用类来解决此问题：
 ```ts
 export class StateManager {
     private state: any;
@@ -68,24 +68,16 @@ export class StateManager {
     
 const { setState, getState, stateIsEqual } = new StateManager();
 ```
-这样就简洁多了，而且性能要比闭包的方式好一些。不过这个类的实例是需要new出来的，这非常不利于我们控制如何去new，以及对这些new出来的实例（依赖）进行管理。  
+这样就简洁多了，而且性能要比闭包的方式好一些。不过通过new的方式，我们还需要对这些实例（依赖）进行管理。  
   
-[**Mushroom**](https://github.com/Big-Bear3/mushroom-di) 为创建、管理、维护（Ioc、DI）这些依赖提供了完整的解决方案。如：单例、多例的控制，依赖创建的参数配置、使用子类（多态）的配置，依赖查找与自动注入等等。  
+[**Mushroom**](https://github.com/Big-Bear3/mushroom-di) 为创建、管理、维护（Ioc、DI）这些依赖提供了完整的解决方案。如：单例、多例的控制，依赖创建的参数、使用的子类（多态）的配置，依赖查找与自动注入依赖等等。  
   
 下面本文将会由浅至深地介绍 **Mushroom** 这款依赖注入工具。
 
-## Mushroom适合什么样的开发者？
-1. 对面向对象程序设计有一定的了解
-2. 对Typescript有一定的使用经验
-3. 对程序的设计原则有一定的了解
-
 ## 运行环境
-**需要支持Map、WeakMap；**  
-**需要支持reflect-metadata；**  
-  
-同时支持Node端和浏览器端。  
+**支持Map、WeakMap、reflect-metadata的浏览器端或Node端**  
 
-*注：由于Vite使用esbuild将TypeScript转译到JavaScript，esbuild还不支持reflect-metadata，可以参照如下方式去解决：
+*注：由于Vite使用esbuild将TypeScript转译到JavaScript，esbuild还不支持reflect-metadata，您可以参照如下方式去解决：
 ```
 npm i -D rollup-plugin-swc3
 ```
@@ -151,32 +143,8 @@ const bee = of(Bee);
 const [bee1, bee2, bee3, ...] = of(Bee1, Bee2, Bee3, ...);
 ```
 
-### 单例与多例
-或许我们在项目中需要一些单例的依赖，我们可以为 **@Injectable()** 传入一个 **type** 参数，**Mushroom** 将会控制这个类创建出的实例是单例的还是多例的：
-```ts
-@Injectable({ type: 'singleton' })
-export class Bee {
-    name = 'bee';
-
-    constructor() {}
-}
-
-@Injectable({ type: 'multiple' })
-export class Bee {
-    name = 'bee';
-
-    constructor() {}
-}
-```
-如果不传，默认为多例。  
-单例依赖一旦创建就会放入 **Mushroom** 容器中，之后将一直使用这个依赖，不会重新创建。当我们需要将 **Mushroom** 容器中的单例依赖销毁，让下一次重新创建时，可以调用 **MushroomService** 中的 **destroySingletonInstance** 方法来销毁 **Mushroom** 容器中保存的实例：
-```ts
-const mushroomService = of(MushroomService);
-mushroomService.destroySingletonInstance(Bee);
-```
-
 ### 使用 @Inject() 装饰器为成员变量注入依赖
-上面介绍的使用 **of()** 获取实例为依赖查找的方式，您可以在任何地方使用它。现在我们来介绍一下依赖注入的方式，但依赖注入只能在类中使用。  
+上面介绍的使用 **of()** 获取实例为依赖查找的方式，我们可以在任何地方使用它。现在介绍一下在类中使用依赖注入的方式。  
 首先我们再创建一个类Honey，用于将其实例注入到Bee类的实例中:
 ```ts
 @Injectable()
@@ -216,7 +184,7 @@ export class Bee {
 ```ts
 console.log(Bee.honey.honeyType); // "Jujube honey"
 ```
-如果您想依赖接口，可以采用下面这种写法：
+如果我们想依赖接口，可以采用下面这种写法：
 ```ts
 @Injectable()
 export class Bee {
@@ -245,8 +213,58 @@ console.log(bee.honey1.honeyType); // "Jujube honey"
 console.log(bee.honey2.honeyType); // "Jujube honey"
 ```
 
+### 单例与多例
+在项目中如果需要一些单例的依赖，我们可以为 **@Injectable()** 传入一个 **type** 参数，**Mushroom** 将会控制这个类创建出的实例是单例的还是多例的：
+```ts
+@Injectable({ type: 'singleton' })
+export class Bee {
+    name = 'bee';
+
+    constructor() {}
+}
+
+@Injectable({ type: 'multiple' })
+export class Bee {
+    name = 'bee';
+
+    constructor() {}
+}
+```
+如果不传，默认为多例。  
+单例依赖一旦创建就会放入 **Mushroom** 容器中，之后将一直使用这个依赖，不会重新创建。当我们需要将 **Mushroom** 容器中的单例依赖销毁，让下一次重新创建时，可以调用 **MushroomService** 中的 **destroySingletonInstance** 方法来销毁 **Mushroom** 容器中保存的实例：
+```ts
+const mushroomService = of(MushroomService);
+mushroomService.destroySingletonInstance(Bee);
+```
+<a id="createCachedDependencies"></a>
+### 创建带有缓存的实例
+如果我们需要单例的依赖，但又不想其常驻内存，我们可以将 **@Injectable()** 中的type设置为 **cached** ，来实现这种效果：
+```ts
+@Injectable({ type: 'cached' })
+export class Bee {
+    name = 'bee';
+
+    constructor() {}
+}
+```
+```ts
+const bee1 = of(Bee);
+const bee2 = of(Bee);
+
+console.log(bee1 === bee2) // true
+```
+如果bee1, bee2实例之后不会再被用到，在下次垃圾回收的时候会将其回收，在 **Mushroom** 容器中缓存的Bee的实例也一并被回收。  
+这将会很有用，如果一个对象占用内存比较多，创建的代价又相对较大，推荐使用这种方式。  
+更多用法可以参考后续这一章节。[链接](#cachedDependenciesAdvancedUsage)  
+    
+我们还可以调用 **MushroomService** 中的 **destroyCachedInstance** 方法，手动清除实例的缓存：
+```ts
+const mushroomService = of(MushroomService);
+mushroomService.destroyCachedInstance(Bee1);
+```
+
 ### 使用 by() 方法为依赖的构造方法传递参数
-少数情况下，我们需要创建构造方法带参数的依赖，我们可以使用 **Mushroom** 提供的 **by()** 方法：
+少数情况下，我们需要创建构造方法带参数的依赖，可以使用 **Mushroom** 提供的 **by()** 方法：
 ```ts
 @Injectable()
 export class Bee {
@@ -265,7 +283,7 @@ export class Bee {
 const bee = by(Bee, 123);
 console.log(bee.getName()); // "bee123"
 ```
-如果第一个参数需要自动注入，第二个参数需要传入参数，则可以使用 **Mushroom** 提供的 **AUTO** symbol常量：
+如果第一个参数需要自动注入，第二个参数需要传入参数，则可以使用 **Mushroom** 提供的 **AUTO** 常量：
 ```ts
 @Injectable()
 export class Bee {
@@ -331,7 +349,7 @@ export class BeeConfig {
     }
 }
 ```
-当然，您还需要使用 **Mushroom** 提供的 **registerDepsConfig** 方法，在您程序的入口去注册该配置类：
+当然，我们还可能需要使用 **Mushroom** 提供的 **registerDepsConfig** 方法（如果配置类在获取该依赖前不会被引用到），在程序的入口去注册该配置类：
 ```ts
 registerDepsConfig(BeeConfig);
 ```
@@ -342,7 +360,7 @@ console.log(bee instanceof HoneyBee); // true
 console.log(bee.getName()); // "bee520"
 console.log(bee.location); // "Jungle"
 ```
-您还可以在配置方法中直接返回要使用的实例：
+我们还可以在配置方法中直接返回要使用的实例：
 ```ts
 export class BeeConfig {
     @DependencyConfig(Bee)
@@ -385,7 +403,7 @@ const bee = of(Bee);
 console.log(bee instanceof Hornet); // true
 console.log(bee instanceof FierceHornet); // true
 ```
-如若不想继续深度查找配置，可以在配置方法中返回 **Mushroom** 提供的 **STOP_DEEP_CONFIG** symbol常量，来阻止继续深度查找配置：
+如若不想继续深度查找配置，可以在配置方法中返回 **Mushroom** 提供的 **STOP_DEEP_CONFIG** 常量，来阻止继续深度查找配置：
 ```ts
 export class BeeConfig {
     @DependencyConfig(Bee)
@@ -407,8 +425,8 @@ console.log(bee instanceof Hornet); // true
 console.log(bee instanceof FierceHornet); // false
 ```
 
-### 任意参数的 by() 方法
-您可以利用 **by()** 方法，传递一个标识给依赖配置方法，去告知其如何配置依赖：
+### 通过 by() 方法传递标识
+我们可以利用 **by()** 方法，传递一个标识给依赖配置方法，去告知其如何配置依赖：
 ```ts
 export class BeeConfig {
     @DependencyConfig(Bee)
@@ -429,11 +447,11 @@ const bee2 = by(Bee, { flag: 0 }); // Hornet
 ```
 
 ### afterInstanceCreate、afterInstanceFetch钩子
-您可以利用 **DependencyConfigEntity** 中的 **afterInstanceCreate** 、**afterInstanceFetch** 钩子进行创建、获取到依赖后的一些自定义操作，这两个钩子的区别为：  
+我们可以利用 **DependencyConfigEntity** 中的 **afterInstanceCreate** 、**afterInstanceFetch** 钩子进行在创建、获取到依赖后的一些自定义操作，这两个钩子的区别为：  
 **afterInstanceCreate** 只在新实例化依赖后调用；  
 **afterInstanceFetch** 在新实例化依赖以及得到依赖（如：获取已创建的单例依赖）后都会调用；  
 顺序为**afterInstanceCreate** -> **afterInstanceFetch**  
-下面会举一个利用 **afterInstanceCreate** 配置局部范围内单例的例子：
+下面会举一个利用 **afterInstanceCreate** 并借助 **MushroomService** 服务，配置局部范围内单例的例子：
 ```ts
 @Injectable()
 export class MonkeyChief {
@@ -446,17 +464,18 @@ export class MonkeyChief {
 ```
 ```ts
 export class ScopedClassesConfig {
-    private static monkeyChiefs = new Map<string, MonkeyChief>();
+    @Inject()
+    private static mushroomService: MushroomService;
 
     @DependencyConfig(MonkeyChief)
     static configMonkeyChief(configEntity: DependencyConfigEntity<typeof MonkeyChief>): void | MonkeyChief {
         const location = configEntity.args[0];
 
-        if (ScopedClassesConfig.monkeyChiefs.has(location)) {
-            return ScopedClassesConfig.monkeyChiefs.get(location);
+        if (ScopedClassesConfig.mushroomService.containsDependencyWithKey(MonkeyChief, location)) {
+            return ScopedClassesConfig.mushroomService.getDependencyByKey(MonkeyChief, location);
         } else {
             configEntity.afterInstanceCreate = (instance): void => {
-                ScopedClassesConfig.monkeyChiefs.set(location, instance);
+                ScopedClassesConfig.mushroomService.addDependencyWithKey(MonkeyChief, instance, location);
             };
         }
     }
@@ -471,7 +490,37 @@ const taishanMonkeyChief = by(MonkeyChief, 'Taishan');
 console.log(huashanMonkeyChief1 === huashanMonkeyChief2); // true
 console.log(huashanMonkeyChief1 === taishanMonkeyChief); // false
 ```
-
+如果你需要让这些实例可以被回收，可以用 **MushroomService** 中的 **addDependencyWithWeakKey()** 方法，代替 **mushroomService.addDependencyWithKey()** 方法，使你的Key（范围）成为弱引用。
+    
+<a id="cachedDependenciesAdvancedUsage"></a>
+### 带有缓存的依赖，配置跟随特定对象的销毁来清除该依赖的缓存
+在[创建带有缓存的实例](#createCachedDependencies)章节中，默认的跟随对象是this，也就是当自己不会再被用到的时候，实例将被销毁（缓存被清除）。我们还可以通过配置 **follow** 属性来跟随其他对象：
+```ts
+@Injectable<Bee>({
+    type: 'cached',
+    follow: function () {
+        return this.following;
+    }
+})
+export class Bee {
+    constructor(public following: ObjectType) {}
+}
+```
+在Vue3项目中，我们可以这样配置一个服务，跟随某一Vue页面实例的销毁而销毁：
+```ts
+import { getCurrentInstance } from 'vue';
+    
+@Injectable<MyVue3Service>({
+    type: 'cached',
+    follow: function () {
+        return getCurrentInstance() || this;
+    }
+})
+export class MyVue3Service {
+    constructor(public following: ObjectType) {}
+}
+```
+    
 ### 延迟注入
 有时我们为了提升实例的初始化性能，可以为 **@Inject()** 装饰器传入 **{lazy: true}** 参数实现延迟注入：
 ```ts

@@ -6,19 +6,39 @@ export type InstanceTypes<T extends Class[]> = T extends [first: infer F, ...res
     ? [InstanceType<F extends Class ? F : any>, ...InstanceTypes<R extends Class[] ? R : any[]>]
     : [];
 
+export type ObjectType = Record<string | symbol | number, any>;
+
 export type GenericType<T> = T extends Class<infer G> ? G : any;
 
-export type InjectType = 'multiple' | 'singleton';
+export type InjectType = 'multiple' | 'cached' | 'singleton';
 
-export interface InjectableOptions {
-    type: InjectType;
-}
+export type DependencyWeakKey = ObjectType;
+export type DependencyKey =
+    | string
+    | symbol
+    | number
+    | boolean
+    | bigint
+    | ((...args: any[]) => any)
+    | Class
+    | null
+    | undefined
+    | DependencyWeakKey;
+
+export type InjectableOptions<T = any> =
+    | {
+          type: Exclude<InjectType, 'cached'>;
+      }
+    | ({
+          type: Extract<InjectType, 'cached'>;
+          follow?: (instance: T) => ObjectType;
+      } & ThisType<T>);
 
 export interface InjectOptions {
     lazy: boolean;
 }
 
-export interface DependencyConfigEntity<T extends Class = any, A extends Class | any[] | undefined = undefined> {
+export interface DependencyConfigEntity<T extends Class = Class, A extends Class | any[] | undefined = undefined> {
     usingClass: Class<GenericType<T>>;
     args: A extends undefined ? ConstructorParameters<T> : A extends Class ? ConstructorParameters<A> : A;
     afterInstanceCreate?: (instance: InstanceType<T>) => void;
@@ -34,7 +54,7 @@ export function by<T extends Class>(c: T, ...args: ConstructorParameters<T>): In
 export function by<T extends Class, CP extends [any, ...any[]]>(c: T, ...args: CP): InstanceType<T>;
 export function by<T, CP extends [any, ...any[]]>(c: Class<T>, ...args: CP): T;
 
-export function Injectable(options?: InjectableOptions): ClassDecorator;
+export function Injectable<T>(options?: InjectableOptions<T>): ClassDecorator;
 
 export function DependencyConfig(c: Class): MethodDecorator;
 
@@ -44,7 +64,12 @@ export function Inject(injectOptions: InjectOptions): PropertyDecorator;
 export function Inject(c: Class, injectOptions: InjectOptions): PropertyDecorator;
 
 export class MushroomService {
-    destroySingletonInstance(nc: NormalClass): void;
+    addDependencyWithKey<T>(nc: NormalClass<T>, instance: T, key: DependencyKey): void;
+    addDependencyWithWeakKey<T>(nc: NormalClass<T>, instance: T, key: DependencyWeakKey): void;
+    getDependencyByKey<T>(nc: NormalClass<T>, key: DependencyKey): T;
+    removeDependencyByKey<T>(nc: NormalClass<T>, key: DependencyKey): boolean;
+    destroyCachedInstance(nc: NormalClass): boolean;
+    destroySingletonInstance(nc: NormalClass): boolean;
 }
 
 export const AUTO: any;

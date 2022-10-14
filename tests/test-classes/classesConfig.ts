@@ -1,6 +1,6 @@
 import type { Class } from '../../src/types/diTypes';
 
-import { DependencyConfig, of } from '../../src';
+import { DependencyConfig, MushroomService, of } from '../../src';
 import { DependencyConfigEntity } from '../../src/dependency-config/dependencyConfigEntity';
 import {
     Banana,
@@ -18,7 +18,8 @@ import {
     Pig,
     RedMonkey,
     RedPig,
-    YellowMonkey
+    YellowMonkey,
+    YellowMonkeyChief
 } from './configedClasses';
 import { STOP_DEEP_CONFIG } from '../../src/constants/diConstants';
 
@@ -109,17 +110,33 @@ export class ClassesConfig {
 }
 
 export class ScopedClassesConfig {
-    private static monkeyChiefs = new Map<string, MonkeyChief>();
-
     @DependencyConfig(MonkeyChief)
     static configMonkeyChief(configEntity: DependencyConfigEntity<typeof MonkeyChief>): void | MonkeyChief {
         const location = configEntity.args[0];
+        const mushroomService = of(MushroomService);
 
-        if (ScopedClassesConfig.monkeyChiefs.has(location)) {
-            return ScopedClassesConfig.monkeyChiefs.get(location);
+        if (mushroomService.containsDependencyWithKey(MonkeyChief, location)) {
+            return mushroomService.getDependencyByKey(MonkeyChief, location);
         } else {
             configEntity.afterInstanceCreate = (instance): void => {
-                ScopedClassesConfig.monkeyChiefs.set(location, instance);
+                mushroomService.addDependencyWithKey(MonkeyChief, instance, location);
+            };
+        }
+    }
+
+    @DependencyConfig(YellowMonkeyChief)
+    static configYellowMonkeyChief(configEntity: DependencyConfigEntity<typeof YellowMonkeyChief>): void | YellowMonkeyChief {
+        const location = configEntity.args[0];
+        const mushroomService = of(MushroomService);
+
+        if (mushroomService.containsDependencyWithKey(YellowMonkeyChief, location)) {
+            return mushroomService.getDependencyByKey(YellowMonkeyChief, location);
+        } else {
+            configEntity.afterInstanceCreate = (instance): void => {
+                mushroomService.addDependencyWithWeakKey(YellowMonkeyChief, instance, location);
+            };
+            configEntity.afterInstanceFetch = (instance): void => {
+                if (!instance) throw new Error();
             };
         }
     }

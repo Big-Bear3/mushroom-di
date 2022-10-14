@@ -8,11 +8,18 @@ export type InstanceTypes<T extends Class[]> = T extends [first: infer F, ...res
     ? [InstanceType<F extends Class ? F : any>, ...InstanceTypes<R extends Class[] ? R : any[]>]
     : [];
 
-export type InjectType = 'multiple' | 'singleton';
+export type ObjectType = Record<string | symbol | number, any>;
 
-export interface InjectableOptions {
-    type: InjectType;
-}
+export type InjectType = 'multiple' | 'cached' | 'singleton';
+
+export type InjectableOptions<T = any> =
+    | {
+          type: Exclude<InjectType, 'cached'>;
+      }
+    | ({
+          type: Extract<InjectType, 'cached'>;
+          follow?: (instance: T) => ObjectType;
+      } & ThisType<T>);
 
 export interface InjectOptions {
     lazy: boolean;
@@ -30,9 +37,22 @@ export interface MethodDescriptor {
 }
 
 export interface DependencyConfigResult<T> {
-    usingClass?: Class<T>;
+    usingClass?: NormalClass<T>;
     usingArgs?: any[];
     usingObject?: T;
     afterInstanceCreate?: (instance: T) => void;
     afterInstanceFetch?: (instance: T, isNew: boolean) => void;
 }
+
+export type DependencyWeakKey = ObjectType;
+export type DependencyKey =
+    | string
+    | symbol
+    | number
+    | boolean
+    | bigint
+    | ((...args: any[]) => any)
+    | Class
+    | null
+    | undefined
+    | DependencyWeakKey;

@@ -1,18 +1,19 @@
-import type { Class, NormalClass, DependencyConfigResult } from '../types/diTypes';
+import type { Class, NormalClass, DependencyConfigResult, ObjectType } from '../types/diTypes';
 
 import { messageNewLineSign, STOP_DEEP_CONFIG } from '../../src/constants/diConstants';
 import { DependenciesConfigCollector } from '../../src/dependency-config/dependenciesConfigCollector';
 import { DependencyConfigEntity } from '../../src/dependency-config/dependencyConfigEntity';
 import { Message } from '../../src/utils/message';
-import { SingletonDependenciesManager } from '../dependency-manager/singletonDependenciesManager';
+import { SingletonDependenciesContainer } from '../dependency-container/singletonDependenciesContainer';
 import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
 import { DependenciesCreator } from './dependenciesCreator';
+import { CachedDependenciesContainer } from '../../src/dependency-container/cachedDependenciesContainer';
 
 export class DependenciesSearcher {
     private static instance: DependenciesSearcher;
 
     /** 根据依赖配置查找或创建依赖 */
-    searchDependency<T>(c: Class<T>, args?: any[]): T {
+    searchDependency<T>(c: Class<T>, args?: unknown[]): T {
         // 读取依赖配置
         const { usingClass, usingArgs, usingObject, afterInstanceCreate, afterInstanceFetch } = this.getUsingsByConfig(c, args);
         if (usingObject) {
@@ -21,39 +22,70 @@ export class DependenciesSearcher {
         }
 
         // 获取注入方式
-        const injectType = DependenciesClassCollector.getInstance().getInjectableOptions(usingClass).type;
-        let instance: any;
-        if (injectType === 'singleton') {
-            const singletonDependenciesManager = SingletonDependenciesManager.getInstance();
-            instance = singletonDependenciesManager.getDependency(<NormalClass>usingClass);
-            if (instance) {
-                if (usingArgs.length > 0)
-                    Message.warn(
-                        '20002',
-                        `您试图在为一个已创建的单例依赖传入构造方法参数，这些参数将不会生效！${messageNewLineSign}class: ${usingClass.name}`
-                    );
+        const injectableOptions = DependenciesClassCollector.getInstance().getInjectableOptions(usingClass);
+        let instance: T;
 
-                afterInstanceFetch?.(instance, false);
-            } else {
-                instance = DependenciesCreator.getInstance().createDependency(<NormalClass>usingClass, usingArgs);
-                singletonDependenciesManager.addDependency(<NormalClass>usingClass, instance);
+        switch (injectableOptions.type) {
+            case 'singleton':
+                const singletonDependenciesContainer = SingletonDependenciesContainer.getInstance();
+                instance = singletonDependenciesContainer.getDependency(usingClass);
+                if (instance) {
+                    afterInstanceFetch?.(instance, false);
+                } else {
+                    instance = DependenciesCreator.getInstance().createDependency(usingClass, usingArgs);
+                    singletonDependenciesContainer.addDependency(usingClass, instance);
+
+                    afterInstanceCreate?.(instance);
+                    afterInstanceFetch?.(instance, true);
+                }
+                break;
+            case 'cached':
+                const cachedDependenciesContainer = CachedDependenciesContainer.getInstance();
+                let key = cachedDependenciesContainer.getDependencyKey(usingClass);
+                if (key) {
+                    instance = cachedDependenciesContainer.getDependency(usingClass, key);
+                    afterInstanceFetch?.(instance, false);
+                } else {
+                    instance = DependenciesCreator.getInstance().createDependency(usingClass, usingArgs);
+
+                    if (injectableOptions.follow) {
+                        key = injectableOptions.follow.call(instance, instance);
+                    } else {
+                        key = <ObjectType>instance;
+                    }
+
+                    if (!key)
+                        Message.throwError(
+                            '29007',
+                            `follow方法的返回值不能为空！${messageNewLineSign}class: ${usingClass.name}, 返回值: ${key}`
+                        );
+                    if (typeof key !== 'object')
+                        Message.throwError(
+                            '29008',
+                            `follow方法的返回值必须是对象类型！${messageNewLineSign}class: ${usingClass.name}, 返回值: ${key}`
+                        );
+
+                    cachedDependenciesContainer.addDependencyKey(usingClass, key);
+                    cachedDependenciesContainer.addDependency(usingClass, instance, key);
+
+                    afterInstanceCreate?.(instance);
+                    afterInstanceFetch?.(instance, true);
+                }
+                break;
+
+            default:
+                instance = DependenciesCreator.getInstance().createDependency(usingClass, usingArgs);
 
                 afterInstanceCreate?.(instance);
                 afterInstanceFetch?.(instance, true);
-            }
-            return instance;
+                break;
         }
-
-        instance = DependenciesCreator.getInstance().createDependency(<NormalClass>usingClass, usingArgs);
-
-        afterInstanceCreate?.(instance);
-        afterInstanceFetch?.(instance, true);
 
         return instance;
     }
 
     /** 获取依赖配置的结果 */
-    private getUsingsByConfig<T>(originalClass: Class<T>, originalArgs?: any[]): DependencyConfigResult<T> {
+    private getUsingsByConfig<T>(originalClass: Class<T>, originalArgs?: unknown[]): DependencyConfigResult<T> {
         let usingClass: Class<T>;
         let usingArgs = originalArgs || [];
         let afterInstanceCreate: (instance: T) => void;
@@ -63,7 +95,7 @@ export class DependenciesSearcher {
         while (usingClass !== currentUsingClass) {
             usingClass = currentUsingClass;
 
-            let configEntity: DependencyConfigEntity<any, any[]>;
+            let configEntity: DependencyConfigEntity<Class, unknown[]>;
 
             // 获取自定义配置依赖方法
             const configMethod = DependenciesConfigCollector.getInstance().getConfigMethod(currentUsingClass);
@@ -94,7 +126,7 @@ export class DependenciesSearcher {
 
                 if (configResult === STOP_DEEP_CONFIG)
                     return {
-                        usingClass: currentUsingClass,
+                        usingClass: <NormalClass>currentUsingClass,
                         usingArgs,
                         afterInstanceCreate,
                         afterInstanceFetch
@@ -103,7 +135,7 @@ export class DependenciesSearcher {
         }
 
         return {
-            usingClass,
+            usingClass: <NormalClass>usingClass,
             usingArgs,
             afterInstanceCreate,
             afterInstanceFetch
