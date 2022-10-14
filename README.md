@@ -236,7 +236,7 @@ export class Bee {
 const mushroomService = of(MushroomService);
 mushroomService.destroySingletonInstance(Bee);
 ```
-    
+<a id="createCachedDependencies"></a>
 ### 创建带有缓存的实例
 如果我们需要单例的依赖，但又不想其常驻内存，我们可以将 **@Injectable()** 中的type设置为 **cached** ，来实现这种效果：
 ```ts
@@ -486,7 +486,7 @@ console.log(huashanMonkeyChief1 === taishanMonkeyChief); // false
 如果你需要让这些实例可以被回收，可以用 **MushroomService** 中的 **addDependencyWithWeakKey()** 方法，代替 **mushroomService.addDependencyWithKey()** 方法，使你的Key（范围）成为弱引用。
     
 ### 带有缓存的依赖，配置跟随特定对象的销毁来清除该依赖的缓存
-在 **创建带有缓存的实例** 章节中，默认的跟随对象是this，也就是当自己不会再被用到的时候，实例将被销毁（缓存被清除）。我们还可以通过配置 **follow** 属性来跟随其他对象：
+在[**创建带有缓存的实例**](#createCachedDependencies)章节中，默认的跟随对象是this，也就是当自己不会再被用到的时候，实例将被销毁（缓存被清除）。我们还可以通过配置 **follow** 属性来跟随其他对象：
 ```ts
 @Injectable<Bee>({
     type: 'cached',
@@ -498,7 +498,7 @@ export class Bee {
     constructor(public following: ObjectType) {}
 }
 ```
-在Vue3项目中，我们可以这样配置一个服务，跟随某一Vue页面实例的销毁而销毁该服务的实例：
+在Vue3项目中，我们可以这样配置一个服务，跟随某一Vue页面实例的销毁而销毁：
 ```ts
 import { getCurrentInstance } from 'vue';
     
