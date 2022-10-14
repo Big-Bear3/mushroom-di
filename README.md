@@ -17,7 +17,7 @@ export class MyClass {
 ```
 
 ## 为什么需要Mushroom？
-在Typescript项目中，我们维护有状态的对象时，面向对象通常比面向函数更加有优势。  
+在Typescript项目中，我们维护有状态的对象时，面向对象通常比面向函数更加有优势：  
 1. 功能性  
     Class提供了更多的功能，如访问修饰符、访问器、继承、实现接口等，这些可以使我们程序的灵活性，健壮性更好，条理更清晰。  
 2. 简洁性、易用性  
@@ -47,7 +47,7 @@ export function useStateManager() {
 
 const { setState, getState, stateIsEqual } = useStateManager();
 ```
-是不是看起来比较熟悉？在Vue3的项目中，<script setup>标签解决了在vue文件中多余的return问题，但是这些use函数中，我们依然需要返回。      
+是不是看起来比较熟悉？在Vue3的项目中，<script setup>标签解决了在vue文件中多余的return问题，但是这些use函数中依然需要返回。      
 我们可以使用类来解决此问题：
 ```ts
 export class StateManager {
@@ -68,7 +68,7 @@ export class StateManager {
     
 const { setState, getState, stateIsEqual } = new StateManager();
 ```
-这样就简洁多了，而且性能要比闭包的方式好一些。不过通过new的方式不利于我们对这些实例（依赖）进行管理。  
+这样就简洁多了，而且性能要比闭包的方式好一些。不过通过new的方式，我们还需要对这些实例（依赖）进行管理。  
   
 [**Mushroom**](https://github.com/Big-Bear3/mushroom-di) 为创建、管理、维护（Ioc、DI）这些依赖提供了完整的解决方案。如：单例、多例的控制，依赖创建的参数、使用的子类（多态）的配置，依赖查找与自动注入依赖等等。  
   
@@ -214,7 +214,7 @@ console.log(bee.honey2.honeyType); // "Jujube honey"
 ```
 
 ### 单例与多例
-我们在项目中如果需要一些单例的依赖，我们可以为 **@Injectable()** 传入一个 **type** 参数，**Mushroom** 将会控制这个类创建出的实例是单例的还是多例的：
+在项目中如果需要一些单例的依赖，我们可以为 **@Injectable()** 传入一个 **type** 参数，**Mushroom** 将会控制这个类创建出的实例是单例的还是多例的：
 ```ts
 @Injectable({ type: 'singleton' })
 export class Bee {
@@ -254,10 +254,10 @@ const bee2 = of(Bee);
 console.log(bee1 === bee2) // true
 ```
 如果bee1, bee2实例之后不会再被用到，在下次垃圾回收的时候会将其回收，在 **Mushroom** 容器中缓存的Bee的实例也一并被回收。  
-这将会很有用，如果你的对象占用内存比较多，创建的代价又相对较大，推荐使用这种方式。
+这将会很有用，如果一个对象占用内存比较多，创建的代价又相对较大，推荐使用这种方式。
 
 ### 使用 by() 方法为依赖的构造方法传递参数
-少数情况下，我们需要创建构造方法带参数的依赖，我们可以使用 **Mushroom** 提供的 **by()** 方法：
+少数情况下，我们需要创建构造方法带参数的依赖，可以使用 **Mushroom** 提供的 **by()** 方法：
 ```ts
 @Injectable()
 export class Bee {
@@ -440,7 +440,7 @@ const bee2 = by(Bee, { flag: 0 }); // Hornet
 ```
 
 ### afterInstanceCreate、afterInstanceFetch钩子
-我们可以利用 **DependencyConfigEntity** 中的 **afterInstanceCreate** 、**afterInstanceFetch** 钩子进行创建、获取到依赖后的一些自定义操作，这两个钩子的区别为：  
+我们可以利用 **DependencyConfigEntity** 中的 **afterInstanceCreate** 、**afterInstanceFetch** 钩子进行在创建、获取到依赖后的一些自定义操作，这两个钩子的区别为：  
 **afterInstanceCreate** 只在新实例化依赖后调用；  
 **afterInstanceFetch** 在新实例化依赖以及得到依赖（如：获取已创建的单例依赖）后都会调用；  
 顺序为**afterInstanceCreate** -> **afterInstanceFetch**  
@@ -483,10 +483,10 @@ const taishanMonkeyChief = by(MonkeyChief, 'Taishan');
 console.log(huashanMonkeyChief1 === huashanMonkeyChief2); // true
 console.log(huashanMonkeyChief1 === taishanMonkeyChief); // false
 ```
-如果你需要让这些实例可以被回收，可以用 **MushroomService** 中的 **addDependencyWithWeakKey()** 方法 代替 **mushroomService.addDependencyWithKey()** 方法，使你的Key（范围）成为弱引用。
+如果你需要让这些实例可以被回收，可以用 **MushroomService** 中的 **addDependencyWithWeakKey()** 方法，代替 **mushroomService.addDependencyWithKey()** 方法，使你的Key（范围）成为弱引用。
     
 ### 带有缓存的依赖，配置跟随特定对象的销毁来清除该依赖的缓存
-在 **创建带有缓存的实例** 章节中，默认的跟随对象是this，也就是当自己不会再被用到的时候，实例将被销毁。我们还可以跟随其他对象：
+在 **创建带有缓存的实例** 章节中，默认的跟随对象是this，也就是当自己不会再被用到的时候，实例将被销毁（缓存被清除）。我们还可以通过配置 **follow** 属性来跟随其他对象：
 ```ts
 @Injectable<Bee>({
     type: 'cached',
@@ -498,7 +498,7 @@ export class Bee {
     constructor(public following: ObjectType) {}
 }
 ```
-在Vue3项目中，我们可以这样配置一个服务，跟随某一Vue实例销毁：
+在Vue3项目中，我们可以这样配置一个服务，跟随某一Vue页面实例的销毁而销毁该服务的实例：
 ```ts
 import { getCurrentInstance } from 'vue';
     
