@@ -13,7 +13,7 @@ export class MyClass {
     constructor(private instance2: OneClass) {} // 构造方法注入，类似于Angular
 }
 
-/** 作者微信：Lwn001*/
+/** 作者微信：Lwn001 */
 ```
 
 ## 为什么需要Mushroom？
@@ -77,7 +77,7 @@ const { setState, getState, stateIsEqual } = new StateManager();
 ## 运行环境
 **支持Map、WeakMap、reflect-metadata的浏览器端或Node端**  
 
-*注：由于Vite使用esbuild将TypeScript转译到JavaScript，esbuild还不支持reflect-metadata，可以参照如下方式去解决：
+*注：由于Vite使用esbuild将TypeScript转译到JavaScript，esbuild还不支持reflect-metadata，您可以参照如下方式去解决：
 ```
 npm i -D rollup-plugin-swc3
 ```
@@ -141,30 +141,6 @@ const bee = of(Bee);
 这样我们就通过 **Mushroom** 的依赖查找功能，得到了该类的实例（依赖）。我们还可以通过 **of()** 方法一次性获得多个依赖：
 ```ts
 const [bee1, bee2, bee3, ...] = of(Bee1, Bee2, Bee3, ...);
-```
-
-### 单例与多例
-或许我们在项目中需要一些单例的依赖，我们可以为 **@Injectable()** 传入一个 **type** 参数，**Mushroom** 将会控制这个类创建出的实例是单例的还是多例的：
-```ts
-@Injectable({ type: 'singleton' })
-export class Bee {
-    name = 'bee';
-
-    constructor() {}
-}
-
-@Injectable({ type: 'multiple' })
-export class Bee {
-    name = 'bee';
-
-    constructor() {}
-}
-```
-如果不传，默认为多例。  
-单例依赖一旦创建就会放入 **Mushroom** 容器中，之后将一直使用这个依赖，不会重新创建。当我们需要将 **Mushroom** 容器中的单例依赖销毁，让下一次重新创建时，可以调用 **MushroomService** 中的 **destroySingletonInstance** 方法来销毁 **Mushroom** 容器中保存的实例：
-```ts
-const mushroomService = of(MushroomService);
-mushroomService.destroySingletonInstance(Bee);
 ```
 
 ### 使用 @Inject() 装饰器为成员变量注入依赖
@@ -235,6 +211,30 @@ export class Bee {
 const bee = of(Bee);
 console.log(bee.honey1.honeyType); // "Jujube honey"
 console.log(bee.honey2.honeyType); // "Jujube honey"
+```
+
+### 单例与多例
+或许我们在项目中需要一些单例的依赖，我们可以为 **@Injectable()** 传入一个 **type** 参数，**Mushroom** 将会控制这个类创建出的实例是单例的还是多例的：
+```ts
+@Injectable({ type: 'singleton' })
+export class Bee {
+    name = 'bee';
+
+    constructor() {}
+}
+
+@Injectable({ type: 'multiple' })
+export class Bee {
+    name = 'bee';
+
+    constructor() {}
+}
+```
+如果不传，默认为多例。  
+单例依赖一旦创建就会放入 **Mushroom** 容器中，之后将一直使用这个依赖，不会重新创建。当我们需要将 **Mushroom** 容器中的单例依赖销毁，让下一次重新创建时，可以调用 **MushroomService** 中的 **destroySingletonInstance** 方法来销毁 **Mushroom** 容器中保存的实例：
+```ts
+const mushroomService = of(MushroomService);
+mushroomService.destroySingletonInstance(Bee);
 ```
 
 ### 使用 by() 方法为依赖的构造方法传递参数
