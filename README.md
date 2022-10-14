@@ -47,7 +47,7 @@ export function useStateManager() {
 
 const { setState, getState, stateIsEqual } = useStateManager();
 ```
-是不是看起来比较熟悉？在Vue3的项目中，<script setup>标签解决了在vue文件中多余的return问题，但是这些use函数中，您依然需要返回。      
+是不是看起来比较熟悉？在Vue3的项目中，<script setup>标签解决了在vue文件中多余的return问题，但是这些use函数中，我们依然需要返回。      
 我们可以使用类来解决此问题：
 ```ts
 export class StateManager {
@@ -144,7 +144,7 @@ const [bee1, bee2, bee3, ...] = of(Bee1, Bee2, Bee3, ...);
 ```
 
 ### 使用 @Inject() 装饰器为成员变量注入依赖
-上面介绍的使用 **of()** 获取实例为依赖查找的方式，您可以在任何地方使用它。现在我们来介绍一下在类中使用依赖注入的方式。  
+上面介绍的使用 **of()** 获取实例为依赖查找的方式，我们可以在任何地方使用它。现在介绍一下在类中使用依赖注入的方式。  
 首先我们再创建一个类Honey，用于将其实例注入到Bee类的实例中:
 ```ts
 @Injectable()
@@ -184,7 +184,7 @@ export class Bee {
 ```ts
 console.log(Bee.honey.honeyType); // "Jujube honey"
 ```
-如果您想依赖接口，可以采用下面这种写法：
+如果我们想依赖接口，可以采用下面这种写法：
 ```ts
 @Injectable()
 export class Bee {
@@ -342,7 +342,7 @@ export class BeeConfig {
     }
 }
 ```
-当然，您还可能需要使用 **Mushroom** 提供的 **registerDepsConfig** 方法（如果配置类在获取该依赖前不会被引用到），在您程序的入口去注册该配置类：
+当然，我们还可能需要使用 **Mushroom** 提供的 **registerDepsConfig** 方法（如果配置类在获取该依赖前不会被引用到），在程序的入口去注册该配置类：
 ```ts
 registerDepsConfig(BeeConfig);
 ```
@@ -353,7 +353,7 @@ console.log(bee instanceof HoneyBee); // true
 console.log(bee.getName()); // "bee520"
 console.log(bee.location); // "Jungle"
 ```
-您还可以在配置方法中直接返回要使用的实例：
+我们还可以在配置方法中直接返回要使用的实例：
 ```ts
 export class BeeConfig {
     @DependencyConfig(Bee)
@@ -419,7 +419,7 @@ console.log(bee instanceof FierceHornet); // false
 ```
 
 ### 通过 by() 方法传递标识
-您可以利用 **by()** 方法，传递一个标识给依赖配置方法，去告知其如何配置依赖：
+我们可以利用 **by()** 方法，传递一个标识给依赖配置方法，去告知其如何配置依赖：
 ```ts
 export class BeeConfig {
     @DependencyConfig(Bee)
@@ -440,7 +440,7 @@ const bee2 = by(Bee, { flag: 0 }); // Hornet
 ```
 
 ### afterInstanceCreate、afterInstanceFetch钩子
-您可以利用 **DependencyConfigEntity** 中的 **afterInstanceCreate** 、**afterInstanceFetch** 钩子进行创建、获取到依赖后的一些自定义操作，这两个钩子的区别为：  
+我们可以利用 **DependencyConfigEntity** 中的 **afterInstanceCreate** 、**afterInstanceFetch** 钩子进行创建、获取到依赖后的一些自定义操作，这两个钩子的区别为：  
 **afterInstanceCreate** 只在新实例化依赖后调用；  
 **afterInstanceFetch** 在新实例化依赖以及得到依赖（如：获取已创建的单例依赖）后都会调用；  
 顺序为**afterInstanceCreate** -> **afterInstanceFetch**  
@@ -486,7 +486,7 @@ console.log(huashanMonkeyChief1 === taishanMonkeyChief); // false
 如果你需要让这些实例可以被回收，可以用 **MushroomService** 中的 **addDependencyWithWeakKey()** 方法 代替 **mushroomService.addDependencyWithKey()** 方法，使你的Key（范围）成为弱引用。
     
 ### 带有缓存的依赖，配置跟随特定对象的销毁来清除该依赖的缓存
-在 **创建带有缓存的实例** 章节中，默认的跟随对象是this，也就是当自己不会再被用到的时候，实例将被销毁。您还可以跟随其他对象：
+在 **创建带有缓存的实例** 章节中，默认的跟随对象是this，也就是当自己不会再被用到的时候，实例将被销毁。我们还可以跟随其他对象：
 ```ts
 @Injectable<Bee>({
     type: 'cached',
@@ -498,7 +498,7 @@ export class Bee {
     constructor(public following: ObjectType) {}
 }
 ```
-在Vue3项目中，你可以这样配置一个服务，跟随某一Vue实例销毁：
+在Vue3项目中，我们可以这样配置一个服务，跟随某一Vue实例销毁：
 ```ts
 import { getCurrentInstance } from 'vue';
     
