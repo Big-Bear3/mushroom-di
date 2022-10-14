@@ -231,7 +231,7 @@ export class Bee {
 }
 ```
 如果不传，默认为多例。  
-单例依赖一旦创建就会放入 **Mushroom** 容器中，之后将一直使用这个依赖，不会重新创建。当我们需要将 **Mushroom** 容器中的单例依赖销毁，让下一次重新创建时，可以调用 **MushroomService** 中的 **destroySingletonInstance** 方法来销毁 **Mushroom** 容器中保存的实例：
+单例依赖一旦创建就会放入 **Mushroom** 容器中，之后将一直使用这个依赖，不会重新创建。当我们需要将 **Mushroom** 容器中的单例依赖销毁，让下一次重新创建时，可以调用 **MushroomService** 中的 **destroySingletonInstance()** 方法来销毁 **Mushroom** 容器中保存的实例：
 ```ts
 const mushroomService = of(MushroomService);
 mushroomService.destroySingletonInstance(Bee);
@@ -257,7 +257,7 @@ console.log(bee1 === bee2) // true
 这将会很有用，如果一个对象占用内存比较多，创建的代价又相对较大，推荐使用这种方式。  
 更多用法可以参考后续这一章节。[链接](#cachedDependenciesAdvancedUsage)  
     
-我们还可以调用 **MushroomService** 中的 **destroyCachedInstance** 方法，手动清除实例的缓存：
+我们还可以调用 **MushroomService** 中的 **destroyCachedInstance()** 方法，手动清除实例的缓存：
 ```ts
 const mushroomService = of(MushroomService);
 mushroomService.destroyCachedInstance(Bee1);
