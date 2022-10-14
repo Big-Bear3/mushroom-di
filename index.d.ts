@@ -67,6 +67,7 @@ export class MushroomService {
     addDependencyWithKey<T>(nc: NormalClass<T>, instance: T, key: DependencyKey): void;
     addDependencyWithWeakKey<T>(nc: NormalClass<T>, instance: T, key: DependencyWeakKey): void;
     getDependencyByKey<T>(nc: NormalClass<T>, key: DependencyKey): T;
+    containsDependencyWithKey<T>(nc: NormalClass<T>, key: DependencyKey): boolean;
     removeDependencyByKey<T>(nc: NormalClass<T>, key: DependencyKey): boolean;
     destroyCachedInstance(nc: NormalClass): boolean;
     destroySingletonInstance(nc: NormalClass): boolean;
