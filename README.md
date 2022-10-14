@@ -238,8 +238,23 @@ mushroomService.destroySingletonInstance(Bee);
 ```
     
 ### 创建带有缓存的实例
-如果我们需要单例的依赖，但又不想其常驻内存，我们可以将 **@Injectable()** 中的type设置为cached，来实现这种效果：
-    
+如果我们需要单例的依赖，但又不想其常驻内存，我们可以将 **@Injectable()** 中的type设置为 **cached** ，来实现这种效果：
+```ts
+@Injectable({ type: 'cached' })
+export class Bee {
+    name = 'bee';
+
+    constructor() {}
+}
+```
+```ts
+const bee1 = of(Bee);
+const bee2 = of(Bee);
+
+console.log(bee1 === bee2) // true
+```
+如果bee1, bee2实例之后不会再被用到，在下次垃圾回收的时候会将其回收，在 **Mushroom** 容器中缓存的Bee的实例也一并被回收。  
+这将会很有用，如果你的对象占用内存比较多，创建的代价又相对较大，推荐使用这种方式。
 
 ### 使用 by() 方法为依赖的构造方法传递参数
 少数情况下，我们需要创建构造方法带参数的依赖，我们可以使用 **Mushroom** 提供的 **by()** 方法：
