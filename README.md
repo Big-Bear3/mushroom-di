@@ -19,7 +19,7 @@ export class MyClass {
 ## 为什么需要Mushroom？
 在Typescript项目中，我们维护有状态的对象时，面向对象通常比面向函数更加有优势。  
 1. 功能性  
-    类提供了更多的功能，如访问修饰符、访问器、继承、实现接口等，这些可以使我们程序的灵活性，健壮性更好，条理更清晰。  
+    Class提供了更多的功能，如访问修饰符、访问器、继承、实现接口等，这些可以使我们程序的灵活性，健壮性更好，条理更清晰。  
 2. 简洁性、易用性  
     只使用函数，维护有状态的对象时，我们往往需要利用闭包：
 ```ts
@@ -74,16 +74,8 @@ const { setState, getState, stateIsEqual } = new StateManager();
   
 下面本文将会由浅至深地介绍 **Mushroom** 这款依赖注入工具。
 
-## Mushroom适合什么样的开发者？
-1. 对面向对象程序设计有一定的了解
-2. 对Typescript有一定的使用经验
-3. 对程序的设计原则有一定的了解
-
 ## 运行环境
-**需要支持Map、WeakMap；**  
-**需要支持reflect-metadata；**  
-  
-同时支持Node端和浏览器端。  
+**支持Map、WeakMap、reflect-metadata的浏览器端或Node端**  
 
 *注：由于Vite使用esbuild将TypeScript转译到JavaScript，esbuild还不支持reflect-metadata，可以参照如下方式去解决：
 ```
