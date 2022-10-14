@@ -237,7 +237,9 @@ const mushroomService = of(MushroomService);
 mushroomService.destroySingletonInstance(Bee);
 ```
 <a id="createCachedDependencies"></a>
-### 创建带有缓存的实例（需运行环境支持WeakRef）
+### 创建带有缓存的实例
+*注：此功能运行环境需要支持WeakRef，否则缓存将不会被清除。  
+    
 如果我们需要单例的依赖，但又不想其常驻内存，我们可以将 **@Injectable()** 中的type设置为 **cached** ，来实现这种效果：
 ```ts
 @Injectable({ type: 'cached' })
