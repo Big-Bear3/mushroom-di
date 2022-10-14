@@ -506,6 +506,7 @@ export class Bee {
     constructor(public following: ObjectType) {}
 }
 ```
+<!--
 在Vue3项目中，我们可以这样配置一个服务，跟随某一Vue页面实例的销毁而销毁：
 ```ts
 import { getCurrentInstance } from 'vue';
@@ -520,6 +521,7 @@ export class MyVue3Service {
     constructor(public following: ObjectType) {}
 }
 ```
+-->
     
 ### 延迟注入
 有时我们为了提升实例的初始化性能，可以为 **@Inject()** 装饰器传入 **{lazy: true}** 参数实现延迟注入：
