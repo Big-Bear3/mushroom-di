@@ -12,7 +12,7 @@ export type ObjectType = Record<string | symbol | number, any>;
 
 export type InjectType = 'multiple' | 'cached' | 'singleton';
 
-export type InjectableOptions<T = any> =
+export type InjectableOptions<T extends ObjectType = ObjectType> =
     | {
           type: Exclude<InjectType, 'cached'>;
       }
