@@ -444,7 +444,7 @@ const bee2 = by(Bee, { flag: 0 }); // Hornet
 **afterInstanceCreate** 只在新实例化依赖后调用；  
 **afterInstanceFetch** 在新实例化依赖以及得到依赖（如：获取已创建的单例依赖）后都会调用；  
 顺序为**afterInstanceCreate** -> **afterInstanceFetch**  
-下面会举一个利用 **afterInstanceCreate** 并借助MushroomService服务，配置局部范围内单例的例子：
+下面会举一个利用 **afterInstanceCreate** 并借助 **MushroomService** 服务，配置局部范围内单例的例子：
 ```ts
 @Injectable()
 export class MonkeyChief {
@@ -484,7 +484,35 @@ console.log(huashanMonkeyChief1 === huashanMonkeyChief2); // true
 console.log(huashanMonkeyChief1 === taishanMonkeyChief); // false
 ```
 如果你需要让这些实例可以被回收，可以用 **MushroomService** 中的 **addDependencyWithWeakKey()** 方法 代替 **mushroomService.addDependencyWithKey()** 方法，使你的Key（范围）成为弱引用。
-
+    
+### 带有缓存的依赖，配置跟随特定对象的销毁来清除该依赖的缓存
+在 **创建带有缓存的实例** 章节中，默认的跟随对象是this，也就是当自己不会再被用到的时候，实例将被销毁。您还可以跟随其他对象：
+```ts
+@Injectable<Bee>({
+    type: 'cached',
+    follow: function () {
+        return this.following;
+    }
+})
+export class Bee {
+    constructor(public following: ObjectType) {}
+}
+```
+在Vue3项目中，你可以这样配置一个服务，跟随某一Vue实例销毁：
+```ts
+import { getCurrentInstance } from 'vue';
+    
+@Injectable<MyVue3Service>({
+    type: 'cached',
+    follow: function () {
+        return getCurrentInstance() || this;
+    }
+})
+export class MyVue3Service {
+    constructor(public following: ObjectType) {}
+}
+```
+    
 ### 延迟注入
 有时我们为了提升实例的初始化性能，可以为 **@Inject()** 装饰器传入 **{lazy: true}** 参数实现延迟注入：
 ```ts
