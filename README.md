@@ -144,7 +144,7 @@ const [bee1, bee2, bee3, ...] = of(Bee1, Bee2, Bee3, ...);
 ```
 
 ### 使用 @Inject() 装饰器为成员变量注入依赖
-上面介绍的使用 **of()** 获取实例为依赖查找的方式，您可以在任何地方使用它。现在我们来介绍一下依赖注入的方式，但依赖注入只能在类中使用。  
+上面介绍的使用 **of()** 获取实例为依赖查找的方式，您可以在任何地方使用它。现在我们来介绍一下在类中使用依赖注入的方式。  
 首先我们再创建一个类Honey，用于将其实例注入到Bee类的实例中:
 ```ts
 @Injectable()
@@ -214,7 +214,7 @@ console.log(bee.honey2.honeyType); // "Jujube honey"
 ```
 
 ### 单例与多例
-或许我们在项目中需要一些单例的依赖，我们可以为 **@Injectable()** 传入一个 **type** 参数，**Mushroom** 将会控制这个类创建出的实例是单例的还是多例的：
+我们在项目中如果需要一些单例的依赖，我们可以为 **@Injectable()** 传入一个 **type** 参数，**Mushroom** 将会控制这个类创建出的实例是单例的还是多例的：
 ```ts
 @Injectable({ type: 'singleton' })
 export class Bee {
@@ -236,6 +236,10 @@ export class Bee {
 const mushroomService = of(MushroomService);
 mushroomService.destroySingletonInstance(Bee);
 ```
+    
+### 创建带有缓存的实例
+如果我们需要单例的依赖，但又不想其常驻内存，我们可以将 **@Injectable()** 中的type设置为cached，来实现这种效果：
+    
 
 ### 使用 by() 方法为依赖的构造方法传递参数
 少数情况下，我们需要创建构造方法带参数的依赖，我们可以使用 **Mushroom** 提供的 **by()** 方法：
