@@ -276,7 +276,7 @@ export class Bee {
 const bee = by(Bee, 123);
 console.log(bee.getName()); // "bee123"
 ```
-如果第一个参数需要自动注入，第二个参数需要传入参数，则可以使用 **Mushroom** 提供的 **AUTO** symbol常量：
+如果第一个参数需要自动注入，第二个参数需要传入参数，则可以使用 **Mushroom** 提供的 **AUTO** 常量：
 ```ts
 @Injectable()
 export class Bee {
@@ -342,7 +342,7 @@ export class BeeConfig {
     }
 }
 ```
-当然，您还需要使用 **Mushroom** 提供的 **registerDepsConfig** 方法，在您程序的入口去注册该配置类：
+当然，您还可能需要使用 **Mushroom** 提供的 **registerDepsConfig** 方法（如果配置类在获取该依赖前不会被引用到），在您程序的入口去注册该配置类：
 ```ts
 registerDepsConfig(BeeConfig);
 ```
@@ -396,7 +396,7 @@ const bee = of(Bee);
 console.log(bee instanceof Hornet); // true
 console.log(bee instanceof FierceHornet); // true
 ```
-如若不想继续深度查找配置，可以在配置方法中返回 **Mushroom** 提供的 **STOP_DEEP_CONFIG** symbol常量，来阻止继续深度查找配置：
+如若不想继续深度查找配置，可以在配置方法中返回 **Mushroom** 提供的 **STOP_DEEP_CONFIG** 常量，来阻止继续深度查找配置：
 ```ts
 export class BeeConfig {
     @DependencyConfig(Bee)
@@ -418,7 +418,7 @@ console.log(bee instanceof Hornet); // true
 console.log(bee instanceof FierceHornet); // false
 ```
 
-### 任意参数的 by() 方法
+### 通过 by() 方法传递标识
 您可以利用 **by()** 方法，传递一个标识给依赖配置方法，去告知其如何配置依赖：
 ```ts
 export class BeeConfig {
@@ -444,7 +444,7 @@ const bee2 = by(Bee, { flag: 0 }); // Hornet
 **afterInstanceCreate** 只在新实例化依赖后调用；  
 **afterInstanceFetch** 在新实例化依赖以及得到依赖（如：获取已创建的单例依赖）后都会调用；  
 顺序为**afterInstanceCreate** -> **afterInstanceFetch**  
-下面会举一个利用 **afterInstanceCreate** 配置局部范围内单例的例子：
+下面会举一个利用 **afterInstanceCreate** 并借助MushroomService服务，配置局部范围内单例的例子：
 ```ts
 @Injectable()
 export class MonkeyChief {
@@ -457,17 +457,18 @@ export class MonkeyChief {
 ```
 ```ts
 export class ScopedClassesConfig {
-    private static monkeyChiefs = new Map<string, MonkeyChief>();
+    @Inject()
+    private static mushroomService: MushroomService;
 
     @DependencyConfig(MonkeyChief)
     static configMonkeyChief(configEntity: DependencyConfigEntity<typeof MonkeyChief>): void | MonkeyChief {
         const location = configEntity.args[0];
 
-        if (ScopedClassesConfig.monkeyChiefs.has(location)) {
-            return ScopedClassesConfig.monkeyChiefs.get(location);
+        if (ScopedClassesConfig.mushroomService.containsDependencyWithKey(MonkeyChief, location)) {
+            return ScopedClassesConfig.mushroomService.getDependencyByKey(MonkeyChief, location);
         } else {
             configEntity.afterInstanceCreate = (instance): void => {
-                ScopedClassesConfig.monkeyChiefs.set(location, instance);
+                ScopedClassesConfig.mushroomService.addDependencyWithKey(MonkeyChief, instance, location);
             };
         }
     }
@@ -482,6 +483,7 @@ const taishanMonkeyChief = by(MonkeyChief, 'Taishan');
 console.log(huashanMonkeyChief1 === huashanMonkeyChief2); // true
 console.log(huashanMonkeyChief1 === taishanMonkeyChief); // false
 ```
+如果你需要让这些实例可以被回收，可以用 **MushroomService** 中的 **addDependencyWithWeakKey()** 方法 代替 **mushroomService.addDependencyWithKey()** 方法，使你的Key（范围）成为弱引用。
 
 ### 延迟注入
 有时我们为了提升实例的初始化性能，可以为 **@Inject()** 装饰器传入 **{lazy: true}** 参数实现延迟注入：
