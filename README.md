@@ -237,7 +237,7 @@ const mushroomService = of(MushroomService);
 mushroomService.destroySingletonInstance(Bee);
 ```
 <a id="createCachedDependencies"></a>
-### 创建带有缓存的实例
+### 创建带有缓存的实例（需运行环境支持WeakRef）
 如果我们需要单例的依赖，但又不想其常驻内存，我们可以将 **@Injectable()** 中的type设置为 **cached** ，来实现这种效果：
 ```ts
 @Injectable({ type: 'cached' })
@@ -254,7 +254,12 @@ const bee2 = of(Bee);
 console.log(bee1 === bee2) // true
 ```
 如果bee1, bee2实例之后不会再被用到，在下次垃圾回收的时候会将其回收，在 **Mushroom** 容器中缓存的Bee的实例也一并被回收。  
-这将会很有用，如果一个对象占用内存比较多，创建的代价又相对较大，推荐使用这种方式。
+这将会很有用，如果一个对象占用内存比较多，创建的代价又相对较大，推荐使用这种方式。  
+我们还可以使用 **MushroomService** 手动销毁缓存：
+```ts
+const mushroomService = of(MushroomService);
+mushroomService.destroyCachedInstance(Bee1);
+```
 
 ### 使用 by() 方法为依赖的构造方法传递参数
 少数情况下，我们需要创建构造方法带参数的依赖，可以使用 **Mushroom** 提供的 **by()** 方法：
@@ -486,7 +491,7 @@ console.log(huashanMonkeyChief1 === taishanMonkeyChief); // false
 如果你需要让这些实例可以被回收，可以用 **MushroomService** 中的 **addDependencyWithWeakKey()** 方法，代替 **mushroomService.addDependencyWithKey()** 方法，使你的Key（范围）成为弱引用。
     
 ### 带有缓存的依赖，配置跟随特定对象的销毁来清除该依赖的缓存
-在[**创建带有缓存的实例**](#createCachedDependencies)章节中，默认的跟随对象是this，也就是当自己不会再被用到的时候，实例将被销毁（缓存被清除）。我们还可以通过配置 **follow** 属性来跟随其他对象：
+在[创建带有缓存的实例](#createCachedDependencies)章节中，默认的跟随对象是this，也就是当自己不会再被用到的时候，实例将被销毁（缓存被清除）。我们还可以通过配置 **follow** 属性来跟随其他对象：
 ```ts
 @Injectable<Bee>({
     type: 'cached',
