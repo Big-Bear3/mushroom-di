@@ -4,6 +4,7 @@ import type { NormalClass, DependencyWeakKey, ObjectType } from '../types/diType
 export class CachedDependenciesContainer {
     private static instance: CachedDependenciesContainer;
 
+    /* istanbul ignore next */
     private static supportWeakRef = WeakRef ? true : false;
 
     private cachedDependenciesMap = new Map<NormalClass, WeakMap<DependencyWeakKey, any>>();
@@ -36,6 +37,7 @@ export class CachedDependenciesContainer {
         const key = this.cachedDependencyKeysMap.get(nc);
         if (!key) return undefined;
 
+        /* istanbul ignore next */
         return CachedDependenciesContainer.supportWeakRef ? (<WeakRef<ObjectType>>key).deref() : <ObjectType>key;
     }
 

@@ -71,6 +71,7 @@ export class DependenciesCreator {
             Message.throwError(
                 '39001',
                 `依赖注入容器实例化类 "${usingClass.name}" 出错！${messageNewLineSign}${
+                    /* istanbul ignore next */
                     (<{ stack: unknown }>error)?.stack ?? error
                 }`
             );

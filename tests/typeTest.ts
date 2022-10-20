@@ -4,8 +4,9 @@
 
 // import { Animal } from './test-classes/extendsClasses';
 // import { Honey, Bear, Zoo, BrownBear } from './test-classes/basicClasses';
-// import { of, by, DependencyConfig, Injectable } from '../src';
+// import { of, by, DependencyConfig, Injectable, MushroomService } from '../src';
 // import { DependencyConfigEntity } from '../src/dependency-config/dependencyConfigEntity';
+// import { modularValues } from './valueTest.spec';
 
 // const bear1 = of(Bear); // Bear
 // const bear2 = of<Bear>(Bear); // Bear
@@ -81,3 +82,24 @@
 //     follow: () => {} // Argument of type '{ type: "singleton"; follow: () => void; }' is not assignable to parameter of type 'InjectableOptions<CachedClass4>'
 // })
 // export class CachedClass4 {}
+
+// const { patchVal, takeVal, InjectVal } = of(MushroomService).buildValueDepsManager(modularValues);
+
+// patchVal('app.theme.mode', 'dark'); // no error
+// patchVal('app.theme.mode', 'custom'); //// Argument of type '"custom"' is not assignable to parameter of type '"dark" | "light"'.
+// patchVal('app.theme.error', 'custom'); //// Argument of type '"app.theme.error"' is not assignable to parameter of type...
+
+// patchVal({ 'user.userId': '123' }); //// Type 'string' is not assignable to type 'number'.
+// patchVal({ 'user.userIds': 1 }); //// Argument of type '{ 'user.userIds': number; }' is not assignable to parameter of type
+
+// const value1 = takeVal('app.isLoading'); // const value1: boolean
+// const value2 = takeVal('app.theme.mode'); // const value2: "light" | "dark"
+
+// const values = takeVal('app.isLoading', 'app.theme.mode'); // [boolean, "light" | "dark"]
+
+// export class ValuesClass1 {
+//     @InjectVal('app.theme.mode') // no error
+//     @InjectVal('user') //// Argument of type '"user"' is not assignable to parameter of type...
+//     @InjectVal('user.role.roles', '1') //// Argument of type 'string' is not assignable to parameter of type 'string[]'
+//     value: unknown;
+// }

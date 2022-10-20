@@ -81,7 +81,8 @@ export class InjectMembersHandler {
             for (const memberInfo of injectMembersInfo.members) {
                 instance[memberInfo.memberName] = memberInfo.definedClass
                     ? dependenciesSearcher.searchDependency(memberInfo.definedClass)
-                    : undefined;
+                    : /* istanbul ignore next */
+                      undefined;
             }
         }
 

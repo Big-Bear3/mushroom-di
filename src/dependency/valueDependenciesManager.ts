@@ -8,9 +8,6 @@ import { MODULE } from '../constants/diConstants';
 export class ValueDependenciesManager {
     private static instance: ValueDependenciesManager;
 
-    /** 非模块化的所有值 */
-    private objectValues: ObjectType;
-
     /** 模块化的所有值 */
     private modularValues: ModularValues;
 
@@ -29,60 +26,49 @@ export class ValueDependenciesManager {
 
         if (typeof values !== 'object') Message.throwError('29010', '构建值依赖管理器的初始值必须是object类型！');
 
-        if (values[MODULE]) {
-            this.modularValues = <ModularValues>values;
-        } else {
-            this.objectValues = values;
-        }
+        this.modularValues = <ModularValues>values;
     }
 
     /** 根据key去更新值 */
     patchValue(key: string, value: unknown): void {
+        /* istanbul ignore next */
         if (typeof key !== 'string') Message.throwError('29011', 'key必须是string类型！');
 
+        if (!this.modularValues) this.modularValues = {} as ModularValues;
+
         const keySeries = key.split('.');
-        if (keySeries.length === 1) {
-            if (!this.objectValues) this.objectValues = {};
-            this.objectValues[key] = value;
-        } else {
-            if (!this.modularValues) this.modularValues = {} as ModularValues;
 
-            let lastObj: Partial<ModularValues> = this.modularValues;
-            for (let i = 0; i < keySeries.length - 1; i++) {
-                let modularObj = lastObj[MODULE];
-                if (!modularObj) {
-                    modularObj = {};
-                    lastObj[MODULE] = modularObj;
-                }
-                let currentObj = modularObj[keySeries[i]];
-                if (!currentObj) {
-                    currentObj = {};
-                    modularObj[keySeries[i]] = currentObj;
-                }
-                lastObj = currentObj;
+        let lastObj: Partial<ModularValues> = this.modularValues;
+        for (let i = 0; i < keySeries.length - 1; i++) {
+            let modularObj = lastObj[MODULE];
+            if (!modularObj) {
+                modularObj = {};
+                lastObj[MODULE] = modularObj;
             }
-
-            lastObj[keySeries[keySeries.length - 1]] = value;
+            let currentObj = modularObj[keySeries[i]];
+            if (!currentObj) {
+                currentObj = {};
+                modularObj[keySeries[i]] = currentObj;
+            }
+            lastObj = currentObj;
         }
+
+        lastObj[keySeries[keySeries.length - 1]] = value;
     }
 
     /** 根据key去取值 */
     takeValue(key: string): unknown {
         if (typeof key !== 'string') Message.throwError('29012', 'key必须是string类型！');
+        if (!this.modularValues) return undefined;
 
         const keySeries = key.split('.');
-        if (keySeries.length === 1) {
-            return this.objectValues?.[key];
-        } else {
-            if (!this.modularValues) return undefined;
 
-            let lastObj: Partial<ModularValues> = this.modularValues;
-            for (let i = 0; i < keySeries.length - 1; i++) {
-                lastObj = lastObj?.[MODULE]?.[keySeries[i]];
-                if (!lastObj) return undefined;
-            }
-            return lastObj[keySeries[keySeries.length - 1]];
+        let lastObj: Partial<ModularValues> = this.modularValues;
+        for (let i = 0; i < keySeries.length - 1; i++) {
+            lastObj = lastObj?.[MODULE]?.[keySeries[i]];
+            if (!lastObj) return undefined;
         }
+        return lastObj[keySeries[keySeries.length - 1]];
     }
 
     static getInstance(): ValueDependenciesManager {
