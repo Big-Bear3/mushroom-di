@@ -1,4 +1,4 @@
-import type { Class } from '../../src/types/diTypes';
+import type { Class } from '../types/diTypes';
 
 import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
 

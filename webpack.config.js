@@ -3,6 +3,8 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+const isProduction = process.env.NODE_ENV == 'production';
+
 const config = {
     entry: './src/index.ts',
     output: {
@@ -31,10 +33,9 @@ const config = {
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.jsx', '.js', '...']
-    }
+    },
+    devtool: isProduction ? false : 'source-map'
 };
-
-const isProduction = process.env.NODE_ENV == 'production';
 
 module.exports = () => {
     if (isProduction) {

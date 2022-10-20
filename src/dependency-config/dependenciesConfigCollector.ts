@@ -1,6 +1,6 @@
 import type { Class, ConfigMethod } from '../types/diTypes';
 
-import { Message } from '../../src/utils/message';
+import { Message } from '../utils/message';
 
 /** 用于收集配置依赖的自定义方法 */
 export class DependenciesConfigCollector {

@@ -1,13 +1,13 @@
 import type { Class, NormalClass, DependencyConfigResult, ObjectType } from '../types/diTypes';
 
-import { messageNewLineSign, STOP_DEEP_CONFIG } from '../../src/constants/diConstants';
-import { DependenciesConfigCollector } from '../../src/dependency-config/dependenciesConfigCollector';
-import { DependencyConfigEntity } from '../../src/dependency-config/dependencyConfigEntity';
-import { Message } from '../../src/utils/message';
+import { messageNewLineSign, STOP_DEEP_CONFIG } from '../constants/diConstants';
+import { DependenciesConfigCollector } from '../dependency-config/dependenciesConfigCollector';
+import { DependencyConfigEntity } from '../dependency-config/dependencyConfigEntity';
+import { Message } from '../utils/message';
 import { SingletonDependenciesContainer } from '../dependency-container/singletonDependenciesContainer';
 import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
 import { DependenciesCreator } from './dependenciesCreator';
-import { CachedDependenciesContainer } from '../../src/dependency-container/cachedDependenciesContainer';
+import { CachedDependenciesContainer } from '../dependency-container/cachedDependenciesContainer';
 
 export class DependenciesSearcher {
     private static instance: DependenciesSearcher;
@@ -87,7 +87,7 @@ export class DependenciesSearcher {
     /** 获取依赖配置的结果 */
     private getUsingsByConfig<T>(originalClass: Class<T>, originalArgs?: unknown[]): DependencyConfigResult<T> {
         let usingClass: Class<T>;
-        let usingArgs = originalArgs || [];
+        let usingArgs = originalArgs ?? [];
         let afterInstanceCreate: (instance: T) => void;
         let afterInstanceFetch: (instance: T, isNew: boolean) => void;
 

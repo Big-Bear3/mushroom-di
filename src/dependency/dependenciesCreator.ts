@@ -1,10 +1,10 @@
-import type { Class, NormalClass, ObjectType } from '../../src/types/diTypes';
+import type { Class, NormalClass, ObjectType } from '../types/diTypes';
 
 import { Message } from '../utils/message';
 import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
 import { DependenciesGraph } from './dependenciesGraph';
 import { DependenciesSearcher } from './dependenciesSearcher';
-import { AUTO, messageNewLineSign } from '../../src/constants/diConstants';
+import { AUTO, messageNewLineSign } from '../constants/diConstants';
 import { InjectMembersHandler } from './injectMembersHandler';
 
 export class DependenciesCreator {
@@ -71,7 +71,7 @@ export class DependenciesCreator {
             Message.throwError(
                 '39001',
                 `依赖注入容器实例化类 "${usingClass.name}" 出错！${messageNewLineSign}${
-                    (<{ stack: unknown }>error)?.stack || error
+                    (<{ stack: unknown }>error)?.stack ?? error
                 }`
             );
         }

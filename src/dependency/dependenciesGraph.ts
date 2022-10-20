@@ -1,4 +1,4 @@
-import type { Class } from '../../src/types/diTypes';
+import type { Class } from '../types/diTypes';
 
 /** 当前正在创建的所有依赖的有向图，用于检测是否存在循环依赖 */
 export class DependenciesGraph {

@@ -1,6 +1,6 @@
 import type { NormalClass, DependencyKey, DependencyWeakKey } from '../types/diTypes';
 
-import { Message } from '../../src/utils/message';
+import { Message } from '../utils/message';
 
 /** 用于管理所有带有键的依赖 */
 export class KeyedDependenciesContainer {
