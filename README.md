@@ -4,7 +4,7 @@
 const instance1 = of(OneClass);
 const instance2 = by(OneClass, 1, 'str'); // 带构造方法参数
 
-patchVal('a.b.c', '123'); // 提供值
+patchVal('a.b.c', '123'); // 提供或更新值
 takeVal('a.b.c'); // 获取值
 
 /** 在类中使用依赖注入 */
