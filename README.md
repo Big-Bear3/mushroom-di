@@ -4,11 +4,17 @@
 const instance1 = of(OneClass);
 const instance2 = by(OneClass, 1, 'str'); // 带构造方法参数
 
+patchVal('a.b.c', '123'); // 提供值
+takeVal('a.b.c'); // 获取值
+
 /** 在类中使用依赖注入 */
 @Injectable() // 单例：@Injectable({ type: 'singleton' })
 export class MyClass {
     @Inject()  // 延迟注入：@Inject({ lazy: true })
     private instance1: OneClass; // 成员变量注入
+    
+    @InjectVal('a.b.c')
+    private value1: string; // 注入值
 
     constructor(private instance2: OneClass) {} // 构造方法注入，类似于Angular
 }
