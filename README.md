@@ -308,6 +308,38 @@ export class Bee {
 const bee = by(Bee, AUTO, 123);
 ```
 
+### 普通值的提供和注入
+在我们项目中，有可能需要提供和注入一些普通值，如基本类型的值，json字面量等，这样可以使我们的程序更加轻量化。  
+首先我们需要通过 **MushroomService** 构建一个模块化的值结构，并且可以指定初始值，值结构为 **ModularValues** 类型：
+```ts 
+const modularValues = {
+    [MODULE]: {
+        app: {
+            theme: {
+                mode: 'light' as 'light' | 'dark'
+            }
+        },
+        user: {
+            userId: 123,
+            userName: '张三',
+
+            [MODULE]: {
+                role: {
+                    roles: ['Admin']
+                }
+            }
+        }
+    }
+};
+    
+export type modularValuesType = typeof modularValues;
+
+const mushroomService = of(MushroomService);
+// 将patchVal, takeVal方法以及InjectVal装饰器导出，以便外部使用
+export const { patchVal, takeVal, InjectVal } = mushroomService.buildValueDepsManager(modularValues); // 指定初始值
+export const { patchVal, takeVal, InjectVal } = mushroomService.buildValueDepsManager<modularValuesType>(); // 仅指定值结构
+```
+
 ## 高级用法
 ### 使用DependencyConfig() 装饰器进行依赖配置
 我们可以通过 **DependencyConfig()** 装饰器装饰自定义方法，来配置被依赖的类如何创建实例：
