@@ -84,7 +84,7 @@ const { setState, getState, stateIsEqual } = new StateManager();
 **支持Map、WeakMap、reflect-metadata的浏览器端或Node端**  
 
 *注：由于Vite使用esbuild将TypeScript转译到JavaScript，esbuild还不支持reflect-metadata，您可以参照如下方式去解决：
-```
+```bash
 npm i -D rollup-plugin-swc3
 ```
 ```js
@@ -117,7 +117,7 @@ export default defineConfig({
 
 ## 安装
 1. 安装依赖包
-```
+```bash
 npm i -S mushroom-di
 ```
 2. 在tsconfig.json中配置如下属性：
@@ -310,9 +310,9 @@ const bee = by(Bee, AUTO, 123);
 
 ### 普通值的提供和注入
 在我们项目中，有可能需要提供和注入一些普通值，如基本类型的值，json字面量等，这样可以使我们的程序更加轻量化。  
-首先我们需要通过 **MushroomService** 构建一个模块化的值结构，并且可以指定初始值，值结构为 **ModularValues** 类型：
+1. 首先我们需要通过 **MushroomService** 构建一个模块化的值结构，并且可以指定初始值，值结构为 **ModularValues** 类型：
 ```ts 
-const modularValues = {
+const modularValues: ModularValues = {
     [MODULE]: {
         app: {
             theme: {
@@ -338,6 +338,36 @@ const mushroomService = of(MushroomService);
 // 将patchVal, takeVal方法以及InjectVal装饰器导出，以便外部使用
 export const { patchVal, takeVal, InjectVal } = mushroomService.buildValueDepsManager(modularValues); // 指定初始值
 export const { patchVal, takeVal, InjectVal } = mushroomService.buildValueDepsManager<modularValuesType>(); // 仅指定值结构
+```
+
+2. 利用patchVal()方法提供或更新值：
+```ts
+patchVal('user.userId', 456); // 更新单个值
+patchVal({ // 更新多个值
+    'user.userId': 789,
+    'user.userName': '李四'
+});
+```
+
+3. 利用takeVal()方法获取值：
+```ts
+userId = takeVal('user.userId');
+const [userId, userName] = takeVal('user.userId', 'user.userName');
+```
+
+4. 利用InjectVal()装饰器注入值：
+```ts
+@Injectable()
+class RoleStore {
+    @InjectVal('app.theme')
+    static theme: { mode: 'light' | 'dark' };
+
+    @InjectVal('app.theme', { mode: 'light' })
+    static themeWithDefault: { mode: 'light' | 'dark' };
+
+    @InjectVal('user.role.roles')
+    roles: string[];
+}
 ```
 
 ## 高级用法
