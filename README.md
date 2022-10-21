@@ -351,9 +351,10 @@ patchVal({ // 更新多个值
 
 3. 利用takeVal()方法获取值：
 ```ts
-userId = takeVal('user.userId');
-const [userId, userName] = takeVal('user.userId', 'user.userName');
+userId = takeVal('user.userId'); // 获取单个值
+const [userId, userName] = takeVal('user.userId', 'user.userName'); // 获取多个值
 ```
+patchVal()的参数以及takeVal()的返回值都是具有类型推断的，提升您在开发中的便利性！
 
 4. 利用InjectVal()装饰器注入值：
 ```ts
