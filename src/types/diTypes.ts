@@ -1,3 +1,4 @@
+import type { STOP_DEEP_CONFIG } from 'src/constants/diConstants';
 import type { DependencyConfigEntity } from '../dependency-config/dependencyConfigEntity';
 
 export type Class<T = any> = abstract new (...args: any[]) => T;
@@ -25,7 +26,10 @@ export interface InjectOptions {
     lazy: boolean;
 }
 
-export type ConfigMethod = (configEntity: DependencyConfigEntity<any, any[]>, outerClass?: Class) => void | symbol | any;
+export type ConfigMethod = (
+    configEntity: DependencyConfigEntity<any, any[]>,
+    outerClass?: Class
+) => void | typeof STOP_DEEP_CONFIG | ObjectType;
 
 export type GenericType<T> = T extends Class<infer G> ? G : any;
 

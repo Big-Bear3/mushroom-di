@@ -1,6 +1,6 @@
 import type { NormalClass, DependencyKey, DependencyWeakKey } from '../types/diTypes';
 
-import { Message } from '../../src/utils/message';
+import { Message } from '../utils/message';
 
 /** 用于管理所有带有键的依赖 */
 export class KeyedDependenciesContainer {
@@ -12,6 +12,7 @@ export class KeyedDependenciesContainer {
     addDependency<T>(nc: NormalClass<T>, instance: T, key: DependencyKey, isWeak?: boolean): void {
         if (isWeak) {
             if (typeof key !== 'object')
+                /* istanbul ignore next */
                 Message.throwError('19001', '将非object类型用作了weakKeyedDependenciesMap对象中WeakMap的键！');
 
             this.keyedDependenciesMap.get(nc)?.delete(key);

@@ -18,3 +18,6 @@ export const AUTO = Symbol('DI-AUTO');
 
 /** 停止深度查找依赖配置标识，用于自定义配置依赖方法的返回值 */
 export const STOP_DEEP_CONFIG = Symbol('DI-STOP-DEEP-CONFIG');
+
+/** 值依赖模块标识 */
+export const MODULE = Symbol('DI-VALUE-DEPS-MODULE');

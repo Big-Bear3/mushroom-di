@@ -14,7 +14,7 @@ export class DependenciesClassCollector {
     }
 
     getInjectableOptions(c: Class): InjectableOptions {
-        return this.dependenciesMap.get(c) || defaultInjectableOptions;
+        return this.dependenciesMap.get(c) ?? defaultInjectableOptions;
     }
 
     contains(c: Class): boolean {

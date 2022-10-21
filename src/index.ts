@@ -2,7 +2,7 @@ import 'reflect-metadata';
 
 import type { Class, ClassTypes, InstanceTypes } from './types/diTypes';
 
-import { AUTO as autoFlag, STOP_DEEP_CONFIG as stopDeepConfigFlag } from './constants/diConstants';
+import { AUTO as autoFlag, STOP_DEEP_CONFIG as stopDeepConfigFlag, MODULE as moduleFlag } from './constants/diConstants';
 import { Injectable as InjectableDecorator } from './decorators/injectable';
 import { DependencyConfig as DependencyConfigDecorator } from './decorators/dependencyConfig';
 import { Inject as InjectDecorator } from './decorators/inject';
@@ -37,6 +37,8 @@ export const MushroomService = MushroomServiceClass;
 
 export const AUTO = autoFlag;
 export const STOP_DEEP_CONFIG = stopDeepConfigFlag;
+
+export const MODULE = moduleFlag;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function registerDepsConfig(c: Class): void {}
