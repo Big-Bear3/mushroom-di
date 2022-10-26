@@ -4,7 +4,7 @@ import { Message } from '../utils/message';
 
 /** 用于收集配置依赖的自定义方法 */
 export class DependenciesConfigCollector {
-    private static instance: DependenciesConfigCollector;
+    private static _instance: DependenciesConfigCollector;
 
     /** 类和配置依赖的自定义方法的映射 */
     private dependenciesConfigMap = new Map<Class, ConfigMethod>();
@@ -20,10 +20,10 @@ export class DependenciesConfigCollector {
         return this.dependenciesConfigMap.get(c);
     }
 
-    static getInstance(): DependenciesConfigCollector {
-        if (!DependenciesConfigCollector.instance) {
-            DependenciesConfigCollector.instance = new DependenciesConfigCollector();
+    static get instance(): DependenciesConfigCollector {
+        if (!DependenciesConfigCollector._instance) {
+            DependenciesConfigCollector._instance = new DependenciesConfigCollector();
         }
-        return DependenciesConfigCollector.instance;
+        return DependenciesConfigCollector._instance;
     }
 }

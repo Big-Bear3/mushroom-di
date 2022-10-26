@@ -4,7 +4,7 @@ import { defaultInjectableOptions } from '../constants/diConstants';
 
 /** 用于收集被注入依赖的选项 */
 export class DependenciesClassCollector {
-    private static instance: DependenciesClassCollector;
+    private static _instance: DependenciesClassCollector;
 
     /** 类和被注入依赖的选项的映射 */
     private dependenciesMap = new Map<Class, InjectableOptions>();
@@ -23,10 +23,10 @@ export class DependenciesClassCollector {
 
     private constructor() {}
 
-    static getInstance(): DependenciesClassCollector {
-        if (!DependenciesClassCollector.instance) {
-            DependenciesClassCollector.instance = new DependenciesClassCollector();
+    static get instance(): DependenciesClassCollector {
+        if (!DependenciesClassCollector._instance) {
+            DependenciesClassCollector._instance = new DependenciesClassCollector();
         }
-        return DependenciesClassCollector.instance;
+        return DependenciesClassCollector._instance;
     }
 }

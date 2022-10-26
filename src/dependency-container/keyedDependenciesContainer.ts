@@ -4,7 +4,7 @@ import { Message } from '../utils/message';
 
 /** 用于管理所有带有键的依赖 */
 export class KeyedDependenciesContainer {
-    private static instance: KeyedDependenciesContainer;
+    private static _instance: KeyedDependenciesContainer;
 
     private keyedDependenciesMap = new Map<NormalClass, Map<DependencyKey, any>>();
     private weakKeyedDependenciesMap = new Map<NormalClass, WeakMap<DependencyWeakKey, any>>();
@@ -70,10 +70,10 @@ export class KeyedDependenciesContainer {
         return false;
     }
 
-    static getInstance(): KeyedDependenciesContainer {
-        if (!KeyedDependenciesContainer.instance) {
-            KeyedDependenciesContainer.instance = new KeyedDependenciesContainer();
+    static get instance(): KeyedDependenciesContainer {
+        if (!KeyedDependenciesContainer._instance) {
+            KeyedDependenciesContainer._instance = new KeyedDependenciesContainer();
         }
-        return KeyedDependenciesContainer.instance;
+        return KeyedDependenciesContainer._instance;
     }
 }

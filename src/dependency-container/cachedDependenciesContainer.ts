@@ -2,7 +2,7 @@ import type { NormalClass, DependencyWeakKey, ObjectType } from '../types/diType
 
 /** 用于管理所有缓存依赖 */
 export class CachedDependenciesContainer {
-    private static instance: CachedDependenciesContainer;
+    private static _instance: CachedDependenciesContainer;
 
     /* istanbul ignore next */
     private static supportWeakRef = WeakRef ? true : false;
@@ -41,10 +41,10 @@ export class CachedDependenciesContainer {
         return CachedDependenciesContainer.supportWeakRef ? (<WeakRef<ObjectType>>key).deref() : <ObjectType>key;
     }
 
-    static getInstance(): CachedDependenciesContainer {
-        if (!CachedDependenciesContainer.instance) {
-            CachedDependenciesContainer.instance = new CachedDependenciesContainer();
+    static get instance(): CachedDependenciesContainer {
+        if (!CachedDependenciesContainer._instance) {
+            CachedDependenciesContainer._instance = new CachedDependenciesContainer();
         }
-        return CachedDependenciesContainer.instance;
+        return CachedDependenciesContainer._instance;
     }
 }

@@ -4,7 +4,7 @@ import { DependenciesClassCollector } from '../dependency-config/dependenciesCla
 
 /** 级联判断父类是否是单例的 */
 export function parentsIsSingleton(c: Class): boolean {
-    const dependenciesCollector = DependenciesClassCollector.getInstance();
+    const dependenciesCollector = DependenciesClassCollector.instance;
     let parentClass = <Class>Reflect.getPrototypeOf(c);
     while (parentClass) {
         const parentInjectableOptions = dependenciesCollector.getInjectableOptions(parentClass);

@@ -150,7 +150,7 @@ test('更新、获取值', () => {
 });
 
 test('无初始化值', () => {
-    const valueDependenciesManager: any = ValueDependenciesManager.getInstance();
+    const valueDependenciesManager: any = ValueDependenciesManager.instance;
     valueDependenciesManager.modularValues = undefined;
     valueDependenciesManager._alreadyBuilt = false;
 

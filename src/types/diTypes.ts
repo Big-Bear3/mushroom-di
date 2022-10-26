@@ -1,4 +1,4 @@
-import type { STOP_DEEP_CONFIG } from 'src/constants/diConstants';
+import type { STOP_DEEP_CONFIG } from '../constants/diConstants';
 import type { DependencyConfigEntity } from '../dependency-config/dependencyConfigEntity';
 
 export type Class<T = any> = abstract new (...args: any[]) => T;

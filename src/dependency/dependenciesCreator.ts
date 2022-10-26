@@ -8,9 +8,9 @@ import { AUTO, messageNewLineSign } from '../constants/diConstants';
 import { InjectMembersHandler } from './injectMembersHandler';
 
 export class DependenciesCreator {
-    private static instance: DependenciesCreator;
+    private static _instance: DependenciesCreator;
 
-    private dependenciesSearcher = DependenciesSearcher.getInstance();
+    private dependenciesSearcher = DependenciesSearcher.instance;
 
     private dependenciesGraph = new DependenciesGraph();
     private creatingInstanceClassQueue: NormalClass[] = [];
@@ -27,7 +27,7 @@ export class DependenciesCreator {
 
         const instance = this.createInstance(usingClass, usingArgs);
 
-        if (isRootInjection) DependenciesCreator.instance = null;
+        if (isRootInjection) DependenciesCreator._instance = null;
 
         return instance;
     }
@@ -52,7 +52,7 @@ export class DependenciesCreator {
 
         // 创建实例
         try {
-            const injectMembersHandler = InjectMembersHandler.getInstance();
+            const injectMembersHandler = InjectMembersHandler.instance;
             injectMembersHandler.handleInstanceLazyMembers(usingClass);
 
             let instance: T;
@@ -103,7 +103,7 @@ export class DependenciesCreator {
             }
         }
 
-        const dependenciesCollector = DependenciesClassCollector.getInstance();
+        const dependenciesCollector = DependenciesClassCollector.instance;
 
         for (let i = 0; i < usingArgs.length; i++) {
             if (usingArgs[i] === AUTO) {
@@ -119,10 +119,10 @@ export class DependenciesCreator {
         }
     }
 
-    static getInstance(): DependenciesCreator {
-        if (!DependenciesCreator.instance) {
-            DependenciesCreator.instance = new DependenciesCreator();
+    static get instance(): DependenciesCreator {
+        if (!DependenciesCreator._instance) {
+            DependenciesCreator._instance = new DependenciesCreator();
         }
-        return DependenciesCreator.instance;
+        return DependenciesCreator._instance;
     }
 }

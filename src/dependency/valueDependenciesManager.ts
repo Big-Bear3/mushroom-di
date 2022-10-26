@@ -6,7 +6,7 @@ import { MODULE } from '../constants/diConstants';
 
 /** 用于管理所有值依赖 */
 export class ValueDependenciesManager {
-    private static instance: ValueDependenciesManager;
+    private static _instance: ValueDependenciesManager;
 
     /** 模块化的所有值 */
     private modularValues: ModularValues;
@@ -71,10 +71,10 @@ export class ValueDependenciesManager {
         return lastObj[keySeries[keySeries.length - 1]];
     }
 
-    static getInstance(): ValueDependenciesManager {
-        if (!ValueDependenciesManager.instance) {
-            ValueDependenciesManager.instance = new ValueDependenciesManager();
+    static get instance(): ValueDependenciesManager {
+        if (!ValueDependenciesManager._instance) {
+            ValueDependenciesManager._instance = new ValueDependenciesManager();
         }
-        return ValueDependenciesManager.instance;
+        return ValueDependenciesManager._instance;
     }
 }

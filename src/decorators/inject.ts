@@ -40,7 +40,7 @@ function addInjectMemberOfDesignType(target: Class, key: string | symbol, inject
     let designType = Reflect.getMetadata?.('design:type', target, key);
     if (!designType || designType === Object) designType = undefined;
 
-    InjectMembersHandler.getInstance().addInjectMember(target, key, designType, injectOptions);
+    InjectMembersHandler.instance.addInjectMember(target, key, designType, injectOptions);
 }
 
 /** 添加指定类型的成员变量 */
@@ -53,7 +53,7 @@ function addInjectMemberOfSpecificClass(
     let designType = specificClass;
     if (!specificClass || specificClass === Object) designType = undefined;
 
-    InjectMembersHandler.getInstance().addInjectMember(target, key, designType, injectOptions);
+    InjectMembersHandler.instance.addInjectMember(target, key, designType, injectOptions);
 }
 
 /** 添加通过metadata获取类型的静态成员变量 */
@@ -61,7 +61,7 @@ function addInjectStaticMemberOfDesignType(target: Class, key: string | symbol, 
     let designType = Reflect.getMetadata?.('design:type', target, key);
     if (!designType || designType === Object) designType = undefined;
 
-    InjectMembersHandler.getInstance().handleInstanceStaticMember(target, key, designType, injectOptions);
+    InjectMembersHandler.instance.handleInstanceStaticMember(target, key, designType, injectOptions);
 }
 
 /** 添加指定类型的静态成员变量 */
@@ -74,7 +74,7 @@ function addInjectStaticMemberOfSpecificClass(
     let designType = specificClass;
     if (!specificClass || specificClass === Object) designType = undefined;
 
-    InjectMembersHandler.getInstance().handleInstanceStaticMember(target, key, designType, injectOptions);
+    InjectMembersHandler.instance.handleInstanceStaticMember(target, key, designType, injectOptions);
 }
 
 /** 判断是否是静态成员变量 */

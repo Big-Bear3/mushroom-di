@@ -18,7 +18,7 @@ interface InjectMembersInfo {
 
 /** 用于处理静态、非静态成员变量注入 */
 export class InjectMembersHandler {
-    private static instance: InjectMembersHandler;
+    private static _instance: InjectMembersHandler;
 
     /** 类和类中需要注入的非静态成员变量的映射 */
     private classToInjectMembers = new Map<Class, InjectMembersInfo>();
@@ -76,7 +76,7 @@ export class InjectMembersHandler {
     handleInstanceMembers(nc: NormalClass, instance: ObjectType): void {
         const injectMembersInfo = this.classToInjectMembers.get(nc.prototype);
         if (injectMembersInfo) {
-            const dependenciesSearcher = DependenciesSearcher.getInstance();
+            const dependenciesSearcher = DependenciesSearcher.instance;
 
             for (const memberInfo of injectMembersInfo.members) {
                 instance[memberInfo.memberName] = memberInfo.definedClass
@@ -96,7 +96,7 @@ export class InjectMembersHandler {
     handleInstanceLazyMembers(nc: NormalClass): void {
         const injectMembersInfo = this.classToInjectMembers.get(nc.prototype);
         if (injectMembersInfo && !injectMembersInfo.lazyMembersHandled) {
-            const dependenciesSearcher = DependenciesSearcher.getInstance();
+            const dependenciesSearcher = DependenciesSearcher.instance;
             const instanceToLazyInjectMembers = this.instanceToLazyInjectMembers;
 
             for (const memberInfo of injectMembersInfo.lazyMembers) {
@@ -154,7 +154,7 @@ export class InjectMembersHandler {
                 get() {
                     if (valueAlreadySet) return _value;
 
-                    _value = DependenciesSearcher.getInstance().searchDependency(definedClass);
+                    _value = DependenciesSearcher.instance.searchDependency(definedClass);
                     valueAlreadySet = true;
 
                     return _value;
@@ -165,15 +165,15 @@ export class InjectMembersHandler {
                 }
             });
         } else {
-            if (definedClass) Reflect.set(c, memberName, DependenciesSearcher.getInstance().searchDependency(definedClass));
+            if (definedClass) Reflect.set(c, memberName, DependenciesSearcher.instance.searchDependency(definedClass));
             else Reflect.set(c, memberName, undefined);
         }
     }
 
-    static getInstance(): InjectMembersHandler {
-        if (!InjectMembersHandler.instance) {
-            InjectMembersHandler.instance = new InjectMembersHandler();
+    static get instance(): InjectMembersHandler {
+        if (!InjectMembersHandler._instance) {
+            InjectMembersHandler._instance = new InjectMembersHandler();
         }
-        return InjectMembersHandler.instance;
+        return InjectMembersHandler._instance;
     }
 }

@@ -16,7 +16,7 @@ export function InjectVal(key: string, defaultValue?: unknown): PropertyDecorato
             enumerable: true,
             configurable: true,
             get() {
-                const valueDependenciesManager = ValueDependenciesManager.getInstance();
+                const valueDependenciesManager = ValueDependenciesManager.instance;
                 const value = valueDependenciesManager.takeValue(key);
 
                 if ((value === null || value === undefined) && hasDefaultValue) return defaultValue;

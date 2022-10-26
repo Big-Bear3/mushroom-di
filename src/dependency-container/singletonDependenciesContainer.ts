@@ -2,7 +2,7 @@ import type { NormalClass } from '../types/diTypes';
 
 /** 用于管理所有单例依赖 */
 export class SingletonDependenciesContainer {
-    private static instance: SingletonDependenciesContainer;
+    private static _instance: SingletonDependenciesContainer;
 
     private singletonDependenciesMap = new Map<NormalClass, any>();
 
@@ -18,10 +18,10 @@ export class SingletonDependenciesContainer {
         return this.singletonDependenciesMap.delete(nc);
     }
 
-    static getInstance(): SingletonDependenciesContainer {
-        if (!SingletonDependenciesContainer.instance) {
-            SingletonDependenciesContainer.instance = new SingletonDependenciesContainer();
+    static get instance(): SingletonDependenciesContainer {
+        if (!SingletonDependenciesContainer._instance) {
+            SingletonDependenciesContainer._instance = new SingletonDependenciesContainer();
         }
-        return SingletonDependenciesContainer.instance;
+        return SingletonDependenciesContainer._instance;
     }
 }

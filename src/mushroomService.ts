@@ -12,9 +12,9 @@ import { InjectVal as InjectValDecorator } from './decorators/injectVal';
 
 @Injectable({ type: 'singleton' })
 export class MushroomService {
-    #keyedDependenciesContainer = KeyedDependenciesContainer.getInstance();
+    #keyedDependenciesContainer = KeyedDependenciesContainer.instance;
 
-    #singletonDependenciesContainer = SingletonDependenciesContainer.getInstance();
+    #singletonDependenciesContainer = SingletonDependenciesContainer.instance;
 
     constructor() {
         if (this.#singletonDependenciesContainer.getDependency(<NormalClass<MushroomService>>MushroomService))
@@ -44,7 +44,7 @@ export class MushroomService {
     }
 
     destroyCachedInstance(nc: NormalClass): boolean {
-        return CachedDependenciesContainer.getInstance().removeDependency(nc);
+        return CachedDependenciesContainer.instance.removeDependency(nc);
     }
 
     destroySingletonInstance(nc: NormalClass): boolean {
@@ -54,7 +54,7 @@ export class MushroomService {
     }
 
     buildValueDepsManager<T extends ModularValues>(values?: T) {
-        const valueDependenciesManager = ValueDependenciesManager.getInstance();
+        const valueDependenciesManager = ValueDependenciesManager.instance;
         if (valueDependenciesManager.alreadyBuilt) Message.throwError('29009', '不能重复构建值依赖管理器！');
 
         valueDependenciesManager.setValues(values);
