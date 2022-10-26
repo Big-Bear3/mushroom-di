@@ -2,6 +2,7 @@ import { Message } from '../src/utils/message';
 import { MushroomService, of } from '../src';
 import { MODULE } from '../src/constants/diConstants';
 import { ValueDependenciesManager } from '../src/dependency/valueDependenciesManager';
+import { numberPropName, symbolPropName } from './test-classes/basicClasses';
 
 Message.toggleConsolePrintable(false);
 
@@ -88,6 +89,14 @@ test('注入值', async () => {
     expect(myAppStore.roleStore.roles).toBe(undefined);
     patchVal('user.role.roles', ['Guest']);
     expect(myAppStore.roleStore.roles[0]).toBe('Guest');
+});
+
+test('为symbol、number类型的成员变量注入值', async () => {
+    const { MyAppStore } = await import('./test-classes/valueClasses');
+    const myAppStore = of(MyAppStore);
+    patchVal('user.userName', '孙悟空');
+    expect(myAppStore[numberPropName]).toBe('孙悟空');
+    expect(myAppStore[symbolPropName]).toBe('孙悟空');
 });
 
 test('为注入值的成员变量赋值抛异常', async () => {

@@ -1,5 +1,6 @@
 import { of } from '../src';
 import { Message } from '../src/utils/message';
+import { Bears, Honey, numberPropName, symbolPropName } from './test-classes/basicClasses';
 import {
     Animal,
     Grassland,
@@ -35,6 +36,12 @@ test('成员变量注入', () => {
 
     expect(grassland1.maleLion.food === grassland2.maleLion.food).toBe(true);
     expect(grassland1.femaleLion.food === grassland2.femaleLion.food).toBe(false);
+});
+
+test('symbol、number类型成员变量注入', () => {
+    const bears = of(Bears);
+    expect(bears[numberPropName] instanceof Honey).toBe(true);
+    expect(bears[symbolPropName] instanceof Honey).toBe(true);
 });
 
 test('父类成员变量注入', () => {

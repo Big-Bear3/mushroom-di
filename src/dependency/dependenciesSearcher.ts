@@ -21,6 +21,13 @@ export class DependenciesSearcher {
             return usingObject;
         }
 
+        if (typeof usingClass !== 'function') Message.throwError('29014', `配置使用的Class(${usingClass})无效！`);
+        if (!Array.isArray(usingArgs)) Message.throwError('29015', `配置的构造方法参数(${usingArgs})无效！`);
+        if (afterInstanceCreate && typeof afterInstanceCreate !== 'function')
+            Message.throwError('29016', '配置的afterInstanceCreate必须是函数！');
+        if (afterInstanceFetch && typeof afterInstanceFetch !== 'function')
+            Message.throwError('29017', '配置的afterInstanceFetch必须是函数！');
+
         // 获取注入方式
         const injectableOptions = DependenciesClassCollector.instance.getInjectableOptions(usingClass);
         let instance: T;
@@ -57,12 +64,12 @@ export class DependenciesSearcher {
                     if (!key)
                         Message.throwError(
                             '29007',
-                            `follow方法的返回值不能为空！${messageNewLineSign}class: ${usingClass.name}, 返回值: ${key}`
+                            `follow方法的返回值不能为空！${messageNewLineSign}class: ${usingClass?.name}, 返回值: ${key}`
                         );
                     if (typeof key !== 'object')
                         Message.throwError(
                             '29008',
-                            `follow方法的返回值必须是对象类型！${messageNewLineSign}class: ${usingClass.name}, 返回值: ${key}`
+                            `follow方法的返回值必须是对象类型！${messageNewLineSign}class: ${usingClass?.name}, 返回值: ${key}`
                         );
 
                     cachedDependenciesContainer.addDependencyKey(usingClass, key);
@@ -116,7 +123,7 @@ export class DependenciesSearcher {
                             afterInstanceFetch: configEntity.afterInstanceFetch
                         };
                     }
-                    Message.throwError('29002', `配置的对象不是 "${originalClass.name}" 或其子类的实例`);
+                    Message.throwError('29002', `配置的对象不是 "${originalClass?.name}" 或其子类的实例`);
                 }
 
                 currentUsingClass = configEntity.usingClass;
@@ -127,7 +134,7 @@ export class DependenciesSearcher {
                 if (configResult === STOP_DEEP_CONFIG)
                     return {
                         usingClass: <NormalClass>currentUsingClass,
-                        usingArgs,
+                        usingArgs: usingArgs ?? [],
                         afterInstanceCreate,
                         afterInstanceFetch
                     };
@@ -136,7 +143,7 @@ export class DependenciesSearcher {
 
         return {
             usingClass: <NormalClass>usingClass,
-            usingArgs,
+            usingArgs: usingArgs ?? [],
             afterInstanceCreate,
             afterInstanceFetch
         };

@@ -1,4 +1,8 @@
-import { by, Inject, Injectable } from '../../src';
+import { DependencyConfigEntity } from '../../src/dependency-config/dependencyConfigEntity';
+import { by, DependencyConfig, Inject, Injectable } from '../../src';
+
+export const numberPropName = 123;
+export const symbolPropName = Symbol('symbolPropName');
 
 @Injectable({ type: 'multiple' })
 export class Honey {
@@ -32,6 +36,12 @@ export class Bears extends Animals {
 
     @Inject()
     honey2: Honey;
+
+    @Inject()
+    [numberPropName]: Honey;
+
+    @Inject()
+    [symbolPropName]: Honey;
 
     @Inject({ lazy: true })
     honeyLazy: Honey;
@@ -69,5 +79,53 @@ export class Zoo {
 export class ErrorZoo {
     constructor(private brownBear: BrownBear, private brownBears: BrownBears) {
         throw new Error();
+    }
+}
+
+@Injectable()
+export class InvalidConfigZoo1 {
+    @DependencyConfig(InvalidConfigZoo1)
+    static configMonkey(configEntity: DependencyConfigEntity<typeof InvalidConfigZoo1>): void {
+        configEntity.usingClass = null;
+    }
+}
+
+@Injectable()
+export class InvalidConfigZoo2 {
+    @DependencyConfig(InvalidConfigZoo2)
+    static configMonkey(configEntity: DependencyConfigEntity<typeof InvalidConfigZoo2>): void {
+        configEntity.usingClass = {} as any;
+    }
+}
+
+@Injectable()
+export class InvalidConfigZoo3 {
+    @DependencyConfig(InvalidConfigZoo3)
+    static configMonkey(configEntity: DependencyConfigEntity<typeof InvalidConfigZoo3>): void {
+        configEntity.args = undefined;
+    }
+}
+
+@Injectable()
+export class InvalidConfigZoo4 {
+    @DependencyConfig(InvalidConfigZoo4)
+    static configMonkey(configEntity: DependencyConfigEntity<typeof InvalidConfigZoo4>): void {
+        configEntity.args = 123 as any;
+    }
+}
+
+@Injectable()
+export class InvalidConfigZoo5 {
+    @DependencyConfig(InvalidConfigZoo5)
+    static configMonkey(configEntity: DependencyConfigEntity<typeof InvalidConfigZoo5>): void {
+        configEntity.afterInstanceCreate = 123 as any;
+    }
+}
+
+@Injectable()
+export class InvalidConfigZoo6 {
+    @DependencyConfig(InvalidConfigZoo6)
+    static configMonkey(configEntity: DependencyConfigEntity<typeof InvalidConfigZoo6>): void {
+        configEntity.afterInstanceFetch = 123 as any;
     }
 }

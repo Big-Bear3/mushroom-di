@@ -70,7 +70,7 @@ export class DependenciesCreator {
         } catch (error) {
             Message.throwError(
                 '39001',
-                `依赖注入容器实例化类 "${usingClass.name}" 出错！${messageNewLineSign}${
+                `依赖注入容器实例化类 "${usingClass?.name}" 出错！${messageNewLineSign}${
                     /* istanbul ignore next */
                     (<{ stack: unknown }>error)?.stack ?? error
                 }`
@@ -94,7 +94,7 @@ export class DependenciesCreator {
     // 判断构造方法参数是否可注入，如果可注入则去查找该依赖
     private handleConstructorArgs(usingArgs: unknown[], constructorArgs: unknown[], usingClass: NormalClass): void {
         if (usingArgs.length > constructorArgs.length) {
-            Message.warn('20001', `为 "${usingClass.name}" 的构造方法配置的参数过多！`);
+            Message.warn('20001', `为 "${usingClass?.name}" 的构造方法配置的参数过多！`);
         } else if (usingArgs.length < constructorArgs.length) {
             // 如果提供的参数个数过少，则用AUTO补全
             const padLength = constructorArgs.length - usingArgs.length;
