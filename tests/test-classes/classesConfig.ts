@@ -22,6 +22,7 @@ import {
     YellowMonkeyChief
 } from './configedClasses';
 import { STOP_DEEP_CONFIG } from '../../src/constants/diConstants';
+import { BigSquirrel } from './cachedClasses';
 
 let usingFood: any = Food;
 let usingMonkey: any = Monkey;
@@ -139,5 +140,24 @@ export class ScopedClassesConfig {
                 if (!instance) throw new Error();
             };
         }
+    }
+}
+
+export class CachedClassesConfig {
+    static bigSquirrelCreateTimes = 0;
+    static bigSquirrelFetchTimes = 0;
+
+    @DependencyConfig(BigSquirrel)
+    static configBigSquirrel(configEntity: DependencyConfigEntity<typeof BigSquirrel>): void | typeof STOP_DEEP_CONFIG {
+        configEntity.afterInstanceCreate = () => {
+            CachedClassesConfig.bigSquirrelCreateTimes++;
+        };
+        configEntity.afterInstanceFetch = () => {
+            CachedClassesConfig.bigSquirrelFetchTimes++;
+        };
+
+        configEntity.args = undefined;
+
+        return STOP_DEEP_CONFIG;
     }
 }

@@ -14,6 +14,9 @@ export class DependenciesSearcher {
 
     /** 根据依赖配置查找或创建依赖 */
     searchDependency<T>(c: Class<T>, args?: unknown[]): T {
+        /* c8 ignore next */
+        if (!c) return undefined;
+
         // 读取依赖配置
         const { usingClass, usingArgs, usingObject, afterInstanceCreate, afterInstanceFetch } = this.getUsingsByConfig(c, args);
         if (usingObject) {

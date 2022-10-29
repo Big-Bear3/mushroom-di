@@ -103,12 +103,12 @@ export class DependenciesCreator {
             }
         }
 
-        const dependenciesCollector = DependenciesClassCollector.instance;
+        const dependenciesClassCollector = DependenciesClassCollector.instance;
 
         for (let i = 0; i < usingArgs.length; i++) {
             if (usingArgs[i] === AUTO) {
                 if (typeof constructorArgs[i] === 'function') {
-                    const isInjectable = dependenciesCollector.contains(<Class>constructorArgs[i]);
+                    const isInjectable = dependenciesClassCollector.contains(<Class>constructorArgs[i]);
                     if (isInjectable) {
                         usingArgs[i] = this.dependenciesSearcher.searchDependency(<Class>constructorArgs[i]);
                         continue;

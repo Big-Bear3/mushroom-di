@@ -41,3 +41,8 @@ export class GreenSquirrel {}
     }
 })
 export class AquaSquirrel {}
+
+@Injectable<BigSquirrel>({
+    type: 'cached'
+})
+export class BigSquirrel {}

@@ -79,10 +79,7 @@ export class InjectMembersHandler {
             const dependenciesSearcher = DependenciesSearcher.instance;
 
             for (const memberInfo of injectMembersInfo.members) {
-                instance[memberInfo.memberName] = memberInfo.definedClass
-                    ? dependenciesSearcher.searchDependency(memberInfo.definedClass)
-                    : /* c8 ignore next */
-                      undefined;
+                instance[memberInfo.memberName] = dependenciesSearcher.searchDependency(memberInfo.definedClass);
             }
         }
 
@@ -100,34 +97,30 @@ export class InjectMembersHandler {
             const instanceToLazyInjectMembers = this.instanceToLazyInjectMembers;
 
             for (const memberInfo of injectMembersInfo.lazyMembers) {
-                if (memberInfo.definedClass) {
-                    Reflect.defineProperty(nc.prototype, memberInfo.memberName, {
-                        enumerable: true,
-                        configurable: true,
-                        get() {
-                            let members = instanceToLazyInjectMembers.get(this);
-                            if (members) {
-                                if (Reflect.has(members, memberInfo.memberName)) return members[memberInfo.memberName];
-                            } else {
-                                members = {};
-                                instanceToLazyInjectMembers.set(this, members);
-                            }
-                            const memberValue = dependenciesSearcher.searchDependency(memberInfo.definedClass);
-                            members[memberInfo.memberName] = memberValue;
-                            return memberValue;
-                        },
-                        set(value: unknown) {
-                            let members = instanceToLazyInjectMembers.get(this);
-                            if (!members) {
-                                members = {};
-                                instanceToLazyInjectMembers.set(this, members);
-                            }
-                            members[memberInfo.memberName] = value;
+                Reflect.defineProperty(nc.prototype, memberInfo.memberName, {
+                    enumerable: true,
+                    configurable: true,
+                    get() {
+                        let members = instanceToLazyInjectMembers.get(this);
+                        if (members) {
+                            if (Reflect.has(members, memberInfo.memberName)) return members[memberInfo.memberName];
+                        } else {
+                            members = {};
+                            instanceToLazyInjectMembers.set(this, members);
                         }
-                    });
-                } else {
-                    Reflect.set(nc.prototype, memberInfo.memberName, undefined);
-                }
+                        const memberValue = dependenciesSearcher.searchDependency(memberInfo.definedClass);
+                        members[memberInfo.memberName] = memberValue;
+                        return memberValue;
+                    },
+                    set(value: unknown) {
+                        let members = instanceToLazyInjectMembers.get(this);
+                        if (!members) {
+                            members = {};
+                            instanceToLazyInjectMembers.set(this, members);
+                        }
+                        members[memberInfo.memberName] = value;
+                    }
+                });
             }
         }
 
@@ -144,7 +137,7 @@ export class InjectMembersHandler {
         definedClass: Class,
         injectOptions: InjectOptions = defaultInjectOptions
     ): void {
-        if (injectOptions.lazy && definedClass) {
+        if (injectOptions.lazy) {
             let _value: unknown;
             let valueAlreadySet = false;
 
@@ -165,8 +158,7 @@ export class InjectMembersHandler {
                 }
             });
         } else {
-            if (definedClass) Reflect.set(c, memberName, DependenciesSearcher.instance.searchDependency(definedClass));
-            else Reflect.set(c, memberName, undefined);
+            Reflect.set(c, memberName, DependenciesSearcher.instance.searchDependency(definedClass));
         }
     }
 

@@ -14,8 +14,8 @@ import {
     Zoo
 } from './test-classes/basicClasses';
 import { BrownBears } from './test-classes/basicClasses';
-import { AquaSquirrel, BlackSquirrel, GreenSquirrel, Squirrel } from './test-classes/cachedClasses';
-import { ClassesConfig, useFood, useMonkey } from './test-classes/classesConfig';
+import { AquaSquirrel, BigSquirrel, BlackSquirrel, GreenSquirrel, Squirrel } from './test-classes/cachedClasses';
+import { CachedClassesConfig, ClassesConfig, useFood, useMonkey } from './test-classes/classesConfig';
 import {
     Banana,
     BrownMonkey,
@@ -197,11 +197,18 @@ test('带配置的依赖', () => {
 test('带配置的依赖配置回调方法', () => {
     of(MonkeyKing, MonkeyKing, MonkeyKing);
     of(Monkeys, Monkeys, Monkeys);
+    of(BigSquirrel);
 
     expect(ClassesConfig.monkeyKingCreateCount).toBe(1);
     expect(ClassesConfig.monkeyKingFetchCount).toBe(3);
     expect(ClassesConfig.monkeysCreateCount).toBe(3);
     expect(ClassesConfig.monkeysFetchCount).toBe(3);
+    expect(CachedClassesConfig.bigSquirrelCreateTimes).toBe(1);
+    expect(CachedClassesConfig.bigSquirrelFetchTimes).toBe(1);
+
+    of(BigSquirrel);
+    expect(CachedClassesConfig.bigSquirrelCreateTimes).toBe(1);
+    expect(CachedClassesConfig.bigSquirrelFetchTimes).toBe(2);
 });
 
 test('带配置的依赖配置非子类实例', () => {

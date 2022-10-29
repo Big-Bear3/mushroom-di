@@ -3,6 +3,9 @@ import { Message } from '../src/utils/message';
 import { MushroomService } from '../src/mushroomService';
 import { MonkeyChief, YellowMonkeyChief } from './test-classes/configedClasses';
 import { ScopedClassesConfig } from './test-classes/classesConfig';
+import { KeyedDependenciesContainer } from '../src/dependency-container/keyedDependenciesContainer';
+
+Message.toggleConsolePrintable(false);
 
 registerDepsConfig(ScopedClassesConfig);
 
@@ -102,4 +105,34 @@ test('移除对象', () => {
     expect(isReallyDelete1).toBe(false);
     expect(isReallyDelete2).toBe(true);
     expect(isExists).toBe(false);
+});
+
+test('弱键和非弱键存储的键不会重复', () => {
+    const mushroomService = of(MushroomService);
+    const monkeyChief = of(MonkeyChief);
+    const weakKey = {};
+
+    mushroomService.addDependencyWithWeakKey(MonkeyChief, monkeyChief, weakKey);
+    let hasMonkeyChief = (<any>KeyedDependenciesContainer).instance.weakKeyedDependenciesMap.get(MonkeyChief).has(weakKey);
+    expect(hasMonkeyChief).toBe(true);
+
+    mushroomService.addDependencyWithKey(MonkeyChief, monkeyChief, weakKey);
+    hasMonkeyChief = (<any>KeyedDependenciesContainer).instance.weakKeyedDependenciesMap.get(MonkeyChief).has(weakKey);
+    expect(hasMonkeyChief).toBe(false);
+
+    mushroomService.addDependencyWithWeakKey(MonkeyChief, monkeyChief, weakKey);
+    hasMonkeyChief = (<any>KeyedDependenciesContainer).instance.keyedDependenciesMap.get(MonkeyChief).has(weakKey);
+    expect(hasMonkeyChief).toBe(false);
+});
+
+test('将非object类型用作weakKeyedDependenciesMap对象中WeakMap的键', () => {
+    const messageHistory = Message.getHistory();
+    Message.clearHistory();
+    const mushroomService = of(MushroomService);
+    const monkeyChief = of(MonkeyChief);
+    try {
+        mushroomService.addDependencyWithWeakKey(MonkeyChief, monkeyChief, <any>'1');
+    } catch (error) {}
+
+    expect(messageHistory[0]?.code).toBe('29018');
 });

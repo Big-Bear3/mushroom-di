@@ -60,6 +60,43 @@ export class BrownBears extends Bears {
     }
 }
 
+@Injectable()
+export class Snake {
+    name = 'Snake';
+
+    @Inject()
+    static num1: number;
+
+    @Inject({ lazy: true })
+    static num2: number;
+
+    @Inject()
+    num3: number;
+
+    @Inject({ lazy: true })
+    num4: number;
+
+    @Inject(null)
+    num5: number;
+
+    @Inject(null, { lazy: true })
+    num6: number;
+
+    @Inject()
+    static animal1: Animal;
+
+    @Inject(Animal)
+    static animal2: Animal;
+
+    @Inject()
+    animal3: Animal;
+
+    @Inject(Animal)
+    animal4: Animal;
+
+    constructor(public num7: number, public animal5: Animal) {}
+}
+
 @Injectable({ type: 'singleton' })
 export class Zoo {
     brownBear: BrownBear;
