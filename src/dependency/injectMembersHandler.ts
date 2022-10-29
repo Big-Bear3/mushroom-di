@@ -1,4 +1,4 @@
-import type { Class, NormalClass, ObjectType } from '../types/diTypes';
+import type { Class, NormalClass, ObjectKey, ObjectType } from '../types/diTypes';
 import type { InjectOptions } from '../types/diTypes';
 
 import { defaultInjectOptions } from '../constants/diConstants';
@@ -6,11 +6,11 @@ import { DependenciesSearcher } from './dependenciesSearcher';
 
 interface InjectMembersInfo {
     members: {
-        memberName: string | symbol | number;
+        memberName: ObjectKey;
         definedClass: Class;
     }[];
     lazyMembers: {
-        memberName: string | symbol | number;
+        memberName: ObjectKey;
         definedClass: Class;
     }[];
     lazyMembersHandled: boolean;
@@ -29,7 +29,7 @@ export class InjectMembersHandler {
     /** 添加类中需要注入的非静态成员变量 */
     addInjectMember(
         c: Class,
-        memberName: string | symbol | number,
+        memberName: ObjectKey,
         definedClass: Class,
         injectOptions: InjectOptions = defaultInjectOptions
     ): void {
@@ -81,7 +81,7 @@ export class InjectMembersHandler {
             for (const memberInfo of injectMembersInfo.members) {
                 instance[memberInfo.memberName] = memberInfo.definedClass
                     ? dependenciesSearcher.searchDependency(memberInfo.definedClass)
-                    : /* istanbul ignore next */
+                    : /* c8 ignore next */
                       undefined;
             }
         }
@@ -140,7 +140,7 @@ export class InjectMembersHandler {
     /** 为类中的静态成员变量注入依赖 */
     handleInstanceStaticMember(
         c: Class,
-        memberName: string | symbol,
+        memberName: ObjectKey,
         definedClass: Class,
         injectOptions: InjectOptions = defaultInjectOptions
     ): void {

@@ -9,7 +9,8 @@ export type InstanceTypes<T extends Class[]> = T extends [first: infer F, ...res
     ? [InstanceType<F extends Class ? F : any>, ...InstanceTypes<R extends Class[] ? R : any[]>]
     : [];
 
-export type ObjectType = Record<string | symbol | number, any>;
+export type ObjectKey = string | symbol | number;
+export type ObjectType = Record<ObjectKey, any>;
 
 export type InjectType = 'multiple' | 'cached' | 'singleton';
 

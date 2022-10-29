@@ -31,7 +31,7 @@ export class ValueDependenciesManager {
 
     /** 根据key去更新值 */
     patchValue(key: string, value: unknown): void {
-        /* istanbul ignore next */
+        /* c8 ignore next */
         if (typeof key !== 'string') Message.throwError('29011', 'key必须是string类型！');
 
         if (!this.modularValues) this.modularValues = {} as ModularValues;

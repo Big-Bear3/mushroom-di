@@ -12,7 +12,7 @@ export class KeyedDependenciesContainer {
     addDependency<T>(nc: NormalClass<T>, instance: T, key: DependencyKey, isWeak?: boolean): void {
         if (isWeak) {
             if (typeof key !== 'object')
-                /* istanbul ignore next */
+                /* c8 ignore next */
                 Message.throwError('19001', '将非object类型用作了weakKeyedDependenciesMap对象中WeakMap的键！');
 
             this.keyedDependenciesMap.get(nc)?.delete(key);

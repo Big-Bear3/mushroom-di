@@ -1,4 +1,4 @@
-import type { Class, InjectOptions } from './../types/diTypes';
+import type { Class, InjectOptions, ObjectKey } from './../types/diTypes';
 
 import { InjectMembersHandler } from '../dependency/injectMembersHandler';
 
@@ -12,7 +12,7 @@ export function Inject(c: Class, injectOptions: InjectOptions): PropertyDecorato
 export function Inject(classOrInjectOptions?: Class | InjectOptions, injectOptions?: InjectOptions): PropertyDecorator {
     const injectArgumentsLength = arguments.length;
 
-    return function (target: Class, key: string | symbol) {
+    return function (target: Class, key: ObjectKey) {
         const isStatic = isStaticMember(target);
 
         if (injectArgumentsLength === 0) {
@@ -36,8 +36,8 @@ export function Inject(classOrInjectOptions?: Class | InjectOptions, injectOptio
 }
 
 /** 添加通过metadata获取类型的成员变量 */
-function addInjectMemberOfDesignType(target: Class, key: string | symbol, injectOptions?: InjectOptions): void {
-    let designType = Reflect.getMetadata?.('design:type', target, key);
+function addInjectMemberOfDesignType(target: Class, key: ObjectKey, injectOptions?: InjectOptions): void {
+    let designType = Reflect.getMetadata?.('design:type', target, <any>key);
     if (!designType || designType === Object) designType = undefined;
 
     InjectMembersHandler.instance.addInjectMember(target, key, designType, injectOptions);
@@ -46,7 +46,7 @@ function addInjectMemberOfDesignType(target: Class, key: string | symbol, inject
 /** 添加指定类型的成员变量 */
 function addInjectMemberOfSpecificClass(
     target: Class,
-    key: string | symbol,
+    key: ObjectKey,
     specificClass: Class,
     injectOptions?: InjectOptions
 ): void {
@@ -57,8 +57,8 @@ function addInjectMemberOfSpecificClass(
 }
 
 /** 添加通过metadata获取类型的静态成员变量 */
-function addInjectStaticMemberOfDesignType(target: Class, key: string | symbol, injectOptions?: InjectOptions): void {
-    let designType = Reflect.getMetadata?.('design:type', target, key);
+function addInjectStaticMemberOfDesignType(target: Class, key: ObjectKey, injectOptions?: InjectOptions): void {
+    let designType = Reflect.getMetadata?.('design:type', target, <any>key);
     if (!designType || designType === Object) designType = undefined;
 
     InjectMembersHandler.instance.handleInstanceStaticMember(target, key, designType, injectOptions);
@@ -67,7 +67,7 @@ function addInjectStaticMemberOfDesignType(target: Class, key: string | symbol, 
 /** 添加指定类型的静态成员变量 */
 function addInjectStaticMemberOfSpecificClass(
     target: Class,
-    key: string | symbol,
+    key: ObjectKey,
     specificClass: Class,
     injectOptions?: InjectOptions
 ): void {

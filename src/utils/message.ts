@@ -3,6 +3,7 @@
  * 第一位：0.初始化问题 1.运行时内部问题 2.用户使用问题 3.执行用户代码问题
  * 第二位：0.警告 1.错误 9.抛异常
  */
+/* c8 ignore start */
 export class Message {
     private static consolePrintable = true;
 
@@ -43,3 +44,4 @@ export class Message {
         Message.consolePrintable = consolePrintable;
     }
 }
+/* c8 ignore stop */
