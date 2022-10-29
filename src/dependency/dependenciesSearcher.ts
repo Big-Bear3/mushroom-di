@@ -10,10 +10,13 @@ import { DependenciesCreator } from './dependenciesCreator';
 import { CachedDependenciesContainer } from '../dependency-container/cachedDependenciesContainer';
 
 export class DependenciesSearcher {
-    private static instance: DependenciesSearcher;
+    private static _instance: DependenciesSearcher;
 
     /** 根据依赖配置查找或创建依赖 */
     searchDependency<T>(c: Class<T>, args?: unknown[]): T {
+        /* c8 ignore next */
+        if (!c) return undefined;
+
         // 读取依赖配置
         const { usingClass, usingArgs, usingObject, afterInstanceCreate, afterInstanceFetch } = this.getUsingsByConfig(c, args);
         if (usingObject) {
@@ -21,18 +24,25 @@ export class DependenciesSearcher {
             return usingObject;
         }
 
+        if (typeof usingClass !== 'function') Message.throwError('29014', `配置使用的Class(${usingClass})无效！`);
+        if (!Array.isArray(usingArgs)) Message.throwError('29015', `配置的构造方法参数(${usingArgs})无效！`);
+        if (afterInstanceCreate && typeof afterInstanceCreate !== 'function')
+            Message.throwError('29016', '配置的afterInstanceCreate必须是函数！');
+        if (afterInstanceFetch && typeof afterInstanceFetch !== 'function')
+            Message.throwError('29017', '配置的afterInstanceFetch必须是函数！');
+
         // 获取注入方式
-        const injectableOptions = DependenciesClassCollector.getInstance().getInjectableOptions(usingClass);
+        const injectableOptions = DependenciesClassCollector.instance.getInjectableOptions(usingClass);
         let instance: T;
 
         switch (injectableOptions.type) {
             case 'singleton':
-                const singletonDependenciesContainer = SingletonDependenciesContainer.getInstance();
+                const singletonDependenciesContainer = SingletonDependenciesContainer.instance;
                 instance = singletonDependenciesContainer.getDependency(usingClass);
                 if (instance) {
                     afterInstanceFetch?.(instance, false);
                 } else {
-                    instance = DependenciesCreator.getInstance().createDependency(usingClass, usingArgs);
+                    instance = DependenciesCreator.instance.createDependency(usingClass, usingArgs);
                     singletonDependenciesContainer.addDependency(usingClass, instance);
 
                     afterInstanceCreate?.(instance);
@@ -40,13 +50,13 @@ export class DependenciesSearcher {
                 }
                 break;
             case 'cached':
-                const cachedDependenciesContainer = CachedDependenciesContainer.getInstance();
+                const cachedDependenciesContainer = CachedDependenciesContainer.instance;
                 let key = cachedDependenciesContainer.getDependencyKey(usingClass);
                 if (key) {
                     instance = cachedDependenciesContainer.getDependency(usingClass, key);
                     afterInstanceFetch?.(instance, false);
                 } else {
-                    instance = DependenciesCreator.getInstance().createDependency(usingClass, usingArgs);
+                    instance = DependenciesCreator.instance.createDependency(usingClass, usingArgs);
 
                     if (injectableOptions.follow) {
                         key = injectableOptions.follow.call(instance, instance);
@@ -57,12 +67,12 @@ export class DependenciesSearcher {
                     if (!key)
                         Message.throwError(
                             '29007',
-                            `follow方法的返回值不能为空！${messageNewLineSign}class: ${usingClass.name}, 返回值: ${key}`
+                            `follow方法的返回值不能为空！${messageNewLineSign}class: ${usingClass?.name}, 返回值: ${key}`
                         );
                     if (typeof key !== 'object')
                         Message.throwError(
                             '29008',
-                            `follow方法的返回值必须是对象类型！${messageNewLineSign}class: ${usingClass.name}, 返回值: ${key}`
+                            `follow方法的返回值必须是对象类型！${messageNewLineSign}class: ${usingClass?.name}, 返回值: ${key}`
                         );
 
                     cachedDependenciesContainer.addDependencyKey(usingClass, key);
@@ -74,7 +84,7 @@ export class DependenciesSearcher {
                 break;
 
             default:
-                instance = DependenciesCreator.getInstance().createDependency(usingClass, usingArgs);
+                instance = DependenciesCreator.instance.createDependency(usingClass, usingArgs);
 
                 afterInstanceCreate?.(instance);
                 afterInstanceFetch?.(instance, true);
@@ -98,12 +108,12 @@ export class DependenciesSearcher {
             let configEntity: DependencyConfigEntity<Class, unknown[]>;
 
             // 获取自定义配置依赖方法
-            const configMethod = DependenciesConfigCollector.getInstance().getConfigMethod(currentUsingClass);
+            const configMethod = DependenciesConfigCollector.instance.getConfigMethod(currentUsingClass);
             if (configMethod) {
                 configEntity = new DependencyConfigEntity(currentUsingClass, usingArgs);
 
                 // 正在创建依赖的实例所属的类
-                const outerClass = DependenciesCreator.getInstance().getCreatingInstanceClass();
+                const outerClass = DependenciesCreator.instance.getCreatingInstanceClass();
 
                 const configResult = configMethod(configEntity, outerClass);
 
@@ -116,7 +126,7 @@ export class DependenciesSearcher {
                             afterInstanceFetch: configEntity.afterInstanceFetch
                         };
                     }
-                    Message.throwError('29002', `配置的对象不是 "${originalClass.name}" 或其子类的实例`);
+                    Message.throwError('29002', `配置的对象不是 "${originalClass?.name}" 或其子类的实例`);
                 }
 
                 currentUsingClass = configEntity.usingClass;
@@ -127,7 +137,7 @@ export class DependenciesSearcher {
                 if (configResult === STOP_DEEP_CONFIG)
                     return {
                         usingClass: <NormalClass>currentUsingClass,
-                        usingArgs,
+                        usingArgs: usingArgs ?? [],
                         afterInstanceCreate,
                         afterInstanceFetch
                     };
@@ -136,16 +146,16 @@ export class DependenciesSearcher {
 
         return {
             usingClass: <NormalClass>usingClass,
-            usingArgs,
+            usingArgs: usingArgs ?? [],
             afterInstanceCreate,
             afterInstanceFetch
         };
     }
 
-    static getInstance(): DependenciesSearcher {
-        if (!DependenciesSearcher.instance) {
-            DependenciesSearcher.instance = new DependenciesSearcher();
+    static get instance(): DependenciesSearcher {
+        if (!DependenciesSearcher._instance) {
+            DependenciesSearcher._instance = new DependenciesSearcher();
         }
-        return DependenciesSearcher.instance;
+        return DependenciesSearcher._instance;
     }
 }

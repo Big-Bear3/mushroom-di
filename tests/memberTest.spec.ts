@@ -1,5 +1,6 @@
 import { of } from '../src';
 import { Message } from '../src/utils/message';
+import { Bears, Honey, numberPropName, Snake, symbolPropName } from './test-classes/basicClasses';
 import {
     Animal,
     Grassland,
@@ -9,7 +10,8 @@ import {
     RabitMeat,
     Meat,
     FemaleLion,
-    SolarSystem
+    SolarSystem,
+    MaleLion
 } from './test-classes/extendsClasses';
 
 Message.toggleConsolePrintable(false);
@@ -37,6 +39,12 @@ test('成员变量注入', () => {
     expect(grassland1.femaleLion.food === grassland2.femaleLion.food).toBe(false);
 });
 
+test('symbol、number类型成员变量注入', () => {
+    const bears = of(Bears);
+    expect(bears[numberPropName] instanceof Honey).toBe(true);
+    expect(bears[symbolPropName] instanceof Honey).toBe(true);
+});
+
 test('父类成员变量注入', () => {
     const grassland = of(Grassland);
 
@@ -62,9 +70,15 @@ test('成员变量延迟注入', () => {
 test('错误注入处理', () => {
     const grassland = of(Grassland);
     expect(grassland.anyMember).toBe(undefined);
-    expect(grassland.nullMember).toBe(undefined);
     expect(Grassland.anyStaticMember).toBe(undefined);
-    expect(Grassland.nullStaticMember).toBe(undefined);
+});
+
+test('指定null注入', () => {
+    const grassland = of(Grassland);
+    expect(grassland.nullMember1 instanceof MaleLion).toBe(true);
+    expect(grassland.nullMember2 instanceof MaleLion).toBe(true);
+    expect(Grassland.nullStaticMember1 instanceof MaleLion).toBe(true);
+    expect(Grassland.nullStaticMember2 instanceof MaleLion).toBe(true);
 });
 
 test('延迟注入成员变量赋值', () => {
@@ -74,4 +88,21 @@ test('延迟注入成员变量赋值', () => {
 
     expect(grassland.maleLionValue).toBe(null);
     expect(Grassland.maleLionStaticValue).toBe(null);
+});
+
+test('找不到依赖注入undefined', () => {
+    const snake = of(Snake);
+
+    expect(Snake.num1).toBe(undefined);
+    expect(Snake.num2).toBe(undefined);
+    expect(snake.num3).toBe(undefined);
+    expect(snake.num4).toBe(undefined);
+    expect(snake.num5).toBe(undefined);
+    expect(snake.num6).toBe(undefined);
+    expect(snake.num7).toBe(undefined);
+    expect(Snake.animal1).toBe(undefined);
+    expect(Snake.animal2).toBe(undefined);
+    expect(snake.animal3).toBe(undefined);
+    expect(snake.animal4).toBe(undefined);
+    expect(snake.animal3).toBe(undefined);
 });

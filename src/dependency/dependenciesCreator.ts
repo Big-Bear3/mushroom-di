@@ -8,9 +8,9 @@ import { AUTO, messageNewLineSign } from '../constants/diConstants';
 import { InjectMembersHandler } from './injectMembersHandler';
 
 export class DependenciesCreator {
-    private static instance: DependenciesCreator;
+    private static _instance: DependenciesCreator;
 
-    private dependenciesSearcher = DependenciesSearcher.getInstance();
+    private dependenciesSearcher = DependenciesSearcher.instance;
 
     private dependenciesGraph = new DependenciesGraph();
     private creatingInstanceClassQueue: NormalClass[] = [];
@@ -27,7 +27,7 @@ export class DependenciesCreator {
 
         const instance = this.createInstance(usingClass, usingArgs);
 
-        if (isRootInjection) DependenciesCreator.instance = null;
+        if (isRootInjection) DependenciesCreator._instance = null;
 
         return instance;
     }
@@ -52,7 +52,7 @@ export class DependenciesCreator {
 
         // 创建实例
         try {
-            const injectMembersHandler = InjectMembersHandler.getInstance();
+            const injectMembersHandler = InjectMembersHandler.instance;
             injectMembersHandler.handleInstanceLazyMembers(usingClass);
 
             let instance: T;
@@ -70,8 +70,8 @@ export class DependenciesCreator {
         } catch (error) {
             Message.throwError(
                 '39001',
-                `依赖注入容器实例化类 "${usingClass.name}" 出错！${messageNewLineSign}${
-                    /* istanbul ignore next */
+                `依赖注入容器实例化类 "${usingClass?.name}" 出错！${messageNewLineSign}${
+                    /* c8 ignore next */
                     (<{ stack: unknown }>error)?.stack ?? error
                 }`
             );
@@ -94,7 +94,7 @@ export class DependenciesCreator {
     // 判断构造方法参数是否可注入，如果可注入则去查找该依赖
     private handleConstructorArgs(usingArgs: unknown[], constructorArgs: unknown[], usingClass: NormalClass): void {
         if (usingArgs.length > constructorArgs.length) {
-            Message.warn('20001', `为 "${usingClass.name}" 的构造方法配置的参数过多！`);
+            Message.warn('20001', `为 "${usingClass?.name}" 的构造方法配置的参数过多！`);
         } else if (usingArgs.length < constructorArgs.length) {
             // 如果提供的参数个数过少，则用AUTO补全
             const padLength = constructorArgs.length - usingArgs.length;
@@ -103,12 +103,12 @@ export class DependenciesCreator {
             }
         }
 
-        const dependenciesCollector = DependenciesClassCollector.getInstance();
+        const dependenciesClassCollector = DependenciesClassCollector.instance;
 
         for (let i = 0; i < usingArgs.length; i++) {
             if (usingArgs[i] === AUTO) {
                 if (typeof constructorArgs[i] === 'function') {
-                    const isInjectable = dependenciesCollector.contains(<Class>constructorArgs[i]);
+                    const isInjectable = dependenciesClassCollector.contains(<Class>constructorArgs[i]);
                     if (isInjectable) {
                         usingArgs[i] = this.dependenciesSearcher.searchDependency(<Class>constructorArgs[i]);
                         continue;
@@ -119,10 +119,10 @@ export class DependenciesCreator {
         }
     }
 
-    static getInstance(): DependenciesCreator {
-        if (!DependenciesCreator.instance) {
-            DependenciesCreator.instance = new DependenciesCreator();
+    static get instance(): DependenciesCreator {
+        if (!DependenciesCreator._instance) {
+            DependenciesCreator._instance = new DependenciesCreator();
         }
-        return DependenciesCreator.instance;
+        return DependenciesCreator._instance;
     }
 }

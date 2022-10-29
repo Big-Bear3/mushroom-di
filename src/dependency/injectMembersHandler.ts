@@ -1,4 +1,4 @@
-import type { Class, NormalClass, ObjectType } from '../types/diTypes';
+import type { Class, NormalClass, ObjectKey, ObjectType } from '../types/diTypes';
 import type { InjectOptions } from '../types/diTypes';
 
 import { defaultInjectOptions } from '../constants/diConstants';
@@ -6,11 +6,11 @@ import { DependenciesSearcher } from './dependenciesSearcher';
 
 interface InjectMembersInfo {
     members: {
-        memberName: string | symbol | number;
+        memberName: ObjectKey;
         definedClass: Class;
     }[];
     lazyMembers: {
-        memberName: string | symbol | number;
+        memberName: ObjectKey;
         definedClass: Class;
     }[];
     lazyMembersHandled: boolean;
@@ -18,7 +18,7 @@ interface InjectMembersInfo {
 
 /** 用于处理静态、非静态成员变量注入 */
 export class InjectMembersHandler {
-    private static instance: InjectMembersHandler;
+    private static _instance: InjectMembersHandler;
 
     /** 类和类中需要注入的非静态成员变量的映射 */
     private classToInjectMembers = new Map<Class, InjectMembersInfo>();
@@ -29,7 +29,7 @@ export class InjectMembersHandler {
     /** 添加类中需要注入的非静态成员变量 */
     addInjectMember(
         c: Class,
-        memberName: string | symbol | number,
+        memberName: ObjectKey,
         definedClass: Class,
         injectOptions: InjectOptions = defaultInjectOptions
     ): void {
@@ -76,13 +76,10 @@ export class InjectMembersHandler {
     handleInstanceMembers(nc: NormalClass, instance: ObjectType): void {
         const injectMembersInfo = this.classToInjectMembers.get(nc.prototype);
         if (injectMembersInfo) {
-            const dependenciesSearcher = DependenciesSearcher.getInstance();
+            const dependenciesSearcher = DependenciesSearcher.instance;
 
             for (const memberInfo of injectMembersInfo.members) {
-                instance[memberInfo.memberName] = memberInfo.definedClass
-                    ? dependenciesSearcher.searchDependency(memberInfo.definedClass)
-                    : /* istanbul ignore next */
-                      undefined;
+                instance[memberInfo.memberName] = dependenciesSearcher.searchDependency(memberInfo.definedClass);
             }
         }
 
@@ -96,38 +93,34 @@ export class InjectMembersHandler {
     handleInstanceLazyMembers(nc: NormalClass): void {
         const injectMembersInfo = this.classToInjectMembers.get(nc.prototype);
         if (injectMembersInfo && !injectMembersInfo.lazyMembersHandled) {
-            const dependenciesSearcher = DependenciesSearcher.getInstance();
+            const dependenciesSearcher = DependenciesSearcher.instance;
             const instanceToLazyInjectMembers = this.instanceToLazyInjectMembers;
 
             for (const memberInfo of injectMembersInfo.lazyMembers) {
-                if (memberInfo.definedClass) {
-                    Reflect.defineProperty(nc.prototype, memberInfo.memberName, {
-                        enumerable: true,
-                        configurable: true,
-                        get() {
-                            let members = instanceToLazyInjectMembers.get(this);
-                            if (members) {
-                                if (Reflect.has(members, memberInfo.memberName)) return members[memberInfo.memberName];
-                            } else {
-                                members = {};
-                                instanceToLazyInjectMembers.set(this, members);
-                            }
-                            const memberValue = dependenciesSearcher.searchDependency(memberInfo.definedClass);
-                            members[memberInfo.memberName] = memberValue;
-                            return memberValue;
-                        },
-                        set(value: unknown) {
-                            let members = instanceToLazyInjectMembers.get(this);
-                            if (!members) {
-                                members = {};
-                                instanceToLazyInjectMembers.set(this, members);
-                            }
-                            members[memberInfo.memberName] = value;
+                Reflect.defineProperty(nc.prototype, memberInfo.memberName, {
+                    enumerable: true,
+                    configurable: true,
+                    get() {
+                        let members = instanceToLazyInjectMembers.get(this);
+                        if (members) {
+                            if (Reflect.has(members, memberInfo.memberName)) return members[memberInfo.memberName];
+                        } else {
+                            members = {};
+                            instanceToLazyInjectMembers.set(this, members);
                         }
-                    });
-                } else {
-                    Reflect.set(nc.prototype, memberInfo.memberName, undefined);
-                }
+                        const memberValue = dependenciesSearcher.searchDependency(memberInfo.definedClass);
+                        members[memberInfo.memberName] = memberValue;
+                        return memberValue;
+                    },
+                    set(value: unknown) {
+                        let members = instanceToLazyInjectMembers.get(this);
+                        if (!members) {
+                            members = {};
+                            instanceToLazyInjectMembers.set(this, members);
+                        }
+                        members[memberInfo.memberName] = value;
+                    }
+                });
             }
         }
 
@@ -140,11 +133,11 @@ export class InjectMembersHandler {
     /** 为类中的静态成员变量注入依赖 */
     handleInstanceStaticMember(
         c: Class,
-        memberName: string | symbol,
+        memberName: ObjectKey,
         definedClass: Class,
         injectOptions: InjectOptions = defaultInjectOptions
     ): void {
-        if (injectOptions.lazy && definedClass) {
+        if (injectOptions.lazy) {
             let _value: unknown;
             let valueAlreadySet = false;
 
@@ -154,7 +147,7 @@ export class InjectMembersHandler {
                 get() {
                     if (valueAlreadySet) return _value;
 
-                    _value = DependenciesSearcher.getInstance().searchDependency(definedClass);
+                    _value = DependenciesSearcher.instance.searchDependency(definedClass);
                     valueAlreadySet = true;
 
                     return _value;
@@ -165,15 +158,14 @@ export class InjectMembersHandler {
                 }
             });
         } else {
-            if (definedClass) Reflect.set(c, memberName, DependenciesSearcher.getInstance().searchDependency(definedClass));
-            else Reflect.set(c, memberName, undefined);
+            Reflect.set(c, memberName, DependenciesSearcher.instance.searchDependency(definedClass));
         }
     }
 
-    static getInstance(): InjectMembersHandler {
-        if (!InjectMembersHandler.instance) {
-            InjectMembersHandler.instance = new InjectMembersHandler();
+    static get instance(): InjectMembersHandler {
+        if (!InjectMembersHandler._instance) {
+            InjectMembersHandler._instance = new InjectMembersHandler();
         }
-        return InjectMembersHandler.instance;
+        return InjectMembersHandler._instance;
     }
 }

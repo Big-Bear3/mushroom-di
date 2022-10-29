@@ -9,7 +9,7 @@ import { Message } from '../utils/message';
  * Injectable() 装饰器
  */
 export function Injectable<T extends ObjectType>(options: InjectableOptions<T> = defaultInjectableOptions): ClassDecorator {
-    return ((target: Class) => {
+    return function (target: Class) {
         if (parentsIsSingleton(target)) {
             Message.throwError(
                 '29001',
@@ -18,8 +18,8 @@ export function Injectable<T extends ObjectType>(options: InjectableOptions<T> =
             );
         }
 
-        DependenciesClassCollector.getInstance().collect(target, options);
+        DependenciesClassCollector.instance.collect(target, options);
 
         return target;
-    }) as ClassDecorator;
+    } as ClassDecorator;
 }

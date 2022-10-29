@@ -1,10 +1,21 @@
 import { of, by, AUTO, DependencyConfig } from '../src';
 import { MushroomService, Injectable, registerDepsConfig } from '../src';
 import { Message } from '../src/utils/message';
-import { Animal, BrownBear, ErrorZoo, Zoo } from './test-classes/basicClasses';
+import {
+    Animal,
+    BrownBear,
+    ErrorZoo,
+    InvalidConfigZoo1,
+    InvalidConfigZoo2,
+    InvalidConfigZoo3,
+    InvalidConfigZoo4,
+    InvalidConfigZoo5,
+    InvalidConfigZoo6,
+    Zoo
+} from './test-classes/basicClasses';
 import { BrownBears } from './test-classes/basicClasses';
-import { AquaSquirrel, BlackSquirrel, GreenSquirrel, Squirrel } from './test-classes/cachedClasses';
-import { ClassesConfig, useFood, useMonkey } from './test-classes/classesConfig';
+import { AquaSquirrel, BigSquirrel, BlackSquirrel, GreenSquirrel, Squirrel } from './test-classes/cachedClasses';
+import { CachedClassesConfig, ClassesConfig, useFood, useMonkey } from './test-classes/classesConfig';
 import {
     Banana,
     BrownMonkey,
@@ -60,7 +71,7 @@ test('继承单例抛异常', () => {
     expect(messageHistory[0]?.code).toBe('29001');
 });
 
-test('清除已创建的单例对象', () => {
+test('清除已创建的单例、或缓存的对象', () => {
     const brownBear1 = by(BrownBear, 1);
     mushroomService.destroySingletonInstance(BrownBear);
     const brownBear2 = by(BrownBear, 1);
@@ -186,11 +197,18 @@ test('带配置的依赖', () => {
 test('带配置的依赖配置回调方法', () => {
     of(MonkeyKing, MonkeyKing, MonkeyKing);
     of(Monkeys, Monkeys, Monkeys);
+    of(BigSquirrel);
 
     expect(ClassesConfig.monkeyKingCreateCount).toBe(1);
     expect(ClassesConfig.monkeyKingFetchCount).toBe(3);
     expect(ClassesConfig.monkeysCreateCount).toBe(3);
     expect(ClassesConfig.monkeysFetchCount).toBe(3);
+    expect(CachedClassesConfig.bigSquirrelCreateTimes).toBe(1);
+    expect(CachedClassesConfig.bigSquirrelFetchTimes).toBe(1);
+
+    of(BigSquirrel);
+    expect(CachedClassesConfig.bigSquirrelCreateTimes).toBe(1);
+    expect(CachedClassesConfig.bigSquirrelFetchTimes).toBe(2);
 });
 
 test('带配置的依赖配置非子类实例', () => {
@@ -232,6 +250,70 @@ test('重复配置提示', () => {
     }
 
     expect(messageHistory[0].code).toBe('20003');
+});
+
+test('无效的配置验证', () => {
+    const messageHistory = Message.getHistory();
+    Message.clearHistory();
+
+    try {
+        of(InvalidConfigZoo1);
+    } catch (error) {}
+    expect(messageHistory[0].code).toBe('29014');
+
+    Message.clearHistory();
+
+    try {
+        of(InvalidConfigZoo2);
+    } catch (error) {}
+    expect(messageHistory[0].code).toBe('29014');
+
+    Message.clearHistory();
+
+    try {
+        of(InvalidConfigZoo3);
+    } catch (error) {}
+    expect(messageHistory).toHaveLength(0);
+
+    Message.clearHistory();
+
+    try {
+        of(InvalidConfigZoo4);
+    } catch (error) {}
+    expect(messageHistory[0].code).toBe('29015');
+
+    Message.clearHistory();
+
+    try {
+        of(InvalidConfigZoo5);
+    } catch (error) {}
+    expect(messageHistory[0].code).toBe('29016');
+
+    Message.clearHistory();
+
+    try {
+        of(InvalidConfigZoo6);
+    } catch (error) {}
+    expect(messageHistory[0].code).toBe('29017');
+});
+
+test('不支持WeakRef的情况下创建实例', () => {
+    const weakRefTmp = WeakRef;
+    WeakRef = undefined;
+
+    mushroomService.destroyCachedInstance(Squirrel);
+
+    const squirrel1 = of(Squirrel);
+    const squirrel2 = of(Squirrel);
+    expect(!!squirrel1 && squirrel1 === squirrel2).toBe(true);
+
+    mushroomService.destroyCachedInstance(Squirrel);
+
+    const squirrel3 = of(Squirrel);
+    expect(!!squirrel3 && squirrel1 === squirrel3).toBe(false);
+
+    mushroomService.destroyCachedInstance(Squirrel);
+    WeakRef = weakRefTmp;
 });
 
 test('Message打印错误', () => {

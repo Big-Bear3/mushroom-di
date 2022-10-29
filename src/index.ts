@@ -11,7 +11,7 @@ import { MushroomService as MushroomServiceClass } from './mushroomService';
 
 // import { Message as MessageClass } from './utils/message';
 
-const dependenciesSearcher = DependenciesSearcher.getInstance();
+const dependenciesSearcher = DependenciesSearcher.instance;
 
 export function of<T extends Class>(c: T): InstanceType<T>;
 export function of<T extends [Class, ...Class[]]>(...c: T): InstanceTypes<T>;

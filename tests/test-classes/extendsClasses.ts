@@ -90,14 +90,20 @@ export class Grassland {
     @Inject({ lazy: true })
     anyMember: any;
 
+    @Inject(null)
+    nullMember1: MaleLion;
+
     @Inject(null, { lazy: true })
-    nullMember: MaleLion;
+    nullMember2: MaleLion;
 
     @Inject({ lazy: true })
     static anyStaticMember: any;
 
+    @Inject(null)
+    static nullStaticMember1: MaleLion;
+
     @Inject(null, { lazy: true })
-    static nullStaticMember: MaleLion;
+    static nullStaticMember2: MaleLion;
 
     @Inject({ lazy: true })
     maleLionValue: MaleLion;

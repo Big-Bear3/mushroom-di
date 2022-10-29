@@ -7,7 +7,7 @@ import { DependenciesConfigCollector } from '../dependency-config/dependenciesCo
  */
 export function DependencyConfig(c: Class): MethodDecorator {
     return ((_target: Class, _key: string, methodDescriptor: MethodDescriptor) => {
-        const dependenciesConfigCollector = DependenciesConfigCollector.getInstance();
+        const dependenciesConfigCollector = DependenciesConfigCollector.instance;
         dependenciesConfigCollector.collect(c, methodDescriptor.value as ConfigMethod);
     }) as MethodDecorator;
 }

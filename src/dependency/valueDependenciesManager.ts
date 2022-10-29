@@ -6,7 +6,7 @@ import { MODULE } from '../constants/diConstants';
 
 /** 用于管理所有值依赖 */
 export class ValueDependenciesManager {
-    private static instance: ValueDependenciesManager;
+    private static _instance: ValueDependenciesManager;
 
     /** 模块化的所有值 */
     private modularValues: ModularValues;
@@ -31,7 +31,7 @@ export class ValueDependenciesManager {
 
     /** 根据key去更新值 */
     patchValue(key: string, value: unknown): void {
-        /* istanbul ignore next */
+        /* c8 ignore next */ // 从外部调用不会产生此异常
         if (typeof key !== 'string') Message.throwError('29011', 'key必须是string类型！');
 
         if (!this.modularValues) this.modularValues = {} as ModularValues;
@@ -71,10 +71,10 @@ export class ValueDependenciesManager {
         return lastObj[keySeries[keySeries.length - 1]];
     }
 
-    static getInstance(): ValueDependenciesManager {
-        if (!ValueDependenciesManager.instance) {
-            ValueDependenciesManager.instance = new ValueDependenciesManager();
+    static get instance(): ValueDependenciesManager {
+        if (!ValueDependenciesManager._instance) {
+            ValueDependenciesManager._instance = new ValueDependenciesManager();
         }
-        return ValueDependenciesManager.instance;
+        return ValueDependenciesManager._instance;
     }
 }
