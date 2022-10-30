@@ -64,6 +64,18 @@ export class DependenciesCreator {
 
             injectMembersHandler.handleInstanceMembers(usingClass, <ObjectType>instance);
 
+            const injectableOptions = DependenciesClassCollector.instance.getInjectableOptions(usingClass);
+
+            switch (injectableOptions.setTo) {
+                case 'sealed':
+                    Object.seal(instance);
+                    break;
+
+                case 'frozen':
+                    Object.freeze(instance);
+                    break;
+            }
+
             this.creatingInstanceClassQueue.pop();
 
             return instance;

@@ -32,7 +32,7 @@ export class ValueDependenciesManager {
     /** 根据key去更新值 */
     patchValue(key: string, value: unknown): void {
         /* c8 ignore next */ // 从外部调用不会产生此异常
-        if (typeof key !== 'string') Message.throwError('29011', 'key必须是string类型！');
+        if (typeof key !== 'string') Message.throwError('19001', 'key必须是string类型！');
 
         if (!this.modularValues) this.modularValues = {} as ModularValues;
 

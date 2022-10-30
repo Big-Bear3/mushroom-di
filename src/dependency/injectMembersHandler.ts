@@ -3,6 +3,8 @@ import type { InjectOptions } from '../types/diTypes';
 
 import { defaultInjectOptions } from '../constants/diConstants';
 import { DependenciesSearcher } from './dependenciesSearcher';
+import { DependenciesClassCollector } from '../../src/dependency-config/dependenciesClassCollector';
+import { Message } from '../../src/utils/message';
 
 interface InjectMembersInfo {
     members: {
@@ -113,6 +115,10 @@ export class InjectMembersHandler {
                         return memberValue;
                     },
                     set(value: unknown) {
+                        const injectableOptions = DependenciesClassCollector.instance.getInjectableOptions(nc);
+                        if (injectableOptions.setTo === 'frozen')
+                            Message.throwError('29019', `该类 (${nc.name}) 的实例已置为frozen，无法对其属性重新赋值！`);
+
                         let members = instanceToLazyInjectMembers.get(this);
                         if (!members) {
                             members = {};
@@ -153,6 +159,10 @@ export class InjectMembersHandler {
                     return _value;
                 },
                 set(value: unknown) {
+                    const injectableOptions = DependenciesClassCollector.instance.getInjectableOptions(c);
+                    if (injectableOptions.setTo === 'frozen')
+                        Message.throwError('29020', `该类 (${c.name}) 的实例已置为frozen，无法对其属性重新赋值！`);
+
                     _value = value;
                     valueAlreadySet = true;
                 }

@@ -14,14 +14,17 @@ export type ObjectType = Record<ObjectKey, any>;
 
 export type InjectType = 'multiple' | 'cached' | 'singleton';
 
-export type InjectableOptions<T extends ObjectType = ObjectType> =
+export type InjectableOptions<T extends ObjectType = ObjectType> = (
     | {
-          type: Exclude<InjectType, 'cached'>;
+          type?: Exclude<InjectType, 'cached'>;
       }
     | ({
-          type: Extract<InjectType, 'cached'>;
+          type?: Extract<InjectType, 'cached'>;
           follow?: (instance: T) => ObjectType;
-      } & ThisType<T>);
+      } & ThisType<T>)
+) & {
+    setTo?: 'sealed' | 'frozen';
+};
 
 export interface InjectOptions {
     lazy: boolean;

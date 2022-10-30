@@ -166,3 +166,19 @@ export class InvalidConfigZoo6 {
         configEntity.afterInstanceFetch = 123 as any;
     }
 }
+
+@Injectable({ setTo: 'sealed' })
+export class Penguin {
+    food = 'fish';
+}
+
+@Injectable({ type: 'singleton', setTo: 'frozen' })
+export class PolarBear {
+    food = 'fish';
+
+    @Inject({ lazy: true })
+    static friend1: BrownBear;
+
+    @Inject({ lazy: true })
+    friend2: BrownBear;
+}
