@@ -5,12 +5,15 @@ import {
     Animal,
     BrownBear,
     ErrorZoo,
+    Fox,
     InvalidConfigZoo1,
     InvalidConfigZoo2,
     InvalidConfigZoo3,
     InvalidConfigZoo4,
     InvalidConfigZoo5,
     InvalidConfigZoo6,
+    Penguin,
+    PolarBear,
     Zoo
 } from './test-classes/basicClasses';
 import { BrownBears } from './test-classes/basicClasses';
@@ -314,6 +317,48 @@ test('不支持WeakRef的情况下创建实例', () => {
 
     mushroomService.destroyCachedInstance(Squirrel);
     WeakRef = weakRefTmp;
+});
+
+test('对象置为sealed或frozen', () => {
+    const fox = of(Fox);
+    const penguin = of(Penguin);
+    const polarBear = of(PolarBear);
+
+    try {
+        fox.food = 'mouse';
+        (<any>fox).color = 'black';
+    } catch (error) {}
+
+    expect(fox.food).toBe('mouse');
+    expect((<any>fox).color).toBe(undefined);
+
+    delete fox.food;
+    expect(fox.food).toBe(undefined);
+
+    try {
+        delete penguin.food;
+    } catch (error) {}
+
+    expect(penguin.food).toBe('fish');
+
+    try {
+        polarBear.food = 'mouse';
+    } catch (error) {}
+    expect(polarBear.food).toBe('fish');
+    expect(polarBear.friend2 instanceof BrownBear).toBe(true);
+
+    const messageHistory = Message.getHistory();
+    Message.clearHistory();
+    try {
+        polarBear.friend2 = null;
+    } catch (error) {}
+    expect(messageHistory[0].code).toBe('29019');
+
+    Message.clearHistory();
+    try {
+        PolarBear.friend1 = null;
+    } catch (error) {}
+    expect(messageHistory[0].code).toBe('29020');
 });
 
 test('Message打印错误', () => {

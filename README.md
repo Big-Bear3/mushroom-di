@@ -309,6 +309,26 @@ export class Bee {
 const bee = by(Bee, AUTO, 123);
 ```
 
+### 禁止扩展、密封和冻结依赖
+我们可以为InjectableOptions传入一个setTo属性，来禁止扩展、密封或冻结依赖。
+```ts
+@Injectable({ setTo: 'inextensible' }) // 设为不可扩展的，相当于Object.preventExtensions
+export class Bee {
+    private name: string;
+}
+
+@Injectable({ setTo: 'sealed' }) // 设为密封的，相当于Object.seal
+export class Bee {
+    private name: string;
+}
+
+@Injectable({ setTo: 'frozen' }) // 设为冻结的，相当于Object.freeze
+export class Bee {
+    private name: string;
+}
+```
+
+
 ### 普通值的提供和注入
 在我们项目中，有可能需要提供和注入一些普通值，如基本类型的值，json字面量等，这样可以使我们的程序更加轻量化。  
 1. 首先我们需要通过 **MushroomService** 构建一个模块化的值结构，并且可以指定初始值，值结构为 **ModularValues** 类型：
