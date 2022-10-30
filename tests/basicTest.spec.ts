@@ -5,6 +5,7 @@ import {
     Animal,
     BrownBear,
     ErrorZoo,
+    Fox,
     InvalidConfigZoo1,
     InvalidConfigZoo2,
     InvalidConfigZoo3,
@@ -319,16 +320,26 @@ test('不支持WeakRef的情况下创建实例', () => {
 });
 
 test('对象置为sealed或frozen', () => {
+    const fox = of(Fox);
     const penguin = of(Penguin);
     const polarBear = of(PolarBear);
 
     try {
-        penguin.food = 'mouse';
-        (<any>penguin).color = 'black';
+        fox.food = 'mouse';
+        (<any>fox).color = 'black';
     } catch (error) {}
 
-    expect(penguin.food).toBe('mouse');
-    expect((<any>penguin).color).toBe(undefined);
+    expect(fox.food).toBe('mouse');
+    expect((<any>fox).color).toBe(undefined);
+
+    delete fox.food;
+    expect(fox.food).toBe(undefined);
+
+    try {
+        delete penguin.food;
+    } catch (error) {}
+
+    expect(penguin.food).toBe('fish');
 
     try {
         polarBear.food = 'mouse';

@@ -67,6 +67,10 @@ export class DependenciesCreator {
             const injectableOptions = DependenciesClassCollector.instance.getInjectableOptions(usingClass);
 
             switch (injectableOptions.setTo) {
+                case 'inextensible':
+                    Object.preventExtensions(instance);
+                    break;
+
                 case 'sealed':
                     Object.seal(instance);
                     break;

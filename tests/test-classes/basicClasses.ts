@@ -167,6 +167,11 @@ export class InvalidConfigZoo6 {
     }
 }
 
+@Injectable({ setTo: 'inextensible' })
+export class Fox {
+    food = 'fish';
+}
+
 @Injectable({ setTo: 'sealed' })
 export class Penguin {
     food = 'fish';
