@@ -312,7 +312,7 @@ const bee = by(Bee, AUTO, 123);
 ### 禁止扩展、密封和冻结依赖
 我们可以为InjectableOptions传入一个setTo属性，来禁止扩展、密封或冻结依赖。
 ```ts
-@Injectable({ setTo: 'nonExtensible' }) // 设为不可扩展的，相当于Object.preventExtensions
+@Injectable({ setTo: 'inextensible' }) // 设为不可扩展的，相当于Object.preventExtensions
 export class Bee {
     private name: string;
 }
