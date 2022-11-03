@@ -5,8 +5,8 @@ export type Class<T = any> = abstract new (...args: any[]) => T;
 export type NormalClass<T = any> = new (...args: any[]) => T;
 
 export type ClassTypes<T extends any[]> = T extends [first: infer F, ...rest: infer R] ? [Class<F>, ...ClassTypes<R>] : [];
-export type InstanceTypes<T extends Class[]> = T extends [first: infer F, ...rest: infer R]
-    ? [InstanceType<F extends Class ? F : any>, ...InstanceTypes<R extends Class[] ? R : any[]>]
+export type InstanceTypes<T extends Class[]> = T extends [first: infer F extends Class, ...rest: infer R extends Class[]]
+    ? [InstanceType<F>, ...InstanceTypes<R>]
     : [];
 
 export type ObjectKey = string | symbol | number;

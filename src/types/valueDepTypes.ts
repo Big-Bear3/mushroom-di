@@ -45,14 +45,10 @@ type DeepValidKeysWithoutModule<T> = T extends [infer F, ...infer R]
     : [];
 
 /** 数组转字符串，通过分隔符分隔 */
-type ArrayJoin<T extends string[], U extends string = '.'> = T extends [infer F, ...infer R]
-    ? F extends string
-        ? R extends string[]
-            ? R['length'] extends 0
-                ? F
-                : `${F}${U}${ArrayJoin<R, U>}`
-            : never
-        : never
+type ArrayJoin<T extends string[], U extends string = '.'> = T extends [infer F extends string, ...infer R extends string[]]
+    ? R['length'] extends 0
+        ? F
+        : `${F}${U}${ArrayJoin<R, U>}`
     : never;
 
 /** 根据key序列取值类型 */

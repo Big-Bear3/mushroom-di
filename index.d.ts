@@ -2,8 +2,8 @@ export type Class<T = any> = abstract new (...args: any[]) => T;
 export type NormalClass<T = any> = new (...args: any[]) => T;
 
 export type ClassTypes<T extends any[]> = T extends [first: infer F, ...rest: infer R] ? [Class<F>, ...ClassTypes<R>] : [];
-export type InstanceTypes<T extends Class[]> = T extends [first: infer F, ...rest: infer R]
-    ? [InstanceType<F extends Class ? F : any>, ...InstanceTypes<R extends Class[] ? R : any[]>]
+export type InstanceTypes<T extends Class[]> = T extends [first: infer F extends Class, ...rest: infer R extends Class[]]
+    ? [InstanceType<F>, ...InstanceTypes<R>]
     : [];
 
 export type ObjectKey = string | symbol | number;
@@ -132,14 +132,10 @@ type DeepValidKeysWithoutModule<T> = T extends [infer F, ...infer R]
         : [F, ...DeepValidKeysWithoutModule<R>]
     : [];
 
-type ArrayJoin<T extends string[], U extends string = '.'> = T extends [infer F, ...infer R]
-    ? F extends string
-        ? R extends string[]
-            ? R['length'] extends 0
-                ? F
-                : `${F}${U}${ArrayJoin<R, U>}`
-            : never
-        : never
+type ArrayJoin<T extends string[], U extends string = '.'> = T extends [infer F extends string, ...infer R extends string[]]
+    ? R['length'] extends 0
+        ? F
+        : `${F}${U}${ArrayJoin<R, U>}`
     : never;
 
 type DeepValue<T extends Record<string | symbol, any>, U extends (string | symbol)[]> = U extends [infer F, ...infer R]
