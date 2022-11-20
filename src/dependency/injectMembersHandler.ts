@@ -9,11 +9,11 @@ import { Message } from '../../src/utils/message';
 interface InjectMembersInfo {
     members: {
         memberName: ObjectKey;
-        definedClass: Class;
+        definedClassOrSymbol: Class | symbol;
     }[];
     lazyMembers: {
         memberName: ObjectKey;
-        definedClass: Class;
+        definedClassOrSymbol: Class | symbol;
     }[];
     lazyMembersHandled: boolean;
 }
@@ -32,7 +32,7 @@ export class InjectMembersHandler {
     addInjectMember(
         c: Class,
         memberName: ObjectKey,
-        definedClass: Class,
+        definedClassOrSymbol: Class | symbol,
         injectOptions: InjectOptions = defaultInjectOptions
     ): void {
         const targetInjectMembersInfo = this.classToInjectMembers.get(c);
@@ -41,12 +41,12 @@ export class InjectMembersHandler {
             if (injectOptions.lazy)
                 targetInjectMembersInfo.lazyMembers.push({
                     memberName: memberName,
-                    definedClass
+                    definedClassOrSymbol
                 });
             else
                 targetInjectMembersInfo.members.push({
                     memberName: memberName,
-                    definedClass
+                    definedClassOrSymbol
                 });
         } else {
             if (injectOptions.lazy)
@@ -55,7 +55,7 @@ export class InjectMembersHandler {
                     lazyMembers: [
                         {
                             memberName: memberName,
-                            definedClass
+                            definedClassOrSymbol
                         }
                     ],
                     lazyMembersHandled: false
@@ -65,7 +65,7 @@ export class InjectMembersHandler {
                     members: [
                         {
                             memberName: memberName,
-                            definedClass
+                            definedClassOrSymbol
                         }
                     ],
                     lazyMembers: [],
@@ -81,7 +81,15 @@ export class InjectMembersHandler {
             const dependenciesSearcher = DependenciesSearcher.instance;
 
             for (const memberInfo of injectMembersInfo.members) {
-                instance[memberInfo.memberName] = dependenciesSearcher.searchDependency(memberInfo.definedClass);
+                if (typeof memberInfo.definedClassOrSymbol === 'symbol') {
+                    instance[memberInfo.memberName] = dependenciesSearcher.searchDependencyBySymbol(
+                        memberInfo.definedClassOrSymbol
+                    );
+                } else {
+                    instance[memberInfo.memberName] = dependenciesSearcher.searchDependencyByClass(
+                        memberInfo.definedClassOrSymbol
+                    );
+                }
             }
         }
 
@@ -110,7 +118,14 @@ export class InjectMembersHandler {
                             members = {};
                             instanceToLazyInjectMembers.set(this, members);
                         }
-                        const memberValue = dependenciesSearcher.searchDependency(memberInfo.definedClass);
+
+                        let memberValue: unknown;
+                        if (typeof memberInfo.definedClassOrSymbol === 'symbol') {
+                            memberValue = dependenciesSearcher.searchDependencyBySymbol(memberInfo.definedClassOrSymbol);
+                        } else {
+                            memberValue = dependenciesSearcher.searchDependencyByClass(memberInfo.definedClassOrSymbol);
+                        }
+
                         members[memberInfo.memberName] = memberValue;
                         return memberValue;
                     },
@@ -140,7 +155,7 @@ export class InjectMembersHandler {
     handleInstanceStaticMember(
         c: Class,
         memberName: ObjectKey,
-        definedClass: Class,
+        definedClassOrSymbol: Class | symbol,
         injectOptions: InjectOptions = defaultInjectOptions
     ): void {
         if (injectOptions.lazy) {
@@ -153,7 +168,12 @@ export class InjectMembersHandler {
                 get() {
                     if (valueAlreadySet) return _value;
 
-                    _value = DependenciesSearcher.instance.searchDependency(definedClass);
+                    if (typeof definedClassOrSymbol === 'symbol') {
+                        _value = DependenciesSearcher.instance.searchDependencyBySymbol(definedClassOrSymbol);
+                    } else {
+                        _value = DependenciesSearcher.instance.searchDependencyByClass(definedClassOrSymbol);
+                    }
+
                     valueAlreadySet = true;
 
                     return _value;
@@ -168,7 +188,11 @@ export class InjectMembersHandler {
                 }
             });
         } else {
-            Reflect.set(c, memberName, DependenciesSearcher.instance.searchDependency(definedClass));
+            if (typeof definedClassOrSymbol === 'symbol') {
+                Reflect.set(c, memberName, DependenciesSearcher.instance.searchDependencyBySymbol(definedClassOrSymbol));
+            } else {
+                Reflect.set(c, memberName, DependenciesSearcher.instance.searchDependencyByClass(definedClassOrSymbol));
+            }
         }
     }
 

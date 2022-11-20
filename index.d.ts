@@ -58,14 +58,18 @@ export function by<T extends Class>(c: T, ...args: ConstructorParameters<T>): In
 export function by<T extends Class, CP extends [any, ...any[]]>(c: T, ...args: CP): InstanceType<T>;
 export function by<T, CP extends [any, ...any[]]>(c: Class<T>, ...args: CP): T;
 
+export function req<T>(s: symbol, ...args: any[]): T;
+export function req<T, CP extends any[]>(s: symbol, ...args: CP): T;
+export function req<T, CPC extends Class>(s: symbol, ...args: ConstructorParameters<CPC>): T;
+
 export function Injectable<T extends ObjectType>(options?: InjectableOptions<T>): ClassDecorator;
 
-export function DependencyConfig(c: Class): MethodDecorator;
+export function DependencyConfig(cs: Class | symbol): MethodDecorator;
 
 export function Inject(): PropertyDecorator;
-export function Inject(c: Class): PropertyDecorator;
+export function Inject(cs: Class | symbol): PropertyDecorator;
 export function Inject(injectOptions: InjectOptions): PropertyDecorator;
-export function Inject(c: Class, injectOptions: InjectOptions): PropertyDecorator;
+export function Inject(cs: Class | symbol, injectOptions: InjectOptions): PropertyDecorator;
 
 export class MushroomService {
     addDependencyWithKey<T>(nc: NormalClass<T>, instance: T, key: DependencyKey): void;

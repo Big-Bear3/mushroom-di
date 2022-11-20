@@ -19,5 +19,7 @@ export class DependencyConfigEntity<T extends Class = Class, A extends Class | u
     constructor(usingClass: Class<GenericType<T>>, args?: ArgsType<T, A>) {
         this.usingClass = usingClass;
         this.args = args;
+        this.afterInstanceCreate = undefined;
+        this.afterInstanceFetch = undefined;
     }
 }

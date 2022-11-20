@@ -126,7 +126,7 @@ export class DependenciesCreator {
                 if (typeof constructorArgs[i] === 'function') {
                     const isInjectable = dependenciesClassCollector.contains(<Class>constructorArgs[i]);
                     if (isInjectable) {
-                        usingArgs[i] = this.dependenciesSearcher.searchDependency(<Class>constructorArgs[i]);
+                        usingArgs[i] = this.dependenciesSearcher.searchDependencyByClass(<Class>constructorArgs[i]);
                         continue;
                     }
                 }

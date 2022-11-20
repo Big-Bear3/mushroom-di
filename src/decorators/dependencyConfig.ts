@@ -5,9 +5,9 @@ import { DependenciesConfigCollector } from '../dependency-config/dependenciesCo
 /**
  * DependencyConfig() 装饰器
  */
-export function DependencyConfig(c: Class): MethodDecorator {
+export function DependencyConfig(cs: Class | symbol): MethodDecorator {
     return ((_target: Class, _key: string, methodDescriptor: MethodDescriptor) => {
         const dependenciesConfigCollector = DependenciesConfigCollector.instance;
-        dependenciesConfigCollector.collect(c, methodDescriptor.value as ConfigMethod);
+        dependenciesConfigCollector.collect(cs, methodDescriptor.value as ConfigMethod);
     }) as MethodDecorator;
 }
