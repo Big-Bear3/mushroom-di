@@ -328,6 +328,23 @@ export class Bee {
 }
 ```
 
+### 通过new关键字创建实例时注入依赖
+某些极端场景下，我们使用new关键字创建实例时，也希望将依赖注入到该实例里：
+```ts
+@Injectable()
+export class Honey {
+    honeyType = 'Jujube honey';
+}
+
+@Injectable({ injectOnNew: true })
+export class Bee {
+    @Inject()
+    honey: Honey;
+}
+
+const bee = new Bee();
+console.log(bee.honey.honeyType); // 'Jujube honey'
+```
 
 ### 普通值的提供和注入
 在我们项目中，有可能需要提供和注入一些普通值，如基本类型的值，json字面量等，这样可以使我们的程序更加轻量化。  
