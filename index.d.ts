@@ -39,6 +39,11 @@ export type InjectableOptions<T extends ObjectType = ObjectType> = (
     injectOnNew: boolean;
 };
 
+export type ConfigMethod = (
+    configEntity: DependencyConfigEntity<any, any[]>,
+    outerClass?: Class
+) => void | typeof STOP_DEEP_CONFIG | ObjectType;
+
 export interface InjectOptions {
     lazy: boolean;
 }
@@ -71,6 +76,9 @@ export function Inject(): PropertyDecorator;
 export function Inject(cs: Class | symbol): PropertyDecorator;
 export function Inject(injectOptions: InjectOptions): PropertyDecorator;
 export function Inject(cs: Class | symbol, injectOptions: InjectOptions): PropertyDecorator;
+
+export function setAsInjectable<T extends ObjectType>(c: Class<T>, options: Omit<InjectableOptions<T>, 'injectOnNew'>): void;
+export function setAsDependencyConfig<T extends ObjectType>(cs: Class<T> | symbol, configMethod: ConfigMethod): void;
 
 export class MushroomService {
     addDependencyWithKey<T>(nc: NormalClass<T>, instance: T, key: DependencyKey): void;

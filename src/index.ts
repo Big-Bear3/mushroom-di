@@ -1,8 +1,13 @@
 import 'reflect-metadata';
 
-import type { Class, ClassTypes, InstanceTypes } from './types/diTypes';
+import type { Class, ClassTypes, ConfigMethod, InjectableOptions, InstanceTypes, ObjectType } from './types/diTypes';
 
-import { AUTO as autoFlag, STOP_DEEP_CONFIG as stopDeepConfigFlag, MODULE as moduleFlag } from './constants/diConstants';
+import {
+    AUTO as autoFlag,
+    STOP_DEEP_CONFIG as stopDeepConfigFlag,
+    MODULE as moduleFlag,
+    defaultInjectableOptions
+} from './constants/diConstants';
 import { Injectable as InjectableDecorator } from './decorators/injectable';
 import { DependencyConfig as DependencyConfigDecorator } from './decorators/dependencyConfig';
 import { Inject as InjectDecorator } from './decorators/inject';
@@ -34,6 +39,18 @@ export function req<T, CP extends any[]>(s: symbol, ...args: CP): T;
 export function req<T, CPC extends Class>(s: symbol, ...args: ConstructorParameters<CPC>): T;
 export function req<T>(s: symbol, ...args: any[]): T {
     return dependenciesSearcher.searchDependencyBySymbol(s, args);
+}
+
+export function setAsInjectable<T extends ObjectType>(
+    c: Class<T>,
+    options: Omit<InjectableOptions<T>, 'injectOnNew'> = defaultInjectableOptions
+): void {
+    delete (<InjectableOptions>options).injectOnNew;
+    Injectable(options)(c);
+}
+
+export function setAsDependencyConfig<T extends ObjectType>(cs: Class<T> | symbol, configMethod: ConfigMethod): void {
+    DependencyConfig(cs)(null, null, { value: configMethod });
 }
 
 export const Injectable = InjectableDecorator;
