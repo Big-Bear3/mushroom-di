@@ -533,7 +533,8 @@ console.log(bee instanceof FierceHornet); // false
 ```
     
 ### 通过 Symbol 配置
-```
+当我们想完全依赖接口编程时或者无共同父类时，可以使用此配置方式：
+```ts
 export interface IBee {
     fly(): void;
 }
@@ -571,11 +572,13 @@ export class BeeConfig {
         configEntity.usingClass = Hornet;
     }
 }
+```
 
+```ts
 const bee1 = req<IBee>(Symbol.for('bee1'));
 const bee2 = req<IBee>(Symbol.for('bee2'));
-
 const sky = of(Sky);
+
 sky.bee1.fly(); // 'HoneyBee Flying!'
 sky.bee2.fly(); // 'Hornet Flying!'
 bee1.fly(); // 'HoneyBee Flying!'
