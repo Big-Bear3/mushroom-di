@@ -328,6 +328,23 @@ export class Bee {
 }
 ```
 
+### 通过new关键字创建实例时注入依赖
+某些极端场景下，我们使用new关键字创建实例时，也希望将依赖注入到该实例里：
+```ts
+@Injectable()
+export class Honey {
+    honeyType = 'Jujube honey';
+}
+
+@Injectable({ injectOnNew: true }) // 配置injectOnNew为true
+export class Bee {
+    @Inject()
+    honey: Honey;
+}
+
+const bee = new Bee();
+console.log(bee.honey.honeyType); // 'Jujube honey'
+```
 
 ### 普通值的提供和注入
 在我们项目中，有可能需要提供和注入一些普通值，如基本类型的值，json字面量等，这样可以使我们的程序更加轻量化。  
@@ -513,6 +530,61 @@ export class BeeConfig {
 const bee = of(Bee);
 console.log(bee instanceof Hornet); // true
 console.log(bee instanceof FierceHornet); // false
+```
+    
+### 通过 Symbol 配置
+当我们想完全依赖接口编程时或者无共同父类时，可以使用此配置方式：  
+- 依赖注入时依然使用 **@Inject()** 装饰器
+- 依赖查找时使用 **req()** 方法
+```ts
+export interface IBee {
+    fly(): void;
+}
+
+@Injectable()
+export class HoneyBee implements IBee {
+    fly(): void {
+        console.log('HoneyBee Flying!');
+    }
+}
+
+@Injectable()
+export class Hornet implements IBee {
+    fly(): void {
+        console.log('Hornet Flying!');
+    }
+}
+
+@Injectable()
+export class Sky {
+    @Inject(Symbol.for('bee1'))
+    bee1: IBee;
+    @Inject(Symbol.for('bee2'))
+    bee2: IBee;
+}
+
+export class BeeConfig {
+    @DependencyConfig(Symbol.for('bee1'))
+    private static configBee1(configEntity: DependencyConfigEntity<typeof HoneyBee | typeof Hornet>) {
+        configEntity.usingClass = HoneyBee;
+    }
+
+    @DependencyConfig(Symbol.for('bee2'))
+    private static configBee2(configEntity: DependencyConfigEntity<typeof HoneyBee | typeof Hornet>) {
+        configEntity.usingClass = Hornet;
+    }
+}
+```
+
+```ts
+const bee1 = req<IBee>(Symbol.for('bee1'));
+const bee2 = req<IBee>(Symbol.for('bee2'));
+const sky = of(Sky);
+
+sky.bee1.fly(); // 'HoneyBee Flying!'
+sky.bee2.fly(); // 'Hornet Flying!'
+bee1.fly(); // 'HoneyBee Flying!'
+bee2.fly(); // 'Hornet Flying!'
 ```
 
 ### 通过 by() 方法传递标识
@@ -729,6 +801,12 @@ export class Bee3 {
 }
 ```
 在程序中应尽量避免循环依赖，如若遇到循环依赖，首先您应该考虑的是，是否程序设计出了问题，或者是bug，其次才是用技术手段解决它。
+
+## 更新日志
+v1.4.0
+1. 增加通过Symbol配置依赖功能。
+2. @Injectable() 装饰器增加injectOnNew选项。
+
 
 
 
