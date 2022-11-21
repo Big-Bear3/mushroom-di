@@ -336,7 +336,7 @@ export class Honey {
     honeyType = 'Jujube honey';
 }
 
-@Injectable({ injectOnNew: true })
+@Injectable({ injectOnNew: true }) // 配置injectOnNew为true
 export class Bee {
     @Inject()
     honey: Honey;
@@ -530,6 +530,56 @@ export class BeeConfig {
 const bee = of(Bee);
 console.log(bee instanceof Hornet); // true
 console.log(bee instanceof FierceHornet); // false
+```
+    
+### 通过 Symbol 配置
+```
+export interface IBee {
+    fly(): void;
+}
+
+@Injectable()
+export class HoneyBee implements IBee {
+    fly(): void {
+        console.log('HoneyBee Flying!');
+    }
+}
+
+@Injectable()
+export class Hornet implements IBee {
+    fly(): void {
+        console.log('Hornet Flying!');
+    }
+}
+
+@Injectable()
+export class Sky {
+    @Inject(Symbol.for('bee1'))
+    bee1: IBee;
+    @Inject(Symbol.for('bee2'))
+    bee2: IBee;
+}
+
+export class BeeConfig {
+    @DependencyConfig(Symbol.for('bee1'))
+    private static configBee1(configEntity: DependencyConfigEntity<typeof HoneyBee | typeof Hornet>) {
+        configEntity.usingClass = HoneyBee;
+    }
+
+    @DependencyConfig(Symbol.for('bee2'))
+    private static configBee2(configEntity: DependencyConfigEntity<typeof HoneyBee | typeof Hornet>) {
+        configEntity.usingClass = Hornet;
+    }
+}
+
+const bee1 = req<IBee>(Symbol.for('bee1'));
+const bee2 = req<IBee>(Symbol.for('bee2'));
+
+const sky = of(Sky);
+sky.bee1.fly(); // 'HoneyBee Flying!'
+sky.bee2.fly(); // 'Hornet Flying!'
+bee1.fly(); // 'HoneyBee Flying!'
+bee2.fly(); // 'Hornet Flying!'
 ```
 
 ### 通过 by() 方法传递标识
