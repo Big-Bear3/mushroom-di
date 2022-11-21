@@ -36,6 +36,7 @@ export type InjectableOptions<T extends ObjectType = ObjectType> = (
       } & ThisType<T>)
 ) & {
     setTo?: 'inextensible' | 'sealed' | 'frozen';
+    injectOnNew: boolean;
 };
 
 export interface InjectOptions {

@@ -4,6 +4,7 @@ import { DependenciesClassCollector } from '../dependency-config/dependenciesCla
 import { parentsIsSingleton } from '../utils/diUtils';
 import { defaultInjectableOptions, messageNewLineSign } from '../constants/diConstants';
 import { Message } from '../utils/message';
+import { DependenciesSearcher } from '../../src/dependency/dependenciesSearcher';
 
 /**
  * Injectable() 装饰器
@@ -19,6 +20,20 @@ export function Injectable<T extends ObjectType>(options: InjectableOptions<T> =
         }
 
         DependenciesClassCollector.instance.collect(target, options);
+
+        if (options.injectOnNew) {
+            const fn = function (...args: unknown[]) {
+                return DependenciesSearcher.instance.searchDependencyByClass(target, args);
+            };
+
+            const staticMemberNames = Reflect.ownKeys(target);
+            for (const staticMemberName of staticMemberNames) {
+                if (staticMemberName === 'length' || staticMemberName === 'name') continue;
+                Reflect.defineProperty(fn, staticMemberName, Reflect.getOwnPropertyDescriptor(target, staticMemberName));
+            }
+
+            return fn;
+        }
 
         return target;
     } as ClassDecorator;

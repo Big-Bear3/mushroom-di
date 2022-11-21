@@ -23,6 +23,7 @@ export type InjectableOptions<T extends ObjectType = ObjectType> = (
           follow?: (instance: T) => ObjectType;
       } & ThisType<T>)
 ) & {
+    injectOnNew?: boolean;
     setTo?: 'inextensible' | 'sealed' | 'frozen';
 };
 
