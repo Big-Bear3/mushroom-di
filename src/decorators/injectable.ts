@@ -19,7 +19,11 @@ export function Injectable<T extends ObjectType>(options: InjectableOptions<T> =
             );
         }
 
-        DependenciesClassCollector.instance.collect(target, options);
+        const dependenciesClassCollector = DependenciesClassCollector.instance;
+        if (dependenciesClassCollector.contains(target))
+            Message.throwError('29022', `禁止重复设置注入选项！class: ${target.name}`);
+
+        dependenciesClassCollector.collect(target, options);
 
         if (options.injectOnNew) {
             const fn = function (...args: unknown[]) {

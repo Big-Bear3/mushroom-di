@@ -13,11 +13,8 @@ export class Nose {
 
 export class LongNose extends Nose {
     override type = 'long';
-
-    static {
-        setAsInjectable(LongNose);
-    }
 }
+setAsInjectable(LongNose);
 
 export class ShortNose extends Nose {
     override type = 'short';
