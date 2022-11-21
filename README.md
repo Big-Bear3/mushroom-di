@@ -534,8 +534,8 @@ console.log(bee instanceof FierceHornet); // false
     
 ### 通过 Symbol 配置
 当我们想完全依赖接口编程时或者无共同父类时，可以使用此配置方式：  
-  依赖注入时依然使用@Inject()装饰器；
-  依赖查找时使用req() 方法
+- 依赖注入时依然使用 **@Inject()** 装饰器
+- 依赖查找时使用 **req()** 方法
 ```ts
 export interface IBee {
     fly(): void;
