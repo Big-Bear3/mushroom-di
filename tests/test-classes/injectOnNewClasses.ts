@@ -34,6 +34,8 @@ export class WhiteFox extends Fox {
     }
 }
 
+export const tigerSymbol = Symbol('tiger');
+
 @Injectable({ injectOnNew: true })
 export class RedFox extends Fox {
     static id = 1234;
@@ -48,6 +50,9 @@ export class RedFox extends Fox {
 
     @Inject()
     static partner: Tiger;
+
+    @Inject()
+    static [tigerSymbol]: Tiger;
 
     @Inject()
     girlFriend: WhiteFox;

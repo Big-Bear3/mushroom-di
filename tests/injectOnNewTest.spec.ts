@@ -1,5 +1,5 @@
 import { Message } from '../src/utils/message';
-import { Fox } from './test-classes/injectOnNewClasses';
+import { Fox, tigerSymbol } from './test-classes/injectOnNewClasses';
 import { RedFox } from './test-classes/injectOnNewClasses';
 
 Message.toggleConsolePrintable(false);
@@ -21,6 +21,7 @@ test('使用new的方式创建实例的依赖注入', () => {
     RedFox.myId = 2;
     expect(RedFox.id).toBe(2);
     expect(RedFox.myId).toBe(2);
+    expect(RedFox[tigerSymbol].name).toBe('tiger');
 
     expect(Fox.partner.name).toBe('tiger');
     expect(Fox.lazyPartner.name).toBe('tiger');
