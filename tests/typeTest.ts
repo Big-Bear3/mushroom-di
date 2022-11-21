@@ -55,9 +55,9 @@
 
 // @Injectable<CachedClass1>({
 //     type: 'cached',
-//     // Type 'number' is not assignable to type 'ObjectType'.
+//     //// Type 'number' is not assignable to type 'ObjectType'.
 //     follow: function () {
-//         this.type; // Property 'type' does not exist on type 'CachedClass'
+//         this.type; //// Property 'type' does not exist on type 'CachedClass'
 //         this.following; // CachedClass1.following: unknown
 //         return 123;
 //     }
@@ -79,7 +79,7 @@
 
 // @Injectable<CachedClass4>({
 //     type: 'singleton',
-//     follow: () => {} // Argument of type '{ type: "singleton"; follow: () => void; }' is not assignable to parameter of type 'InjectableOptions<CachedClass4>'
+//     follow: () => {} //// Argument of type '{ type: "singleton"; follow: () => void; }' is not assignable to parameter of type 'InjectableOptions<CachedClass4>'
 // })
 // export class CachedClass4 {}
 

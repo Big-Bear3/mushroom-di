@@ -55,12 +55,7 @@ export class DependenciesCreator {
             const injectMembersHandler = InjectMembersHandler.instance;
             injectMembersHandler.handleInstanceLazyMembers(usingClass);
 
-            let instance: T;
-            if (usingArgs.length > 0) {
-                instance = new usingClass(...usingArgs);
-            } else {
-                instance = new usingClass();
-            }
+            const instance = new usingClass(...usingArgs);
 
             injectMembersHandler.handleInstanceMembers(usingClass, <ObjectType>instance);
 
@@ -126,7 +121,7 @@ export class DependenciesCreator {
                 if (typeof constructorArgs[i] === 'function') {
                     const isInjectable = dependenciesClassCollector.contains(<Class>constructorArgs[i]);
                     if (isInjectable) {
-                        usingArgs[i] = this.dependenciesSearcher.searchDependency(<Class>constructorArgs[i]);
+                        usingArgs[i] = this.dependenciesSearcher.searchDependencyByClass(<Class>constructorArgs[i]);
                         continue;
                     }
                 }

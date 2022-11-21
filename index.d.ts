@@ -2,8 +2,8 @@ export type Class<T = any> = abstract new (...args: any[]) => T;
 export type NormalClass<T = any> = new (...args: any[]) => T;
 
 export type ClassTypes<T extends any[]> = T extends [first: infer F, ...rest: infer R] ? [Class<F>, ...ClassTypes<R>] : [];
-export type InstanceTypes<T extends Class[]> = T extends [first: infer F, ...rest: infer R]
-    ? [InstanceType<F extends Class ? F : any>, ...InstanceTypes<R extends Class[] ? R : any[]>]
+export type InstanceTypes<T extends Class[]> = T extends [first: infer F extends Class, ...rest: infer R extends Class[]]
+    ? [InstanceType<F>, ...InstanceTypes<R>]
     : [];
 
 export type ObjectKey = string | symbol | number;
@@ -36,6 +36,7 @@ export type InjectableOptions<T extends ObjectType = ObjectType> = (
       } & ThisType<T>)
 ) & {
     setTo?: 'inextensible' | 'sealed' | 'frozen';
+    injectOnNew: boolean;
 };
 
 export interface InjectOptions {
@@ -58,14 +59,18 @@ export function by<T extends Class>(c: T, ...args: ConstructorParameters<T>): In
 export function by<T extends Class, CP extends [any, ...any[]]>(c: T, ...args: CP): InstanceType<T>;
 export function by<T, CP extends [any, ...any[]]>(c: Class<T>, ...args: CP): T;
 
+export function req<T>(s: symbol, ...args: any[]): T;
+export function req<T, CP extends any[]>(s: symbol, ...args: CP): T;
+export function req<T, CPC extends Class>(s: symbol, ...args: ConstructorParameters<CPC>): T;
+
 export function Injectable<T extends ObjectType>(options?: InjectableOptions<T>): ClassDecorator;
 
-export function DependencyConfig(c: Class): MethodDecorator;
+export function DependencyConfig(cs: Class | symbol): MethodDecorator;
 
 export function Inject(): PropertyDecorator;
-export function Inject(c: Class): PropertyDecorator;
+export function Inject(cs: Class | symbol): PropertyDecorator;
 export function Inject(injectOptions: InjectOptions): PropertyDecorator;
-export function Inject(c: Class, injectOptions: InjectOptions): PropertyDecorator;
+export function Inject(cs: Class | symbol, injectOptions: InjectOptions): PropertyDecorator;
 
 export class MushroomService {
     addDependencyWithKey<T>(nc: NormalClass<T>, instance: T, key: DependencyKey): void;
@@ -132,14 +137,10 @@ type DeepValidKeysWithoutModule<T> = T extends [infer F, ...infer R]
         : [F, ...DeepValidKeysWithoutModule<R>]
     : [];
 
-type ArrayJoin<T extends string[], U extends string = '.'> = T extends [infer F, ...infer R]
-    ? F extends string
-        ? R extends string[]
-            ? R['length'] extends 0
-                ? F
-                : `${F}${U}${ArrayJoin<R, U>}`
-            : never
-        : never
+type ArrayJoin<T extends string[], U extends string = '.'> = T extends [infer F extends string, ...infer R extends string[]]
+    ? R['length'] extends 0
+        ? F
+        : `${F}${U}${ArrayJoin<R, U>}`
     : never;
 
 type DeepValue<T extends Record<string | symbol, any>, U extends (string | symbol)[]> = U extends [infer F, ...infer R]

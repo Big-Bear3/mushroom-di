@@ -18,15 +18,22 @@ export function of<T extends [Class, ...Class[]]>(...c: T): InstanceTypes<T>;
 export function of<T>(c: Class<T>): T;
 export function of<T extends [any, ...any[]]>(...c: ClassTypes<T>): T;
 export function of(...classes: Class[]): any | any[] {
-    if (classes.length === 1) return dependenciesSearcher.searchDependency(classes[0]);
-    return classes.map((c) => dependenciesSearcher.searchDependency(c));
+    if (classes.length === 1) return dependenciesSearcher.searchDependencyByClass(classes[0]);
+    return classes.map((c) => dependenciesSearcher.searchDependencyByClass(c));
 }
 
 export function by<T extends Class>(c: T, ...args: ConstructorParameters<T>): InstanceType<T>;
 export function by<T extends Class, CP extends [any, ...any[]]>(c: T, ...args: CP): InstanceType<T>;
 export function by<T, CP extends [any, ...any[]]>(c: Class<T>, ...args: CP): T;
 export function by<T extends Class>(c: T, ...args: any[]): InstanceType<T> {
-    return dependenciesSearcher.searchDependency(c, args);
+    return dependenciesSearcher.searchDependencyByClass(c, args);
+}
+
+export function req<T>(s: symbol, ...args: any[]): T;
+export function req<T, CP extends any[]>(s: symbol, ...args: CP): T;
+export function req<T, CPC extends Class>(s: symbol, ...args: ConstructorParameters<CPC>): T;
+export function req<T>(s: symbol, ...args: any[]): T {
+    return dependenciesSearcher.searchDependencyBySymbol(s, args);
 }
 
 export const Injectable = InjectableDecorator;

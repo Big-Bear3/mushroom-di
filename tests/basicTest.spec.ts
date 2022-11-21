@@ -1,4 +1,5 @@
-import { of, by, AUTO, DependencyConfig } from '../src';
+import { DependencyConfigEntity } from '../src/dependency-config/dependencyConfigEntity';
+import { of, by, AUTO, DependencyConfig, req, STOP_DEEP_CONFIG } from '../src';
 import { MushroomService, Injectable, registerDepsConfig } from '../src';
 import { Message } from '../src/utils/message';
 import {
@@ -36,6 +37,7 @@ import {
     RedPig,
     YellowMonkey
 } from './test-classes/configedClasses';
+import { BrownRacoon, IRacoon, Island, Racoon, RedRacoon, SmallIsland } from './test-classes/symbolConfigClasses';
 
 Message.toggleConsolePrintable(false);
 
@@ -227,6 +229,132 @@ test('带配置的依赖配置非子类实例', () => {
     } catch (error) {}
 
     expect(messageHistory[0].code).toBe('29002');
+});
+
+test('symbol类型的配置', () => {
+    const messageHistory = Message.getHistory();
+    Message.clearHistory();
+
+    let racoon: IRacoon;
+    try {
+        racoon = req<IRacoon>(Symbol.for('racoon'));
+    } catch (error) {}
+    expect(messageHistory[0].code).toBe('29021');
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    class Config1 {
+        @DependencyConfig(Symbol.for('racoon'))
+        static configRacoon(configEntity: DependencyConfigEntity<typeof Racoon>): void {
+            configEntity.usingClass = Racoon;
+            configEntity.args = ['racoon!'];
+        }
+    }
+
+    racoon = req<IRacoon>(Symbol.for('racoon'));
+    expect(racoon.name).toBe('racoon!');
+
+    const island = of(Island);
+    expect(island.racoon.name).toBe('racoon!');
+    // expect(Island.staticRacoon).toBe('racoon!');
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    class Config2 {
+        @DependencyConfig(Symbol.for('invalidRacoon'))
+        static configRacoon(configEntity: DependencyConfigEntity<typeof Racoon>): void {
+            configEntity.args = ['racoon!'];
+        }
+    }
+
+    try {
+        Message.clearHistory();
+        racoon = req<IRacoon>(Symbol.for('invalidRacoon'));
+    } catch (error) {}
+    expect(messageHistory[0].code).toBe('29014');
+
+    const smallIsland = of(SmallIsland);
+    expect(smallIsland.smallRacoon).toBeDefined();
+    expect(smallIsland.racoon).toBeDefined();
+    expect(smallIsland.lazyRacoon).toBeDefined();
+    expect(smallIsland.lazySmallRacoon).toBeDefined();
+    expect(SmallIsland.staticLazySmallRacoon).toBeDefined();
+
+    Message.clearHistory();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    class Config3 {
+        @DependencyConfig(Symbol.for('duplicateRacoon'))
+        static configRacoon(configEntity: DependencyConfigEntity<typeof Racoon>): void {
+            configEntity.usingClass = Racoon;
+        }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    class Config4 {
+        @DependencyConfig(Symbol.for('duplicateRacoon'))
+        static configRacoon(configEntity: DependencyConfigEntity<typeof Racoon>): void {
+            configEntity.usingClass = Racoon;
+        }
+    }
+
+    expect(messageHistory[0].code).toBe('20004');
+});
+
+test('symbol类型的配置回调方法', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    class Config {
+        @DependencyConfig(Symbol.for('myRedRacoon'))
+        static configRedRacoon(configEntity: DependencyConfigEntity<typeof RedRacoon>): void {
+            configEntity.usingClass = RedRacoon;
+            configEntity.args = ['redRacoon!'];
+
+            configEntity.afterInstanceCreate = () => {
+                RedRacoon.food = 'fish';
+            };
+        }
+
+        @DependencyConfig(Symbol.for('myBrownRacoon'))
+        static configBrownRacoon(configEntity: DependencyConfigEntity<typeof BrownRacoon>): void {
+            configEntity.usingClass = BrownRacoon;
+            configEntity.args = ['brownRacoon!'];
+
+            configEntity.afterInstanceFetch = () => {
+                BrownRacoon.food = 'fish';
+            };
+        }
+
+        @DependencyConfig(Symbol.for('myBrownRacoon2'))
+        static configBrownRacoon2(configEntity: DependencyConfigEntity<typeof BrownRacoon>): BrownRacoon {
+            configEntity.afterInstanceFetch = () => {
+                BrownRacoon.food = 'cocoa';
+            };
+            return new BrownRacoon('brownRacoon!!');
+        }
+
+        @DependencyConfig(Symbol.for('myBrownRacoon3'))
+        static configBrownRacoon3(configEntity: DependencyConfigEntity<typeof BrownRacoon>) {
+            configEntity.usingClass = BrownRacoon;
+            configEntity.args = undefined;
+            configEntity.afterInstanceFetch = () => {
+                BrownRacoon.food = 'fish';
+            };
+            return STOP_DEEP_CONFIG;
+        }
+    }
+
+    const redRacoon = req<IRacoon>(Symbol.for('myRedRacoon'));
+    let brownRacoon = req<IRacoon>(Symbol.for('myBrownRacoon'));
+
+    expect(redRacoon.name).toBe('redRacoon!');
+    expect(brownRacoon.name).toBe('racoon!');
+    expect(RedRacoon.food).toBe('fish');
+    expect(BrownRacoon.food).toBe('corn');
+
+    brownRacoon = req<IRacoon>(Symbol.for('myBrownRacoon2'));
+    expect(brownRacoon.name).toBe('brownRacoon!!');
+    expect(BrownRacoon.food).toBe('cocoa');
+
+    brownRacoon = req<IRacoon>(Symbol.for('myBrownRacoon3'));
+    expect(brownRacoon.name).toBeUndefined();
+    expect(BrownRacoon.food).toBe('fish');
 });
 
 test('深度查找配置', () => {
