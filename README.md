@@ -82,7 +82,8 @@ const { setState, getState, stateIsEqual } = new StateManager();
 下面本文将会由浅至深地介绍 **Mushroom** 这款依赖注入工具。
 
 ## 运行环境
-**支持Map、WeakMap、reflect-metadata的浏览器端或Node端**  
+**完整功能的使用需支持Map、WeakMap、TypeScript装饰器和reflect-metadata的浏览器端或Node端**  
+**如不支持TypeScript装饰器和reflect-metadata，您仍可以使用函数以及指定类的方式去实现。**
 
 *注：由于Vite使用esbuild将TypeScript转译到JavaScript，esbuild还不支持reflect-metadata，您可以参照如下方式去解决：
 ```bash
@@ -244,7 +245,7 @@ const mushroomService = of(MushroomService);
 mushroomService.destroySingletonInstance(Bee);
 ```
 <a id="createCachedDependencies"></a>
-### 创建带有缓存的实例
+### 创建带有缓存的实例（需环境支持WeakRef）
 如果我们需要单例的依赖，但又不想其常驻内存，我们可以将 **@Injectable()** 中的type设置为 **cached** ，来实现这种效果：
 ```ts
 @Injectable({ type: 'cached' })
@@ -268,6 +269,25 @@ console.log(bee1 === bee2) // true
 ```ts
 const mushroomService = of(MushroomService);
 mushroomService.destroyCachedInstance(Bee1);
+```
+
+### 使用函数代替 @Injectable() 装饰器
+如果运行环境不支持Typescript，可以使用 **setAsInjectable()** 方法替代：
+```ts
+export class Bee {
+    name = 'bee';
+}
+setAsInjectable(Bee, { type: 'singleton' })
+```
+或者在静态代码块中调用：
+```ts
+export class Bee {
+    name = 'bee';
+    
+    static {
+        setAsInjectable(Bee, { type: 'singleton' })
+    }
+}
 ```
 
 ### 使用 by() 方法为依赖的构造方法传递参数
