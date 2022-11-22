@@ -1,4 +1,4 @@
-# 一款简洁、易上手且功能强大的依赖注入工具
+## 一款简洁、易上手且功能强大的依赖注入工具<br>致力于提升您在编写面向对象程序的开发体验，让您更轻松地写出符合SOLID规范的代码
 ## 用法风格概览
 ```ts
 /** 在ts文件、函数中使用依赖查找 */
@@ -82,7 +82,8 @@ const { setState, getState, stateIsEqual } = new StateManager();
 下面本文将会由浅至深地介绍 **Mushroom** 这款依赖注入工具。
 
 ## 运行环境
-**支持Map、WeakMap、reflect-metadata的浏览器端或Node端**  
+**完整功能的使用需支持Map、WeakMap、TypeScript装饰器和reflect-metadata的浏览器端或Node端**  
+**如不支持TypeScript装饰器和reflect-metadata，您仍可以使用函数以及指定类的方式去实现。**
 
 *注：由于Vite使用esbuild将TypeScript转译到JavaScript，esbuild还不支持reflect-metadata，您可以参照如下方式去解决：
 ```bash
@@ -244,7 +245,7 @@ const mushroomService = of(MushroomService);
 mushroomService.destroySingletonInstance(Bee);
 ```
 <a id="createCachedDependencies"></a>
-### 创建带有缓存的实例
+### 创建带有缓存的实例（需环境支持WeakRef）
 如果我们需要单例的依赖，但又不想其常驻内存，我们可以将 **@Injectable()** 中的type设置为 **cached** ，来实现这种效果：
 ```ts
 @Injectable({ type: 'cached' })
@@ -268,6 +269,25 @@ console.log(bee1 === bee2) // true
 ```ts
 const mushroomService = of(MushroomService);
 mushroomService.destroyCachedInstance(Bee1);
+```
+
+### 使用函数代替 @Injectable() 装饰器
+如果运行环境不支持Typescript装饰器，可以使用 **setAsInjectable()** 函数替代：
+```ts
+export class Bee {
+    name = 'bee';
+}
+setAsInjectable(Bee, { type: 'singleton' })
+```
+或在静态代码块中调用：
+```ts
+export class Bee {
+    name = 'bee';
+    
+    static {
+        setAsInjectable(Bee, { type: 'singleton' })
+    }
+}
 ```
 
 ### 使用 by() 方法为依赖的构造方法传递参数
@@ -482,7 +502,7 @@ console.log(bee instanceof Hornet); // true
 console.log(bee.getName()); // bee999
 console.log(bee.location); // Forest
 ```
-该配置是一种深度的配置，如果当前配置指定了usingClass，则 **Mushroom** 还会继续查找本次usingClass的指定的配置进行进一步的配置，直到最后两次配置指定的usingClass一致为止。
+该配置是一种深度查找的配置，如果当前配置指定了usingClass，则 **Mushroom** 还会继续查找本次usingClass的指定的配置进行进一步的配置，直到最后两次配置指定的usingClass一致为止。
 ```ts
 @Injectable()
 export class FierceHornet extends Hornet {
@@ -585,6 +605,16 @@ sky.bee1.fly(); // 'HoneyBee Flying!'
 sky.bee2.fly(); // 'Hornet Flying!'
 bee1.fly(); // 'HoneyBee Flying!'
 bee2.fly(); // 'Hornet Flying!'
+```
+
+### 使用函数代替 @DependencyConfig() 装饰器
+如果运行环境不支持Typescript装饰器，可以使用 **setAsDependencyConfig()** 函数替代：
+
+```ts
+setAsDependencyConfig(Bee, (configEntity: DependencyConfigEntity<typeof Bee | typeof HoneyBee | typeof Hornet>) => {
+    configEntity.usingClass = HoneyBee;
+    configEntity.args = ['520'];
+});
 ```
 
 ### 通过 by() 方法传递标识
@@ -803,9 +833,12 @@ export class Bee3 {
 在程序中应尽量避免循环依赖，如若遇到循环依赖，首先您应该考虑的是，是否程序设计出了问题，或者是bug，其次才是用技术手段解决它。
 
 ## 更新日志
+v1.4.1
+- 支持使用 setAsInjectable() 和 setAsDependencyConfig() 函数代替 @Injectable() 和 @DependencyConfig() 装饰器。
+
 v1.4.0
-1. 增加通过Symbol配置依赖功能。
-2. @Injectable() 装饰器增加injectOnNew选项。
+- 增加通过Symbol配置依赖功能。
+- @Injectable() 装饰器增加injectOnNew选项。
 
 
 
