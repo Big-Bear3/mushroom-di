@@ -272,14 +272,14 @@ mushroomService.destroyCachedInstance(Bee1);
 ```
 
 ### 使用函数代替 @Injectable() 装饰器
-如果运行环境不支持Typescript，可以使用 **setAsInjectable()** 方法替代：
+如果运行环境不支持Typescript装饰器，可以使用 **setAsInjectable()** 方法替代：
 ```ts
 export class Bee {
     name = 'bee';
 }
 setAsInjectable(Bee, { type: 'singleton' })
 ```
-或者在静态代码块中调用：
+或在静态代码块中调用：
 ```ts
 export class Bee {
     name = 'bee';
@@ -605,6 +605,16 @@ sky.bee1.fly(); // 'HoneyBee Flying!'
 sky.bee2.fly(); // 'Hornet Flying!'
 bee1.fly(); // 'HoneyBee Flying!'
 bee2.fly(); // 'Hornet Flying!'
+```
+
+### 使用函数代替 @DependencyConfig() 装饰器
+如果运行环境不支持Typescript装饰器，可以使用 **setAsDependencyConfig()** 方法替代：
+
+```ts
+setAsDependencyConfig(Bee, (configEntity: DependencyConfigEntity<typeof Bee | typeof HoneyBee | typeof Hornet>) => {
+    configEntity.usingClass = HoneyBee;
+    configEntity.args = ['520'];
+});
 ```
 
 ### 通过 by() 方法传递标识
