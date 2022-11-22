@@ -834,11 +834,11 @@ export class Bee3 {
 
 ## 更新日志
 v1.4.1
-1. 支持使用 setAsInjectable() 和 setAsDependencyConfig() 函数代替 @Injectable() 和 @DependencyConfig() 装饰器。
+- 支持使用 setAsInjectable() 和 setAsDependencyConfig() 函数代替 @Injectable() 和 @DependencyConfig() 装饰器。
 
 v1.4.0
-1. 增加通过Symbol配置依赖功能。
-2. @Injectable() 装饰器增加injectOnNew选项。
+- 增加通过Symbol配置依赖功能。
+- @Injectable() 装饰器增加injectOnNew选项。
 
 
 
