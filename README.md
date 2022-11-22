@@ -272,7 +272,7 @@ mushroomService.destroyCachedInstance(Bee1);
 ```
 
 ### 使用函数代替 @Injectable() 装饰器
-如果运行环境不支持Typescript装饰器，可以使用 **setAsInjectable()** 方法替代：
+如果运行环境不支持Typescript装饰器，可以使用 **setAsInjectable()** 函数替代：
 ```ts
 export class Bee {
     name = 'bee';
@@ -502,7 +502,7 @@ console.log(bee instanceof Hornet); // true
 console.log(bee.getName()); // bee999
 console.log(bee.location); // Forest
 ```
-该配置是一种深度的配置，如果当前配置指定了usingClass，则 **Mushroom** 还会继续查找本次usingClass的指定的配置进行进一步的配置，直到最后两次配置指定的usingClass一致为止。
+该配置是一种深度查找的配置，如果当前配置指定了usingClass，则 **Mushroom** 还会继续查找本次usingClass的指定的配置进行进一步的配置，直到最后两次配置指定的usingClass一致为止。
 ```ts
 @Injectable()
 export class FierceHornet extends Hornet {
@@ -608,7 +608,7 @@ bee2.fly(); // 'Hornet Flying!'
 ```
 
 ### 使用函数代替 @DependencyConfig() 装饰器
-如果运行环境不支持Typescript装饰器，可以使用 **setAsDependencyConfig()** 方法替代：
+如果运行环境不支持Typescript装饰器，可以使用 **setAsDependencyConfig()** 函数替代：
 
 ```ts
 setAsDependencyConfig(Bee, (configEntity: DependencyConfigEntity<typeof Bee | typeof HoneyBee | typeof Hornet>) => {
@@ -833,6 +833,9 @@ export class Bee3 {
 在程序中应尽量避免循环依赖，如若遇到循环依赖，首先您应该考虑的是，是否程序设计出了问题，或者是bug，其次才是用技术手段解决它。
 
 ## 更新日志
+v1.4.1
+1. 支持使用 setAsInjectable() 和 setAsDependencyConfig() 函数代替 @Injectable() 和 @DependencyConfig() 装饰器。
+
 v1.4.0
 1. 增加通过Symbol配置依赖功能。
 2. @Injectable() 装饰器增加injectOnNew选项。
