@@ -1,6 +1,6 @@
 import type { Class, InjectableOptions } from '../types/diTypes';
 
-import { defaultInjectableOptions } from '../constants/diConstants';
+import { DiConstants } from '../constants/diConstants';
 
 /** 用于收集被注入依赖的选项 */
 export class DependenciesClassCollector {
@@ -15,9 +15,9 @@ export class DependenciesClassCollector {
 
     getInjectableOptions(c: Class): InjectableOptions {
         const injectableOptions = this.dependenciesMap.get(c);
-        if (!injectableOptions) return defaultInjectableOptions;
+        if (!injectableOptions) return DiConstants.defaultInjectableOptions;
 
-        if (!injectableOptions.type) injectableOptions.type = defaultInjectableOptions.type;
+        if (!injectableOptions.type) injectableOptions.type = DiConstants.defaultInjectableOptions.type;
         return injectableOptions;
     }
 

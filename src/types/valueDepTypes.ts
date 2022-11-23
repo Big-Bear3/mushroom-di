@@ -1,11 +1,11 @@
-import type { MODULE } from '../constants/diConstants';
+import type { DiConstants } from '../constants/diConstants';
 import type { ObjectType } from './diTypes';
 
-export type Module = typeof MODULE;
+export type Module = typeof DiConstants.MODULE;
 
 /** 模块化的值类型 */
 export type ModularValues = {
-    [MODULE]: Record<string, ObjectType & Partial<ModularValues>>;
+    [DiConstants.MODULE]: Record<string, ObjectType & Partial<ModularValues>>;
 };
 
 /** 取所有key序列，直到最后连续两层都是字符串 */

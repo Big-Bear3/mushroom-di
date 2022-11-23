@@ -1,6 +1,6 @@
 import type { Class, NormalClass, DependencyConfigResult, ObjectType } from '../types/diTypes';
 
-import { messageNewLineSign, STOP_DEEP_CONFIG } from '../constants/diConstants';
+import { DiConstants, msgNewLine } from '../constants/diConstants';
 import { DependenciesConfigCollector } from '../dependency-config/dependenciesConfigCollector';
 import { DependencyConfigEntity } from '../dependency-config/dependencyConfigEntity';
 import { Message } from '../utils/message';
@@ -95,12 +95,12 @@ export class DependenciesSearcher {
                     if (!key)
                         Message.throwError(
                             '29007',
-                            `follow方法的返回值不能为空！${messageNewLineSign}class: ${usingClass?.name}, 返回值: ${key}`
+                            `follow方法的返回值不能为空！${msgNewLine}class: ${usingClass?.name}, 返回值: ${key}`
                         );
                     if (typeof key !== 'object')
                         Message.throwError(
                             '29008',
-                            `follow方法的返回值必须是对象类型！${messageNewLineSign}class: ${usingClass?.name}, 返回值: ${key}`
+                            `follow方法的返回值必须是对象类型！${msgNewLine}class: ${usingClass?.name}, 返回值: ${key}`
                         );
 
                     cachedDependenciesContainer.addDependencyKey(usingClass, key);
@@ -143,7 +143,7 @@ export class DependenciesSearcher {
 
                 const configResult = configMethod(configEntity, outerClass);
 
-                if (configResult && configResult !== STOP_DEEP_CONFIG) {
+                if (configResult && configResult !== DiConstants.STOP_DEEP_CONFIG) {
                     // 检测指定的依赖所属的类，是否是原始定义的类或其子类
                     if (configResult instanceof originalClass) {
                         return {
@@ -160,7 +160,7 @@ export class DependenciesSearcher {
                 afterInstanceCreate = configEntity.afterInstanceCreate;
                 afterInstanceFetch = configEntity.afterInstanceFetch;
 
-                if (configResult === STOP_DEEP_CONFIG)
+                if (configResult === DiConstants.STOP_DEEP_CONFIG)
                     return {
                         usingClass: <NormalClass>currentUsingClass,
                         usingArgs: usingArgs ?? [],
@@ -192,7 +192,7 @@ export class DependenciesSearcher {
         const outerClass = DependenciesCreator.instance.getCreatingInstanceClass();
         const configResult = configMethod(configEntity, outerClass);
 
-        if (configResult && configResult !== STOP_DEEP_CONFIG) {
+        if (configResult && configResult !== DiConstants.STOP_DEEP_CONFIG) {
             return {
                 usingObject: configResult,
                 afterInstanceCreate: configEntity.afterInstanceCreate,
@@ -202,7 +202,7 @@ export class DependenciesSearcher {
 
         const currentUsingClass = configEntity.usingClass;
 
-        if (configResult === STOP_DEEP_CONFIG) {
+        if (configResult === DiConstants.STOP_DEEP_CONFIG) {
             return {
                 usingClass: <NormalClass>currentUsingClass,
                 usingArgs: configEntity.args ?? [],

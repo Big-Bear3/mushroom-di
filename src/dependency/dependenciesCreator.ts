@@ -4,8 +4,8 @@ import { Message } from '../utils/message';
 import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
 import { DependenciesGraph } from './dependenciesGraph';
 import { DependenciesSearcher } from './dependenciesSearcher';
-import { AUTO, messageNewLineSign } from '../constants/diConstants';
 import { InjectMembersHandler } from './injectMembersHandler';
+import { DiConstants, msgNewLine } from '../constants/diConstants';
 
 export class DependenciesCreator {
     private static _instance: DependenciesCreator;
@@ -81,7 +81,7 @@ export class DependenciesCreator {
         } catch (error) {
             Message.throwError(
                 '39001',
-                `依赖注入容器实例化类 "${usingClass?.name}" 出错！${messageNewLineSign}${
+                `依赖注入容器实例化类 "${usingClass?.name}" 出错！${msgNewLine}${
                     /* c8 ignore next */
                     (<{ stack: unknown }>error)?.stack ?? error
                 }`
@@ -110,14 +110,14 @@ export class DependenciesCreator {
             // 如果提供的参数个数过少，则用AUTO补全
             const padLength = constructorArgs.length - usingArgs.length;
             for (let i = 0; i < padLength; i++) {
-                usingArgs.push(AUTO);
+                usingArgs.push(DiConstants.AUTO);
             }
         }
 
         const dependenciesClassCollector = DependenciesClassCollector.instance;
 
         for (let i = 0; i < usingArgs.length; i++) {
-            if (usingArgs[i] === AUTO) {
+            if (usingArgs[i] === DiConstants.AUTO) {
                 if (typeof constructorArgs[i] === 'function') {
                     const isInjectable = dependenciesClassCollector.contains(<Class>constructorArgs[i]);
                     if (isInjectable) {

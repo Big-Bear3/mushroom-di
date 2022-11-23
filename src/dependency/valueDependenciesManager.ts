@@ -2,7 +2,7 @@ import type { ObjectType } from '../types/diTypes';
 import type { ModularValues } from '../types/valueDepTypes';
 
 import { Message } from '../utils/message';
-import { MODULE } from '../constants/diConstants';
+import { DiConstants } from '../constants/diConstants';
 
 /** 用于管理所有值依赖 */
 export class ValueDependenciesManager {
@@ -40,10 +40,10 @@ export class ValueDependenciesManager {
 
         let lastObj: Partial<ModularValues> = this.modularValues;
         for (let i = 0; i < keySeries.length - 1; i++) {
-            let modularObj = lastObj[MODULE];
+            let modularObj = lastObj[DiConstants.MODULE];
             if (!modularObj) {
                 modularObj = {};
-                lastObj[MODULE] = modularObj;
+                lastObj[DiConstants.MODULE] = modularObj;
             }
             let currentObj = modularObj[keySeries[i]];
             if (!currentObj) {
@@ -65,7 +65,7 @@ export class ValueDependenciesManager {
 
         let lastObj: Partial<ModularValues> = this.modularValues;
         for (let i = 0; i < keySeries.length - 1; i++) {
-            lastObj = lastObj?.[MODULE]?.[keySeries[i]];
+            lastObj = lastObj?.[DiConstants.MODULE]?.[keySeries[i]];
             if (!lastObj) return undefined;
         }
         return lastObj[keySeries[keySeries.length - 1]];

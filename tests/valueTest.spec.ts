@@ -1,6 +1,6 @@
 import { Message } from '../src/utils/message';
 import { MushroomService, of } from '../src';
-import { MODULE } from '../src/constants/diConstants';
+import { DiConstants } from '../src/constants/diConstants';
 import { ValueDependenciesManager } from '../src/dependency/valueDependenciesManager';
 import { numberPropName, symbolPropName } from './test-classes/basicClasses';
 
@@ -15,7 +15,7 @@ export type RoleType = typeof role;
 export interface AppType {
     isLoading: boolean;
 
-    [MODULE]: {
+    [DiConstants.MODULE]: {
         theme: {
             mode: 'light' | 'dark';
         };
@@ -34,12 +34,12 @@ export const values = {
 };
 
 export const modularValues = {
-    [MODULE]: {
+    [DiConstants.MODULE]: {
         user: {
             userId: 123,
             userName: '张三',
 
-            [MODULE]: {
+            [DiConstants.MODULE]: {
                 role: {} as RoleType
             }
         },
