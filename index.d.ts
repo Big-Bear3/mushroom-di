@@ -26,7 +26,7 @@ export type DependencyKey =
     | undefined
     | DependencyWeakKey;
 
-export type InjectableOptions<T extends ObjectType = ObjectType> = (
+export type InjectableBasicOptions<T extends ObjectType = ObjectType> = (
     | {
           type?: Exclude<InjectType, 'cached'>;
       }
@@ -36,7 +36,10 @@ export type InjectableOptions<T extends ObjectType = ObjectType> = (
       } & ThisType<T>)
 ) & {
     setTo?: 'inextensible' | 'sealed' | 'frozen';
-    injectOnNew: boolean;
+};
+
+export type InjectableOptions<T extends ObjectType = ObjectType> = InjectableBasicOptions<T> & {
+    injectOnNew?: boolean;
 };
 
 export type ConfigMethod = (
@@ -77,7 +80,7 @@ export function Inject(cs: Class | symbol): PropertyDecorator;
 export function Inject(injectOptions: InjectOptions): PropertyDecorator;
 export function Inject(cs: Class | symbol, injectOptions: InjectOptions): PropertyDecorator;
 
-export function setAsInjectable<T extends ObjectType>(c: Class<T>, options: Omit<InjectableOptions<T>, 'injectOnNew'>): void;
+export function setAsInjectable<T extends ObjectType>(c: Class<T>, options?: InjectableBasicOptions): void;
 export function setAsDependencyConfig<T extends ObjectType>(cs: Class<T> | symbol, configMethod: ConfigMethod): void;
 
 export class MushroomService {

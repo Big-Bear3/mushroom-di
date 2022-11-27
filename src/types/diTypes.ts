@@ -1,4 +1,4 @@
-import type { STOP_DEEP_CONFIG } from '../constants/diConstants';
+import type { DiConstants } from '../constants/diConstants';
 import type { DependencyConfigEntity } from '../dependency-config/dependencyConfigEntity';
 
 export type Class<T = any> = abstract new (...args: any[]) => T;
@@ -14,7 +14,7 @@ export type ObjectType = Record<ObjectKey, any>;
 
 export type InjectType = 'multiple' | 'cached' | 'singleton';
 
-export type InjectableOptions<T extends ObjectType = ObjectType> = (
+export type InjectableBasicOptions<T extends ObjectType = ObjectType> = (
     | {
           type?: Exclude<InjectType, 'cached'>;
       }
@@ -23,8 +23,11 @@ export type InjectableOptions<T extends ObjectType = ObjectType> = (
           follow?: (instance: T) => ObjectType;
       } & ThisType<T>)
 ) & {
-    injectOnNew?: boolean;
     setTo?: 'inextensible' | 'sealed' | 'frozen';
+};
+
+export type InjectableOptions<T extends ObjectType = ObjectType> = InjectableBasicOptions<T> & {
+    injectOnNew?: boolean;
 };
 
 export interface InjectOptions {
@@ -34,7 +37,7 @@ export interface InjectOptions {
 export type ConfigMethod = (
     configEntity: DependencyConfigEntity<any, any[]>,
     outerClass?: Class
-) => void | typeof STOP_DEEP_CONFIG | ObjectType;
+) => void | typeof DiConstants.STOP_DEEP_CONFIG | ObjectType;
 
 export type GenericType<T> = T extends Class<infer G> ? G : any;
 

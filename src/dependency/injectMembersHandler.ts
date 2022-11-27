@@ -1,7 +1,7 @@
 import type { Class, NormalClass, ObjectKey, ObjectType } from '../types/diTypes';
 import type { InjectOptions } from '../types/diTypes';
 
-import { defaultInjectOptions } from '../constants/diConstants';
+import { DiConstants } from '../constants/diConstants';
 import { DependenciesSearcher } from './dependenciesSearcher';
 import { DependenciesClassCollector } from '../../src/dependency-config/dependenciesClassCollector';
 import { Message } from '../../src/utils/message';
@@ -33,7 +33,7 @@ export class InjectMembersHandler {
         c: Class,
         memberName: ObjectKey,
         definedClassOrSymbol: Class | symbol,
-        injectOptions: InjectOptions = defaultInjectOptions
+        injectOptions: InjectOptions = DiConstants.defaultInjectOptions
     ): void {
         const targetInjectMembersInfo = this.classToInjectMembers.get(c);
 
@@ -156,7 +156,7 @@ export class InjectMembersHandler {
         c: Class,
         memberName: ObjectKey,
         definedClassOrSymbol: Class | symbol,
-        injectOptions: InjectOptions = defaultInjectOptions
+        injectOptions: InjectOptions = DiConstants.defaultInjectOptions
     ): void {
         if (injectOptions.lazy) {
             let _value: unknown;

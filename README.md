@@ -429,6 +429,21 @@ class RoleStore {
 }
 ```
 
+### 全局配置
+目前支持配置默认被注入选项和注入选项，例如：
+```ts
+MushroomService.setGlobalConfig({
+    defaultInjectableOptions: {
+        setTo: 'sealed',
+        type: 'cached'
+    },
+    defaultInjectOptions: {
+        lazy: true
+    }
+});
+```
+注：此方法需要在程序中使用到任何默认值之前调用。
+
 ## 高级用法
 ### 使用DependencyConfig() 装饰器进行依赖配置
 我们可以通过 **DependencyConfig()** 装饰器装饰自定义方法，来配置被依赖的类如何创建实例：
@@ -833,6 +848,10 @@ export class Bee3 {
 在程序中应尽量避免循环依赖，如若遇到循环依赖，首先您应该考虑的是，是否程序设计出了问题，或者是bug，其次才是用技术手段解决它。
 
 ## 更新日志
+v1.4.2
+- 新增全局配置功能。
+- 修复已知问题。
+
 v1.4.1
 - 支持使用 setAsInjectable() 和 setAsDependencyConfig() 函数代替 @Injectable() 和 @DependencyConfig() 装饰器。
 

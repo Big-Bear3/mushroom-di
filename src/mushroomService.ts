@@ -1,16 +1,17 @@
-import type { DependencyKey, NormalClass, DependencyWeakKey } from './types/diTypes';
+import type { DependencyKey, NormalClass, DependencyWeakKey, InjectOptions, InjectableBasicOptions } from './types/diTypes';
 
 import { Message } from './utils/message';
 import { Injectable } from './decorators/injectable';
 import { SingletonDependenciesContainer } from './dependency-container/singletonDependenciesContainer';
 import { KeyedDependenciesContainer } from './dependency-container/keyedDependenciesContainer';
 import { CachedDependenciesContainer } from './dependency-container/cachedDependenciesContainer';
-import { messageNewLineSign } from './constants/diConstants';
+import { msgNewLine } from './constants/diConstants';
 import { ModularKeysTupleToObjects, ModularKeysObject, ModularValues } from './types/valueDepTypes';
 import { ValueDependenciesManager } from './dependency/valueDependenciesManager';
 import { InjectVal as InjectValDecorator } from './decorators/injectVal';
+import { DiConstants } from './constants/diConstants';
 
-@Injectable({ type: 'singleton' })
+@Injectable({ type: 'singleton', setTo: 'frozen' })
 export class MushroomService {
     #keyedDependenciesContainer = KeyedDependenciesContainer.instance;
 
@@ -22,12 +23,12 @@ export class MushroomService {
     }
 
     addDependencyWithKey<T>(nc: NormalClass<T>, instance: T, key: DependencyKey): void {
-        if (!instance) Message.throwError('29005', `向Mushroom容器中添加的对象不能为空！${messageNewLineSign}class: ${nc.name}`);
+        if (!instance) Message.throwError('29005', `向Mushroom容器中添加的对象不能为空！${msgNewLine}class: ${nc.name}`);
         this.#keyedDependenciesContainer.addDependency(nc, instance, key);
     }
 
     addDependencyWithWeakKey<T>(nc: NormalClass<T>, instance: T, key: DependencyWeakKey): void {
-        if (!instance) Message.throwError('29006', `向Mushroom容器中添加的对象不能为空！${messageNewLineSign}class: ${nc.name}`);
+        if (!instance) Message.throwError('29006', `向Mushroom容器中添加的对象不能为空！${msgNewLine}class: ${nc.name}`);
         this.#keyedDependenciesContainer.addDependency(nc, instance, key, true);
     }
 
@@ -91,5 +92,27 @@ export class MushroomService {
             <any>InjectValDecorator;
 
         return { patchVal, takeVal, InjectVal };
+    }
+
+    static setGlobalConfig(globalConfig: {
+        defaultInjectableOptions?: InjectableBasicOptions;
+        defaultInjectOptions?: InjectOptions;
+    }): void {
+        if (DiConstants.globalConfigAlreadySet) Message.throwError('29023', '禁止重复设置全局配置！');
+        if (DiConstants.defaultConfigAlreadyGot) Message.warn('20002', '在设置全局配置前已经使用过默认配置！');
+
+        if (globalConfig.defaultInjectableOptions) {
+            for (const key of Object.keys(globalConfig.defaultInjectableOptions)) {
+                DiConstants.defaultInjectableOptions[key] = globalConfig.defaultInjectableOptions[key];
+            }
+        }
+
+        if (globalConfig.defaultInjectOptions) {
+            for (const key of Object.keys(globalConfig.defaultInjectOptions)) {
+                DiConstants.defaultInjectOptions[key] = globalConfig.defaultInjectOptions[key];
+            }
+        }
+
+        DiConstants.globalConfigAlreadySet = true;
     }
 }

@@ -1,13 +1,16 @@
 import 'reflect-metadata';
 
-import type { Class, ClassTypes, ConfigMethod, InjectableOptions, InstanceTypes, ObjectType } from './types/diTypes';
+import type {
+    Class,
+    ClassTypes,
+    ConfigMethod,
+    InjectableBasicOptions,
+    InjectableOptions,
+    InstanceTypes,
+    ObjectType
+} from './types/diTypes';
 
-import {
-    AUTO as autoFlag,
-    STOP_DEEP_CONFIG as stopDeepConfigFlag,
-    MODULE as moduleFlag,
-    defaultInjectableOptions
-} from './constants/diConstants';
+import { DiConstants } from './constants/diConstants';
 import { Injectable as InjectableDecorator } from './decorators/injectable';
 import { DependencyConfig as DependencyConfigDecorator } from './decorators/dependencyConfig';
 import { Inject as InjectDecorator } from './decorators/inject';
@@ -41,11 +44,8 @@ export function req<T>(s: symbol, ...args: any[]): T {
     return dependenciesSearcher.searchDependencyBySymbol(s, args);
 }
 
-export function setAsInjectable<T extends ObjectType>(
-    c: Class<T>,
-    options: Omit<InjectableOptions<T>, 'injectOnNew'> = defaultInjectableOptions
-): void {
-    delete (<InjectableOptions>options).injectOnNew;
+export function setAsInjectable<T extends ObjectType>(c: Class<T>, options?: InjectableBasicOptions): void {
+    if (options) delete (<InjectableOptions>options).injectOnNew;
     Injectable(options)(c);
 }
 
@@ -59,10 +59,10 @@ export const Inject = InjectDecorator;
 
 export const MushroomService = MushroomServiceClass;
 
-export const AUTO = autoFlag;
-export const STOP_DEEP_CONFIG = stopDeepConfigFlag;
+export const AUTO = DiConstants.AUTO;
+export const STOP_DEEP_CONFIG = DiConstants.STOP_DEEP_CONFIG;
 
-export const MODULE = moduleFlag;
+export const MODULE = DiConstants.MODULE;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function registerDepsConfig(c: Class): void {}
