@@ -2,14 +2,32 @@ import type { InjectableOptions, InjectOptions } from '../types/diTypes';
 
 export class DiConstants {
     /** 默认可注入对象被注入选项 */
-    static defaultInjectableOptions: InjectableOptions = {
+    static #defaultInjectableOptions: InjectableOptions = {
         type: 'multiple'
     };
 
     /** 默认注入选项 */
-    static defaultInjectOptions: InjectOptions = {
+    static #defaultInjectOptions: InjectOptions = {
         lazy: false
     };
+
+    /** 默认可注入对象被注入选项 */
+    static get defaultInjectableOptions() {
+        DiConstants.defaultConfigAlreadyGot = true;
+        return DiConstants.#defaultInjectableOptions;
+    }
+
+    /** 默认注入选项 */
+    static get defaultInjectOptions() {
+        DiConstants.defaultConfigAlreadyGot = true;
+        return DiConstants.#defaultInjectOptions;
+    }
+
+    /** 是否已经使用过默认配置 */
+    static defaultConfigAlreadyGot = false;
+
+    /** 是否已经设置过全局配置 */
+    static globalConfigAlreadySet = false;
 
     /** 自动注入标识，用作of()和by()的参数 */
     static readonly AUTO = Symbol('DI-AUTO');

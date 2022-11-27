@@ -1,6 +1,14 @@
 import 'reflect-metadata';
 
-import type { Class, ClassTypes, ConfigMethod, InjectableOptions, InstanceTypes, ObjectType } from './types/diTypes';
+import type {
+    Class,
+    ClassTypes,
+    ConfigMethod,
+    InjectableBasicOptions,
+    InjectableOptions,
+    InstanceTypes,
+    ObjectType
+} from './types/diTypes';
 
 import { DiConstants } from './constants/diConstants';
 import { Injectable as InjectableDecorator } from './decorators/injectable';
@@ -36,11 +44,8 @@ export function req<T>(s: symbol, ...args: any[]): T {
     return dependenciesSearcher.searchDependencyBySymbol(s, args);
 }
 
-export function setAsInjectable<T extends ObjectType>(
-    c: Class<T>,
-    options: Omit<InjectableOptions<T>, 'injectOnNew'> = DiConstants.defaultInjectableOptions
-): void {
-    delete (<InjectableOptions>options).injectOnNew;
+export function setAsInjectable<T extends ObjectType>(c: Class<T>, options?: InjectableBasicOptions): void {
+    if (options) delete (<InjectableOptions>options).injectOnNew;
     Injectable(options)(c);
 }
 

@@ -14,7 +14,7 @@ export type ObjectType = Record<ObjectKey, any>;
 
 export type InjectType = 'multiple' | 'cached' | 'singleton';
 
-export type InjectableOptions<T extends ObjectType = ObjectType> = (
+export type InjectableBasicOptions<T extends ObjectType = ObjectType> = (
     | {
           type?: Exclude<InjectType, 'cached'>;
       }
@@ -23,8 +23,11 @@ export type InjectableOptions<T extends ObjectType = ObjectType> = (
           follow?: (instance: T) => ObjectType;
       } & ThisType<T>)
 ) & {
-    injectOnNew?: boolean;
     setTo?: 'inextensible' | 'sealed' | 'frozen';
+};
+
+export type InjectableOptions<T extends ObjectType = ObjectType> = InjectableBasicOptions<T> & {
+    injectOnNew?: boolean;
 };
 
 export interface InjectOptions {

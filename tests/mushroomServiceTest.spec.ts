@@ -1,7 +1,7 @@
 import { by, of, registerDepsConfig } from '../src';
 import { Message } from '../src/utils/message';
 import { MushroomService } from '../src/mushroomService';
-import { MonkeyChief, YellowMonkeyChief } from './test-classes/configedClasses';
+import { Monkey, MonkeyChief, YellowMonkeyChief } from './test-classes/configedClasses';
 import { ScopedClassesConfig } from './test-classes/classesConfig';
 import { KeyedDependenciesContainer } from '../src/dependency-container/keyedDependenciesContainer';
 
@@ -135,4 +135,33 @@ test('将非object类型用作weakKeyedDependenciesMap对象中WeakMap的键', (
     } catch (error) {}
 
     expect(messageHistory[0]?.code).toBe('29018');
+});
+
+test('全局配置', () => {
+    expect(of(Monkey) === of(Monkey)).toBe(false);
+
+    const messageHistory = Message.getHistory();
+    Message.clearHistory();
+
+    MushroomService.setGlobalConfig({
+        defaultInjectableOptions: {
+            setTo: 'sealed',
+            type: 'cached',
+            follow: () => ({})
+        },
+        defaultInjectOptions: {
+            lazy: true
+        }
+    });
+
+    expect(messageHistory[0]?.code).toBe('20002');
+
+    expect(of(Monkey) === of(Monkey)).toBe(true);
+    expect(Object.isSealed(of(Monkey))).toBe(true);
+
+    Message.clearHistory();
+    try {
+        MushroomService.setGlobalConfig({});
+    } catch (error) {}
+    expect(messageHistory[0]?.code).toBe('29023');
 });

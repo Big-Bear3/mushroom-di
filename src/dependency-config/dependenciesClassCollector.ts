@@ -17,7 +17,10 @@ export class DependenciesClassCollector {
         const injectableOptions = this.dependenciesMap.get(c);
         if (!injectableOptions) return DiConstants.defaultInjectableOptions;
 
-        if (!injectableOptions.type) injectableOptions.type = DiConstants.defaultInjectableOptions.type;
+        for (const key of Object.keys(DiConstants.defaultInjectableOptions)) {
+            if (!Reflect.has(injectableOptions, key)) injectableOptions[key] = DiConstants.defaultInjectableOptions[key];
+        }
+
         return injectableOptions;
     }
 
