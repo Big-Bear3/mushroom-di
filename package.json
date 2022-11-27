@@ -12,8 +12,8 @@
         "index.d.ts"
     ],
     "scripts": {
-        "build": "webpack --mode=production --node-env=production",
-        "build:dev": "webpack --mode=development",
+        "build": "webpack --mode production --env production",
+        "build:dev": "webpack --mode development",
         "serve": "webpack serve",
         "test": "jest",
         "test:coverage": "jest --coverage"
