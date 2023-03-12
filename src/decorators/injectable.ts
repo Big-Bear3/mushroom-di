@@ -3,7 +3,7 @@ import type { Class, InjectableOptions, ObjectType } from '../types/diTypes';
 import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
 import { parentsIsSingleton } from '../utils/diUtils';
 import { Message } from '../utils/message';
-import { DependenciesSearcher } from '../../src/dependency/dependenciesSearcher';
+import { DependenciesSearcher } from '../dependency/dependenciesSearcher';
 import { msgNewLine } from '../constants/diConstants';
 
 /**

@@ -29,6 +29,12 @@ export class DiConstants {
     /** 是否已经设置过全局配置 */
     static globalConfigAlreadySet = false;
 
+    /** mushroom-pinia中用于存放原始类的属性键名 */
+    static readonly originalClassPropName = '__mp_class';
+
+    /** mushroom-pinia中用于存放原始类实例的属性键名 */
+    static readonly originalInstancePropName = '__mp_instance';
+
     /** 自动注入标识，用作of()和by()的参数 */
     static readonly AUTO = Symbol('DI-AUTO');
 
