@@ -1,7 +1,7 @@
 import type { Class, InjectOptions, ObjectKey } from './../types/diTypes';
 
 import { InjectMembersHandler } from '../dependency/injectMembersHandler';
-import { DependenciesClassCollector } from '../../src/dependency-config/dependenciesClassCollector';
+import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
 
 /**
  * Inject() 装饰器

@@ -3,8 +3,8 @@ import type { InjectOptions } from '../types/diTypes';
 
 import { DiConstants } from '../constants/diConstants';
 import { DependenciesSearcher } from './dependenciesSearcher';
-import { DependenciesClassCollector } from '../../src/dependency-config/dependenciesClassCollector';
-import { Message } from '../../src/utils/message';
+import { DependenciesClassCollector } from '../dependency-config/dependenciesClassCollector';
+import { Message } from '../utils/message';
 
 interface InjectMembersInfo {
     members: {
