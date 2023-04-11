@@ -58,12 +58,25 @@ export class DependenciesCreator {
             const injectMembersHandler = InjectMembersHandler.instance;
             injectMembersHandler.handleInstanceLazyMembers(usingClass);
 
-            const instance = new usingClass(...usingArgs);
+            let instance: T;
 
-            injectMembersHandler.handleInstanceMembers(
-                usingClass,
-                <ObjectType>instance[DiConstants.originalInstancePropName] ?? instance
-            );
+            /* c8 ignore start */
+            if (usingClass[DiConstants.originalClassPropName]) {
+                usingClass[DiConstants.originalClassPropName][DiConstants.afterClassStoreInstanceCreatedCbName] = (
+                    classStoreInstance: ObjectType
+                ) => {
+                    injectMembersHandler.handleInstanceMembers(usingClass, classStoreInstance);
+                };
+
+                instance = new usingClass(...usingArgs);
+
+                delete usingClass[DiConstants.originalClassPropName][DiConstants.afterClassStoreInstanceCreatedCbName];
+                /* c8 ignore stop */
+            } else {
+                instance = new usingClass(...usingArgs);
+
+                injectMembersHandler.handleInstanceMembers(usingClass, instance);
+            }
 
             const injectableOptions = DependenciesClassCollector.instance.getInjectableOptions(usingClass);
 
