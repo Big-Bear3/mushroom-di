@@ -5,6 +5,7 @@ import { ValueDependenciesManager } from '../dependency/valueDependenciesManager
 
 /**
  * InjectVal() 装饰器
+ * 用于装饰成员变量以注入值
  */
 export function InjectVal(key: string, defaultValue?: unknown): PropertyDecorator {
     if (typeof key !== 'string') Message.throwError('29013', 'key必须是string类型！');

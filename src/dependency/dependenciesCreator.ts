@@ -126,7 +126,7 @@ export class DependenciesCreator {
         if (usingArgs.length > constructorArgs.length) {
             Message.warn('20001', `为 "${usingClass?.name}" 的构造方法配置的参数过多！`);
         } else if (usingArgs.length < constructorArgs.length) {
-            // 如果提供的参数个数过少，则用AUTO补全
+            // 如果提供的参数个数过少，则用常量"AUTO"补全
             const padLength = constructorArgs.length - usingArgs.length;
             for (let i = 0; i < padLength; i++) {
                 usingArgs.push(DiConstants.AUTO);

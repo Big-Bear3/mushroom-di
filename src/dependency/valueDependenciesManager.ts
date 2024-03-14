@@ -8,7 +8,7 @@ import { DiConstants } from '../constants/diConstants';
 export class ValueDependenciesManager {
     private static _instance: ValueDependenciesManager;
 
-    /** 模块化的所有值 */
+    /** 模块化的所有的值 */
     private modularValues: ModularValues;
 
     /** 值依赖管理器是否已经构建 */
@@ -18,7 +18,7 @@ export class ValueDependenciesManager {
         return this._alreadyBuilt;
     }
 
-    /** 设置所有值 */
+    /** 设置所有的值 */
     setValues(values: ModularValues | ObjectType) {
         this._alreadyBuilt = true;
 
