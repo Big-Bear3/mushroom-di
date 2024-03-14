@@ -1,6 +1,6 @@
 import type { NormalClass } from '../types/diTypes';
 
-/** 用于管理所有单例依赖 */
+/** 该类用于管理所有单例依赖 */
 export class SingletonDependenciesContainer {
     private static _instance: SingletonDependenciesContainer;
 

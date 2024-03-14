@@ -3,10 +3,10 @@ import type { Class, GenericType } from '../types/diTypes';
 type ArgsType<T extends Class, A extends Class | unknown[]> = A extends undefined
     ? ConstructorParameters<T>
     : A extends Class
-    ? ConstructorParameters<A>
-    : A;
+      ? ConstructorParameters<A>
+      : A;
 
-/** 用于存放配置的依赖所使用的类和构造方法参数 */
+/** 该类用于存放配置的依赖所使用的类和构造方法参数 */
 export class DependencyConfigEntity<T extends Class = Class, A extends Class | unknown[] = undefined> {
     usingClass: Class<GenericType<T>>;
 

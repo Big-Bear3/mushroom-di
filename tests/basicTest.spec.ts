@@ -367,7 +367,7 @@ test('深度查找配置', () => {
     expect(pig2.age).toBe(1);
 });
 
-test('重复配置提示', () => {
+test('重复配置了依赖进行提示', () => {
     const messageHistory = Message.getHistory();
     Message.clearHistory();
 

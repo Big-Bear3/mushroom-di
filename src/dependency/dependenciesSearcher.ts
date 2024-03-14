@@ -9,6 +9,7 @@ import { DependenciesClassCollector } from '../dependency-config/dependenciesCla
 import { DependenciesCreator } from './dependenciesCreator';
 import { CachedDependenciesContainer } from '../dependency-container/cachedDependenciesContainer';
 
+/** 该类用于搜索依赖 */
 export class DependenciesSearcher {
     private static _instance: DependenciesSearcher;
 

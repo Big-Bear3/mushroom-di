@@ -2,7 +2,7 @@ import type { Class, InjectableOptions } from '../types/diTypes';
 
 import { DiConstants } from '../constants/diConstants';
 
-/** 用于收集被注入依赖的选项 */
+/** 该类用于收集被注入依赖的选项 */
 export class DependenciesClassCollector {
     private static _instance: DependenciesClassCollector;
 
