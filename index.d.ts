@@ -102,6 +102,10 @@ export class MushroomService {
         takeVal<U extends ModularKeysObject<T>, K extends [keyof U, ...(keyof U)[]]>(...key: K): ModularKeysTupleToObjects<U, K>;
         InjectVal<U extends ModularKeysObject<T>, K extends keyof U>(key: K, defaultValue?: U[K]): PropertyDecorator;
     };
+    static setGlobalConfig(globalConfig: {
+        defaultInjectableOptions?: InjectableBasicOptions;
+        defaultInjectOptions?: InjectOptions;
+    }): void;
 }
 
 export const AUTO: any;
@@ -115,20 +119,18 @@ export type ModularValues = {
     [MODULE]: Record<string, ObjectType & Partial<ModularValues>>;
 };
 
-type DeepKeys<T extends Record<string | symbol, any>, LastIsSymbol extends boolean = false> = T extends Record<
-    string | symbol,
-    any
->
-    ? {
-          [K in keyof T]: K extends string
-              ? LastIsSymbol extends true
-                  ? [K]
-                  : [K] | [K, ...DeepKeys<T[K], true>]
-              : K extends symbol
-              ? [K] | [K, ...DeepKeys<T[K], false>]
-              : never;
-      }[keyof T]
-    : never;
+type DeepKeys<T extends Record<string | symbol, any>, LastIsSymbol extends boolean = false> =
+    T extends Record<string | symbol, any>
+        ? {
+              [K in keyof T]: K extends string
+                  ? LastIsSymbol extends true
+                      ? [K]
+                      : [K] | [K, ...DeepKeys<T[K], true>]
+                  : K extends symbol
+                    ? [K] | [K, ...DeepKeys<T[K], false>]
+                    : never;
+          }[keyof T]
+        : never;
 
 type DeepValidKeys<T extends Record<string | symbol, any>, U extends DeepKeys<T> = DeepKeys<T>> = U extends [
     ...any[],
@@ -159,8 +161,8 @@ type DeepValue<T extends Record<string | symbol, any>, U extends (string | symbo
         ? R['length'] extends 0
             ? T[F]
             : R extends (string | symbol)[]
-            ? DeepValue<T[F], R>
-            : never
+              ? DeepValue<T[F], R>
+              : never
         : never
     : never;
 
