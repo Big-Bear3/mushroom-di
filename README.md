@@ -21,6 +21,7 @@ export class MyClass {
 }
 
 /** 作者微信：Lwn001 */
+/** 暂不支持ES7装饰器 */
 ```
 
 ## 为什么需要Mushroom？
