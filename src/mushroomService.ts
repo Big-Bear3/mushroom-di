@@ -11,6 +11,9 @@ import { ValueDependenciesManager } from './dependency/valueDependenciesManager'
 import { InjectVal as InjectValDecorator } from './decorators/injectVal';
 import { DiConstants } from './constants/diConstants';
 
+/**
+ * 管理依赖的常用工具
+ */
 @Injectable({ type: 'singleton', setTo: 'frozen' })
 export class MushroomService {
     #keyedDependenciesContainer = KeyedDependenciesContainer.instance;

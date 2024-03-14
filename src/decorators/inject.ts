@@ -5,6 +5,7 @@ import { DependenciesClassCollector } from '../dependency-config/dependenciesCla
 
 /**
  * Inject() 装饰器
+ * 用于装饰成员变量以注入依赖
  */
 export function Inject(): PropertyDecorator;
 export function Inject(cs: Class | symbol): PropertyDecorator;

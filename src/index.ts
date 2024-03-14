@@ -71,4 +71,5 @@ of(MushroomService);
 
 // export const Message = MessageClass;
 
+// 用浏览器调试时打开
 // import('../tests/webTest');

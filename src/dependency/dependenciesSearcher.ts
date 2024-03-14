@@ -133,7 +133,7 @@ export class DependenciesSearcher {
         while (usingClass !== currentUsingClass) {
             usingClass = currentUsingClass;
 
-            // 获取自定义配置依赖方法
+            // 获取自定义配置依赖的方法
             const configMethod = DependenciesConfigCollector.instance.getConfigMethod(currentUsingClass);
             if (configMethod) {
                 const configEntity = new DependencyConfigEntity(currentUsingClass, usingArgs);

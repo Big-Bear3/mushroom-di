@@ -8,6 +8,7 @@ import { msgNewLine } from '../constants/diConstants';
 
 /**
  * Injectable() 装饰器
+ * 类被此装饰器装饰后，使得该类的实例可以被注入
  */
 export function Injectable<T extends ObjectType>(options?: InjectableOptions<T>): ClassDecorator {
     return function (target: Class) {

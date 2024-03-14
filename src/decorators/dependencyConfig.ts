@@ -4,6 +4,7 @@ import { DependenciesConfigCollector } from '../dependency-config/dependenciesCo
 
 /**
  * DependencyConfig() 装饰器
+ * 用于装饰配置依赖的方法
  */
 export function DependencyConfig(cs: Class | symbol): MethodDecorator {
     return ((_target: Class, _key: string, methodDescriptor: MethodDescriptor) => {
