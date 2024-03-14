@@ -2,7 +2,7 @@ import type { NormalClass, DependencyKey, DependencyWeakKey } from '../types/diT
 
 import { Message } from '../utils/message';
 
-/** 用于管理所有带有键的依赖 */
+/** 该类用于管理所有带有键的依赖 */
 export class KeyedDependenciesContainer {
     private static _instance: KeyedDependenciesContainer;
 

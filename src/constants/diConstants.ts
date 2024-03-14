@@ -1,7 +1,7 @@
 import type { InjectableOptions, InjectOptions } from '../types/diTypes';
 
 export class DiConstants {
-    /** 默认可注入对象被注入选项 */
+    /** 默认可注入对象的被注入选项 */
     static #defaultInjectableOptions: InjectableOptions = {
         type: 'multiple'
     };

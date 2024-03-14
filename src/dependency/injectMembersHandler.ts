@@ -18,7 +18,7 @@ interface InjectMembersInfo {
     lazyMembersHandled: boolean;
 }
 
-/** 用于处理静态、非静态成员变量的注入 */
+/** 该类用于处理静态、非静态成员变量的注入 */
 export class InjectMembersHandler {
     private static _instance: InjectMembersHandler;
 

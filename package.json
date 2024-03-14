@@ -1,5 +1,5 @@
 {
-    "version": "1.4.4",
+    "version": "1.4.5",
     "name": "mushroom-di",
     "author": "BigBear3",
     "description": "A node and browser end dependency injection tool.",

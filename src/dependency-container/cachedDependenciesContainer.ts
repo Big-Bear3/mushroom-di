@@ -1,6 +1,6 @@
 import type { NormalClass, DependencyWeakKey, ObjectType } from '../types/diTypes';
 
-/** 用于管理所有缓存依赖 */
+/** 该类用于管理所有缓存依赖 */
 export class CachedDependenciesContainer {
     private static _instance: CachedDependenciesContainer;
 

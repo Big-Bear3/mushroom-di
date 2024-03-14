@@ -7,6 +7,7 @@ import { DependenciesSearcher } from './dependenciesSearcher';
 import { InjectMembersHandler } from './injectMembersHandler';
 import { DiConstants, msgNewLine } from '../constants/diConstants';
 
+/** 该类用于创建依赖 */
 export class DependenciesCreator {
     private static _instance: DependenciesCreator;
 

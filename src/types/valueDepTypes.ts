@@ -3,26 +3,24 @@ import type { ObjectType } from './diTypes';
 
 export type Module = typeof DiConstants.MODULE;
 
-/** 模块化的值类型 */
+/** 模块化的值的类型 */
 export type ModularValues = {
     [DiConstants.MODULE]: Record<string, ObjectType & Partial<ModularValues>>;
 };
 
 /** 取所有key序列，直到最后连续两层都是字符串 */
-type DeepKeys<T extends Record<string | symbol, any>, LastIsSymbol extends boolean = false> = T extends Record<
-    string | symbol,
-    any
->
-    ? {
-          [K in keyof T]: K extends string
-              ? LastIsSymbol extends true
-                  ? [K]
-                  : [K] | [K, ...DeepKeys<T[K], true>]
-              : K extends symbol
-              ? [K] | [K, ...DeepKeys<T[K], false>]
-              : never;
-      }[keyof T]
-    : never;
+type DeepKeys<T extends Record<string | symbol, any>, LastIsSymbol extends boolean = false> =
+    T extends Record<string | symbol, any>
+        ? {
+              [K in keyof T]: K extends string
+                  ? LastIsSymbol extends true
+                      ? [K]
+                      : [K] | [K, ...DeepKeys<T[K], true>]
+                  : K extends symbol
+                    ? [K] | [K, ...DeepKeys<T[K], false>]
+                    : never;
+          }[keyof T]
+        : never;
 
 /** 筛选出最后两层都是字符串的key序列 */
 type DeepValidKeys<T extends Record<string | symbol, any>, U extends DeepKeys<T> = DeepKeys<T>> = U extends [
@@ -57,8 +55,8 @@ type DeepValue<T extends Record<string | symbol, any>, U extends (string | symbo
         ? R['length'] extends 0
             ? T[F]
             : R extends (string | symbol)[]
-            ? DeepValue<T[F], R>
-            : never
+              ? DeepValue<T[F], R>
+              : never
         : never
     : never;
 

@@ -4,7 +4,7 @@ import type { ModularValues } from '../types/valueDepTypes';
 import { Message } from '../utils/message';
 import { DiConstants } from '../constants/diConstants';
 
-/** 用于管理所有值依赖 */
+/** 该类用于管理所有值依赖 */
 export class ValueDependenciesManager {
     private static _instance: ValueDependenciesManager;
 
