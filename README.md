@@ -849,6 +849,12 @@ export class Bee3 {
 在程序中应尽量避免循环依赖，如若遇到循环依赖，首先您应该考虑的是，是否程序设计出了问题，或者是bug，其次才是用技术手段解决它。
 
 ## 更新日志
+v1.4.6
+- 修复index.d.ts中缺少setGlobalConfig的定义
+
+v1.4.5
+- 更新依赖版本
+
 v1.4.4
 - 修复在mushroom-pinia的onStoreCreated回调函数中无法拿到用成员变量方式注入的对象问题。
 
